@@ -23,6 +23,7 @@ func main() {
 	pgDbname := os.Getenv("PG_DBNAME")
 
 	models.OpenGlobalConnection(pgHost, pgPort, pgUser, pgPassword, pgDbname)
+	models.ExecuteMigration()
 
 	StartServer(":" + port)
 }
