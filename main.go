@@ -16,13 +16,16 @@ func main() {
 	}
 
 	port := os.Getenv("PORT")
-	pgHost := os.Getenv("PG_HOST")
-	pgPort := os.Getenv("PG_PORT")
-	pgUser := os.Getenv("PG_USER")
-	pgPassword := os.Getenv("PG_PASSWORD")
-	pgDbname := os.Getenv("PG_DBNAME")
 
-	models.OpenGlobalConnection(pgHost, pgPort, pgUser, pgPassword, pgDbname)
+	conn := models.Connection{
+		Host:     os.Getenv("PG_HOST"),
+		Port:     os.Getenv("PG_PORT"),
+		User:     os.Getenv("PG_USER"),
+		Password: os.Getenv("PG_PASSWORD"),
+		Dbname:   os.Getenv("PG_DBNAME"),
+	}
+
+	models.OpenGlobalConnection(conn)
 	models.ExecuteMigration()
 
 	StartServer(":" + port)
