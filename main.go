@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-postr/models"
 	"log"
 	"os"
 
@@ -15,6 +16,13 @@ func main() {
 	}
 
 	port := os.Getenv("PORT")
+	pgHost := os.Getenv("PG_HOST")
+	pgPort := os.Getenv("PG_PORT")
+	pgUser := os.Getenv("PG_USER")
+	pgPassword := os.Getenv("PG_PASSWORD")
+	pgDbname := os.Getenv("PG_DBNAME")
+
+	models.OpenGlobalConnection(pgHost, pgPort, pgUser, pgPassword, pgDbname)
 
 	StartServer(":" + port)
 }
