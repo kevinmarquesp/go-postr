@@ -13,6 +13,7 @@ func StartServer(port string) {
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	router.HandleFunc("/", controllers.HomePageController)
+	router.HandleFunc("/login", controllers.LoginPageController)
 
 	err := http.ListenAndServe(port, router)
 	if err != nil {

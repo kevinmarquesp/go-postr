@@ -1,0 +1,44 @@
+{{define "LoginPage"}}
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		{{template "Head" "Login Page"}}
+	</head>
+	<body>
+		<div class="vw-100 vh-100 d-flex flex-column align-items-center">
+
+			<main class="p-5 flex-grow-1 d-flex justify-content-center align-items-center">
+				<div style="width: min(35ch, 100%)" class="card m-sm">
+					<div class="card-header">
+						Create a new account!
+					</div>
+					<div class="card-body">
+
+						<form>
+							<div class="mb-2">
+								<label for="user_name" class="form-label">
+									User name:
+								</label>
+								<input type="text" name="user_name" id="user_name" class="form-control">
+							</div>
+
+							<div class="mb-3">
+								<label for="password" class="form-label">
+									Password:
+								</label>
+								<input type="text" name="password" id="password" class="form-control">
+							</div>
+
+							<input type="submit" value="Submit" class="btn btn-primary">
+						</form>
+
+					</div>
+				</div>
+			</main>
+
+			{{template "Footer"}}
+
+		</div>
+	</body>
+</html>
+{{end}}
