@@ -1,0 +1,7 @@
+header, main, footer {
+	width: min(100vw, 1200px);
+}
+
+.--login-btn:hover {
+	color: var(--bs-blue);
+}

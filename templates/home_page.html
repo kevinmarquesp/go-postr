@@ -1,0 +1,67 @@
+{{define "HomePage"}}
+	<!DOCTYPE html>
+	<html lang="pt-br">
+		<head>
+			{{template "Head" "Home Page"}}
+		</head>
+		<body>
+
+			<div class="vw-100 vh-100 d-flex flex-column align-items-center">
+				<header class="w-sm p-3 bg-primary container-fluid text-center">
+					<a href="#" class="text-white link-offset-1">Sign in</a>
+					<a href="#" class="ms-2 btn btn-outline-light --login-btn">Log in</a>
+				</header>
+
+				<main class="flex-grow-1 ps-4 pe-4 pt-5 pb-5">
+					<div class="border border-2 rounded-3 --page-container">
+
+						<nav class="p-3 pb-0">
+							<div class="nav nav-tabs" id="nav-tab" role="tablist">
+								<button class="nav-link active" id="tab_about_button" data-bs-toggle="tab" data-bs-target="#tab_about" type="button" role="tab" aria-controls="tab_about" aria-selected="true">
+									About
+								</button>
+								<button class="nav-link" id="tab_articles_button" data-bs-toggle="tab" data-bs-target="#tab_articles" type="button" role="tab" aria-controls="tab_articles" aria-selected="false">
+									Articles
+								</button>
+								<button class="nav-link" id="tab_users_button" data-bs-toggle="tab" data-bs-target="#tab_users" type="button" role="tab" aria-controls="tab_users" aria-selected="false">
+									Users
+								</button>
+							</div>
+						</nav>
+
+						<div class="tab-content p-3">
+							<div class="tab-pane fade show active" id="tab_about" role="tabpanel" aria-labelledby="tab_about_button" tabindex="0">
+								<h2>
+									About
+								</h2>
+								<p>
+									Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas enim modi nobis consequuntur aperiam eos, odio eum odit. Labore molestiae, atque nobis et natus culpa.
+								</p>
+							</div>
+							<div class="tab-pane fade" id="tab_articles" role="tabpanel" aria-labelledby="tab_articles_container" tabindex="0">
+								<h2>
+									Articles
+								</h2>
+								<p>
+									Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas enim modi nobis consequuntur aperiam eos, odio eum odit. Labore molestiae, atque nobis et natus culpa.
+								</p>
+							</div>
+							<div class="tab-pane fade" id="tab_users" role="tabpanel" aria-labelledby="tab_users_container" tabindex="0">
+								<h2>
+									Users
+								</h2>
+								<p>
+									Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas enim modi nobis consequuntur aperiam eos, odio eum odit. Labore molestiae, atque nobis et natus culpa.
+								</p>
+							</div>
+						</div>
+
+					</div>
+				</main>
+
+				{{template "Footer"}}
+			</div>
+
+		</body>
+	</html>
+{{end}}
