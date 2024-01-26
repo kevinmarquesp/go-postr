@@ -1,15 +1,15 @@
-{{define "HomePage"}}
+{{define "Home"}}
 	<!DOCTYPE html>
 	<html lang="pt-br">
 		<head>
-			{{template "Head" "Home Page"}}
+			{{template "Components.Head" "Home Page"}}
 		</head>
 		<body>
 
 			<div class="vw-100 vh-100 d-flex flex-column align-items-center">
 				<header class="w-sm p-3 bg-primary container-fluid text-center">
 					<a href="#" class="text-white link-offset-1">Sign in</a>
-					<a href="#" class="ms-2 btn btn-outline-light --login-btn">Log in</a>
+					<a href="/login" class="ms-2 btn btn-outline-light --login-btn">Log in</a>
 				</header>
 
 				<main class="flex-grow-1 ps-4 pe-4 pt-5 pb-5">
@@ -59,7 +59,7 @@
 					</div>
 				</main>
 
-				{{template "Footer"}}
+				{{template "Components.Footer"}}
 			</div>
 
 		</body>

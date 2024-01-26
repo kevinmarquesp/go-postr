@@ -6,7 +6,7 @@ import (
 )
 
 func LoginPageController(w http.ResponseWriter, r *http.Request) {
-	err := Tmpl.ExecuteTemplate(w, "LoginPage", nil)
+	err := Tmpl.ExecuteTemplate(w, "Login", nil)
 	if err != nil {
 		log.Println("Could not render the HomePage template, something went wrong")
 		log.Fatal(err)
