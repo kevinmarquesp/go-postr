@@ -1,0 +1,7 @@
+{{define "AuthStatus"}}
+	{{if not .IsEmpty}}
+		<span class="text-{{.Status}} bg-{{.Status}}-subtle border border-{{.Status}} rounded p-1 ps-2 lh-sm d-block">
+			{{.Msg}}
+		</span>
+	{{end}}
+{{end}}

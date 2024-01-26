@@ -12,8 +12,11 @@ func StartServer(port string) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	router.HandleFunc("/", controllers.HomePageController)
 	router.HandleFunc("/login", controllers.LoginPageController)
+	
+	router.HandleFunc("/auth/validate/user", controllers.ValidateUserNameController)
 
 	err := http.ListenAndServe(port, router)
 	if err != nil {
