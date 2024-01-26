@@ -1,6 +1,18 @@
 package controllers
 
-import "html/template"
+import (
+	"html/template"
+	"log"
+)
 
-var htmlDir string = "templates/*.html"
-var Tmpl *template.Template = template.Must(template.ParseGlob(htmlDir))
+var Tmpl *template.Template
+
+func init() {
+	log.Println("Setting up template files...")
+
+	pagesDir := "templates/*.html"
+	componentsDir := "templates/components/*.html"
+
+	Tmpl = template.Must(template.ParseGlob(pagesDir))
+	Tmpl = template.Must(Tmpl.ParseGlob(componentsDir))
+}
