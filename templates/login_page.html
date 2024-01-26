@@ -36,7 +36,17 @@
 								<label for="password" class="form-label">
 									Password:
 								</label>
-								<input type="text" name="password" id="password" class="form-control">
+								<input
+									hx-get="/auth/validate/password"
+									hx-trigger="keyup changed delay:500ms"
+									hx-target="#password_field_info"
+									type="text"
+									name="password"
+									id="password"
+									class="form-control"
+									required
+								/>
+								<div class="mt-3" id="password_field_info"></div>
 							</div>
 
 							<input type="submit" value="Submit" class="btn btn-primary">
