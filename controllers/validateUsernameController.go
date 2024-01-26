@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -15,18 +16,18 @@ func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case len(userName) == 0:
 		log.Println("Validating username: empty field")
-		writeAnEmptyString(w)
+		fmt.Fprintf(w, "")
 
 	case strings.Contains(userName, " "):
 		log.Println("Validating username: space character detected")
-		writeFieldValidationResponseWraper(w, "danger", "Space characters aren't allowed")
+		writeFieldValidationResponse(w, "danger", "Space characters aren't allowed")
 
 	case strings.ContainsAny(userName, INVALID_CHARS):
 		log.Println("Validating username: invalid characters detected")
-		writeFieldValidationResponseWraper(w, "danger", "Use only letters, number and - or _ characters")
+		writeFieldValidationResponse(w, "danger", "Use only letters, number and - or _ characters")
 
 	default:
 		log.Println("Validating username: valid user!")
-		writeFieldValidationResponseWraper(w, "success", "Valid username")
+		writeFieldValidationResponse(w, "success", "Valid username")
 	}
 }
