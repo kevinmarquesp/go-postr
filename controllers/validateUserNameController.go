@@ -9,9 +9,9 @@ import (
 const INVALID_CHARS string = "~`!@#$%^&*()+={}[]|\\:;\"'<>,.?/"
 
 type ValidateUsernameResponse struct {
-	IsEmpty bool
-	Status  string
-	Msg     string
+	IsEmpty         bool
+	BootstrapStatus string
+	InfoMessage     string
 }
 
 func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
@@ -20,34 +20,43 @@ func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
 
 	switch {
 	case len(userName) == 0:
-		WriteUsernameValidationStatus(w, "", "")
+		log.Println("Validating username: empty field")
+
+		WriteUsernameValidationStatus(w, ValidateUsernameResponse{
+			IsEmpty: true,
+		})
 
 	case strings.Contains(userName, " "):
-		WriteUsernameValidationStatus(w, "danger", "Space characters aren't allowed")	
+		log.Println("Validating username: space character detected")
+
+		WriteUsernameValidationStatus(w, ValidateUsernameResponse{
+			BootstrapStatus: "danger",
+			InfoMessage:     "Space characters aren't allowed",
+		})
 
 	case strings.ContainsAny(userName, INVALID_CHARS):
-		WriteUsernameValidationStatus(w, "danger", "Use only letters, number and - or _ characters")
+		log.Println("Validating username: invalid characters detected")
+
+		WriteUsernameValidationStatus(w, ValidateUsernameResponse{
+			BootstrapStatus: "danger", 
+			InfoMessage:     "Use only letters, number and - or _ characters",
+		})
 
 	default:
-		WriteUsernameValidationStatus(w, "success", "Valid username")
+		log.Println("Validating username: valid user!")
+
+		WriteUsernameValidationStatus(w, ValidateUsernameResponse{
+			BootstrapStatus: "success", 
+			InfoMessage:     "Valid username",
+		})
 	}
 }
 
-func WriteUsernameValidationStatus(w http.ResponseWriter, status, msg string) {
-	var isEmpty bool
+func WriteUsernameValidationStatus(w http.ResponseWriter, data ValidateUsernameResponse) {
+	log.Printf("Wrinting username validation result: %t, %s, %s\n",
+		data.IsEmpty, data.BootstrapStatus, data.InfoMessage)
 
-	if len(status) == 0 || len(msg) == 0 {
-		isEmpty = true
-	} else {
-		isEmpty = false
-	}
-
-	err := Tmpl.ExecuteTemplate(w, "AuthStatus", ValidateUsernameResponse{
-		IsEmpty: isEmpty,
-		Status:  status,
-		Msg:     msg,
-	})
-
+	err := Tmpl.ExecuteTemplate(w, "AuthStatus", data)
 	if err != nil {
 		log.Println("Could not write the AuthStatus component...")
 		log.Fatal(err)
