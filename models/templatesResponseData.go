@@ -1,6 +1,6 @@
 package models
 
-type ValidateUsernameResponse struct {
+type FieldValidationResponseData struct {
 	IsEmpty         bool
 	BootstrapStatus string
 	InfoMessage     string
