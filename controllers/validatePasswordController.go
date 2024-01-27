@@ -25,9 +25,7 @@ func passwordValidationCases(w http.ResponseWriter, length int) {
 }
 
 func ValidatePasswordController(w http.ResponseWriter, r *http.Request) {
-	var err error
-
-	if err = parseValidationFormFields(w, r); err != nil {
+	if err := parseValidationFormFields(w, r); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("[ERROR]", err)
 

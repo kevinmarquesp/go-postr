@@ -11,7 +11,7 @@ import (
 const INVALID_CHARS string = "~`!@#$%^&*()+={}[]|\\:;\"'<>,.?/"
 
 func wasUsernameAlreadyTaken(username string) (bool, error) {
-	rows, err := models.Db.Query("SELECT user_name FROM public.user WHERE user_name LIKE $1", username)
+	rows, err := models.Db.Query("SELECT username FROM public.user WHERE username LIKE $1", username)
 	if err != nil {
 		log.Println("Couldn't check if this username already exists")
 		return false, err
