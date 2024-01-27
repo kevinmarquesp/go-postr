@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const INVALID_CHARS string = "~`!@#$%^&*()+={}[]|\\:;\"'<>,.?/"
+const invalidChars string = "~`!@#$%^&*()+={}[]|\\:;\"'<>,.?/"
 
 func wasUsernameAlreadyTaken(username string) (bool, error) {
 	rows, err := models.Db.Query("SELECT username FROM public.user WHERE username LIKE $1", username)
@@ -44,7 +44,7 @@ func usernameValidationCases(w http.ResponseWriter, wasAlreadyTaken bool, userna
 		log.Println("Username Validation :: space character detected")
 		writeFieldValidationResponse(w, "danger", "Space characters aren't allowed")
 
-	case strings.ContainsAny(username, INVALID_CHARS):
+	case strings.ContainsAny(username, invalidChars):
 		log.Println("Username Validation :: invalid characters detected")
 		writeFieldValidationResponse(w, "danger", "Use only letters, number and - or _ characters")
 

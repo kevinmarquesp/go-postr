@@ -10,11 +10,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const insertUserQuery = `INSERT INTO public.user (
+		username, password, bio, created_at, updated_at
+	) VALUES ($1, $2, $3, $4, $4)`
+
 func CreateNewUserController(w http.ResponseWriter, r *http.Request) {
 	if err := parseValidationFormFields(w, r); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("[ERROR]", err)
-
 		return
 	}
 
@@ -28,8 +30,7 @@ func CreateNewUserController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = models.Db.Exec(`INSERT INTO public.user (username, password, bio, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $4)`, username, hashedPassword, userBio, time.Now())
+	_, err = models.Db.Exec(insertUserQuery, username, hashedPassword, userBio, time.Now())
 	if err != nil {
 		log.Println("[ERROR]", err)
 		return
