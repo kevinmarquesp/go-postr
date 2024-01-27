@@ -1,19 +1,34 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 )
 
 func ValidatePasswordController(w http.ResponseWriter, r *http.Request) {
-	password := r.URL.Query().Get("password")
+	if r.Method != http.MethodPost {
+		writeFieldValidationResponse(w, "warning", "Server error: nvalid request method, expected POST")
+		log.Println("Invalid request method, expected POST")
+
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		writeFieldValidationResponse(w, "warning", "Server error: could not parse form values")
+
+		log.Println("Could not parse the form values")
+		log.Println(err)
+
+		return
+	}
+
+	password := r.Form.Get("password")
 	length := len(password)
 
 	switch {
 	case length == 0:
 		log.Println("Validating password: empty field")
-		fmt.Fprintf(w, "")
 
 	case length < 8:
 		log.Println("Validating password: password specified is too short")
