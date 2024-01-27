@@ -35,7 +35,24 @@ func isUsernameAlreadyTaken(username string) (bool, error) {
 }
 
 func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("user_name")
+	if r.Method != http.MethodPost {
+		writeFieldValidationResponse(w, "warning", "Server error: nvalid request method, expected POST")
+		log.Println("Invalid request method, expected POST")
+
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		writeFieldValidationResponse(w, "warning", "Server error: could not parse form values")
+
+		log.Println("Could not parse the form values")
+		log.Println(err)
+
+		return
+	}
+
+	username := r.Form.Get("username")
 	username = strings.TrimSpace(username)
 
 	wasAlreadyTaken, err := isUsernameAlreadyTaken(username)

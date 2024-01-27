@@ -16,16 +16,17 @@
 
 						<form>
 							<div class="mb-2" id="user_input">
-								<label for="user_name" class="form-label">
+								<label for="username" class="form-label">
 									User name:
 								</label>
 								<input
-									hx-get="/auth/validate/user"
+									hx-post="/auth/validate/user"
 									hx-trigger="keyup changed delay:180ms"
 									hx-target="#user_field_info"
+									hx-params="username"
 									type="text"
-									name="user_name"
-									id="user_name"
+									name="username"
+									id="username"
 									class="form-control"
 									required
 								/>
