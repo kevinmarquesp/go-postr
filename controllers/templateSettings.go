@@ -7,7 +7,7 @@ import (
 
 var Tmpl *template.Template
 
-func init() {
+func InitializeHtmlTemplates() {
 	log.Println("Setting up template files...")
 
 	pagesDir := "templates/*.html"

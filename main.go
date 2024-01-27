@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-postr/controllers"
 	"go-postr/models"
 	"log"
 	"os"
@@ -27,6 +28,7 @@ func main() {
 
 	models.OpenGlobalConnection(conn)
 	models.ExecuteMigration()
+	controllers.InitializeHtmlTemplates()
 
 	StartServer(":" + port)
 }
