@@ -10,7 +10,7 @@ import (
 
 const INVALID_CHARS string = "~`!@#$%^&*()+={}[]|\\:;\"'<>,.?/"
 
-func isUsernameAlreadyTaken(username string) (bool, error) {
+func wasUsernameAlreadyTaken(username string) (bool, error) {
 	rows, err := models.Db.Query("SELECT user_name FROM public.user WHERE user_name LIKE $1", username)
 	if err != nil {
 		log.Println("Couldn't check if this username already exists")
@@ -34,6 +34,30 @@ func isUsernameAlreadyTaken(username string) (bool, error) {
 	return false, nil
 }
 
+func usernameValidationCases(w http.ResponseWriter, wasAlreadyTaken bool, username string) {
+	switch {
+	case len(username) == 0:
+		log.Println("Username Validation :: empty field")
+		fmt.Fprintf(w, "")
+
+	case strings.Contains(username, " "):
+		log.Println("Username Validation :: space character detected")
+		writeFieldValidationResponse(w, "danger", "Space characters aren't allowed")
+
+	case strings.ContainsAny(username, INVALID_CHARS):
+		log.Println("Username Validation :: invalid characters detected")
+		writeFieldValidationResponse(w, "danger", "Use only letters, number and - or _ characters")
+
+	case wasAlreadyTaken:
+		log.Println("Username Validation :: that username string was already taken!")
+		writeFieldValidationResponse(w, "danger", "Username already taken!")
+
+	default:
+		log.Println("Username Validation :: valid user!")
+		writeFieldValidationResponse(w, "success", "Valid username")
+	}
+}
+
 func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
 	var err error
 
@@ -45,32 +69,13 @@ func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
 	username := r.Form.Get("username")
 	username = strings.TrimSpace(username)
 
-	wasAlreadyTaken, err := isUsernameAlreadyTaken(username)
+	wasAlreadyTaken, err := wasUsernameAlreadyTaken(username)
 	if err != nil {
-		writeFieldValidationResponse(w, "warning", "Something went wrong at the server")
-		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("[ERROR]", err)
+
 		return
 	}
 
-	switch {
-	case len(username) == 0:
-		log.Println("Validating username: empty field")
-		fmt.Fprintf(w, "")
-
-	case strings.Contains(username, " "):
-		log.Println("Validating username: space character detected")
-		writeFieldValidationResponse(w, "danger", "Space characters aren't allowed")
-
-	case strings.ContainsAny(username, INVALID_CHARS):
-		log.Println("Validating username: invalid characters detected")
-		writeFieldValidationResponse(w, "danger", "Use only letters, number and - or _ characters")
-
-	case wasAlreadyTaken:
-		log.Println("Validating username: that username string was already taken!")
-		writeFieldValidationResponse(w, "danger", "Username already taken!")
-
-	default:
-		log.Println("Validating username: valid user!")
-		writeFieldValidationResponse(w, "success", "Valid username")
-	}
+	usernameValidationCases(w, wasAlreadyTaken, username)
 }
