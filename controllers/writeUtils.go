@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"go-postr/models"
 	"log"
 	"net/http"
@@ -21,3 +22,19 @@ func writeFieldValidationResponse(w http.ResponseWriter, bootstrapStatus, infoMe
 		log.Fatal(err)
 	}
 }
+
+func parseValidationFormFields(w http.ResponseWriter, r *http.Request) error {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusBadRequest)
+		return errors.New("Invalid method, expected 'post'")
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return err
+	}
+
+	return nil
+}
+

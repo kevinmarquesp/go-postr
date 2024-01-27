@@ -35,20 +35,10 @@ func isUsernameAlreadyTaken(username string) (bool, error) {
 }
 
 func ValidateUsernameController(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		writeFieldValidationResponse(w, "warning", "Server error: nvalid request method, expected POST")
-		log.Println("Invalid request method, expected POST")
+	var err error
 
-		return
-	}
-
-	err := r.ParseForm()
-	if err != nil {
-		writeFieldValidationResponse(w, "warning", "Server error: could not parse form values")
-
-		log.Println("Could not parse the form values")
-		log.Println(err)
-
+	if err = parseValidationFormFields(w, r); err != nil {
+		log.Println("[ERROR]", err)
 		return
 	}
 
