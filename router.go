@@ -14,7 +14,7 @@ func StartServer(port string) {
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	router.HandleFunc("/", controllers.HomePageController)
-	router.HandleFunc("/login", controllers.LoginPageController)
+	router.HandleFunc("/signin", controllers.SigninPageController)
 	
 	router.HandleFunc("/auth/validate/user", controllers.ValidateUsernameController)
 	router.HandleFunc("/auth/validate/password", controllers.ValidatePasswordController)
