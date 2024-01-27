@@ -14,7 +14,7 @@
 					</div>
 					<div class="card-body">
 
-						<form>
+						<form hx-post="/auth/create">
 							<div class="mb-2" id="user_input">
 								<label for="username" class="form-label">
 									User name:
@@ -51,7 +51,7 @@
 								<div class="mt-3" id="password_field_info"></div>
 							</div>
 
-							<input type="submit" value="Submit" class="btn btn-primary">
+							<input type="submit" value="Create" class="btn btn-primary">
 						</form>
 
 					</div>
