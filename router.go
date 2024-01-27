@@ -15,9 +15,9 @@ func StartServer(port string) {
 
 	router.HandleFunc("/", controllers.HomePageController)
 	router.HandleFunc("/signin", controllers.SigninPageController)
-	
 	router.HandleFunc("/auth/validate/user", controllers.ValidateUsernameController)
 	router.HandleFunc("/auth/validate/password", controllers.ValidatePasswordController)
+	router.HandleFunc("/auth/create", controllers.CreateNewUserController)
 
 	err := http.ListenAndServe(port, router)
 	if err != nil {
