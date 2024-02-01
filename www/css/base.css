@@ -1,0 +1,14 @@
+.custom_nav-button:hover {
+	color: var(--bs-blue) !important;
+}
+
+.custom_app-container {
+	display: grid;
+	justify-content: center;
+
+	width: 100vw;
+
+	.custom_app-content {
+		width: min(1080px, 100vw);
+	}
+}

@@ -1,0 +1,59 @@
+{{ define "CustomHeader" }}
+	<title>Go Postr</title>
+{{ end }}
+
+{{ define "Body" }}
+	<nav class="p-3 pb-0">
+		<div class="nav nav-tabs" id="nav-tab" role="tablist">
+			<button class="nav-link active"
+			        id="tab_about_button"
+							data-bs-toggle="tab"
+							data-bs-target="#tab_about"
+							role="tab"
+							aria-controls="tab_about"
+							aria-selected="true">About</button>
+
+			<button class="nav-link"
+			        id="tab_articles_button"
+			        data-bs-toggle="tab"
+			        data-bs-target="#tab_articles"
+			        role="tab"
+			        aria-controls="tab_articles"
+			        aria-selected="false">Articles</button>
+
+			<button class="nav-link"
+			        id="tab_users_button"
+			        data-bs-toggle="tab"
+			        data-bs-target="#tab_users"
+			        role="tab"
+			        aria-controls="tab_users"
+			        aria-selected="false">Users</button>
+		</div>
+	</nav>
+
+	<div class="tab-content p-3">
+		<div class="tab-pane fade show active"
+		     id="tab_about"
+		     role="tabpanel"
+		     aria-labelledby="tab_about_button">
+			<h2>About</h2>
+			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas enim modi nobis consequuntur aperiam eos, odio eum odit. Labore molestiae, atque nobis et natus culpa.</p>
+		</div>
+
+		<div class="tab-pane fade"
+		     id="tab_articles"
+		     role="tabpanel"
+		     aria-labelledby="tab_articles_container">
+			<h2>Articles</h2>
+			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas enim modi nobis consequuntur aperiam eos, odio eum odit. Labore molestiae, atque nobis et natus culpa.</p>
+		</div>
+
+		<div class="tab-pane fade"
+		     id="tab_users"
+		     role="tabpanel"
+		     aria-labelledby="tab_users_container">
+			<h2>Users</h2>
+			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas enim modi nobis consequuntur aperiam eos, odio eum odit. Labore molestiae, atque nobis et natus culpa.</p>
+		</div>
+	</div>
+{{ end }}

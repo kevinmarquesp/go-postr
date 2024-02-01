@@ -1,15 +1,16 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 )
 
-func InitializeRouter(port string) error {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "<h1>Hello world!</h1>")
-	})
+func SetupRoutes() {
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("www/css"))))
 
+	http.HandleFunc("/", homePageController)
+}
+
+func InitializeRouter(port string) error {
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		return err
