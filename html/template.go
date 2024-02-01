@@ -20,9 +20,10 @@ func (t *Template) Execute(w http.ResponseWriter, r *http.Request, target string
 
 func GetFiles(keys ...string) []string {
 	filesMap := map[string]string{
-		"Partials.Base": "templates/partials/base.html",
-		"Home":          "templates/home.html",
-		"Signup":        "templates/signup.html",
+		"Components.FieldValidationStatus": "templates/components/field_validation_status.html",
+		"Partials.Base":                    "templates/partials/base.html",
+		"Home":                             "templates/home.html",
+		"Signup":                           "templates/signup.html",
 	}
 
 	var files []string
