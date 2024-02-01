@@ -1,0 +1,37 @@
+{{ define "CustomHeader" }}
+	<title>Go Postr | Sign up</title>
+{{ end }}
+
+{{ define "Body" }}
+	<div class="h-100 d-flex align-items-center justify-content-center">
+		<div style="width: min(35ch, 100%)" class="card m-sm">
+			<div class="card-body">
+
+				<form method="put" action="/">
+					<div class="mb-2" id="user_input">
+						<label for="username" class="form-label">User name:</label>
+						<input type="text"
+									 name="username"
+									 id="username"
+									 class="form-control"
+									 required>
+						<div class="mt-3" id="user_field_info"></div>
+					</div>
+
+					<div class="mb-3">
+						<label for="password" class="form-label">Password:</label>
+						<input type="password"
+									 name="password"
+									 id="password"
+									 class="form-control"
+									 required>
+						<div class="mt-3" id="password_field_info"></div>
+					</div>
+
+					<input type="submit" value="Create" class="btn btn-primary">
+				</form>
+
+			</div>
+		</div>
+	</div>
+{{ end }}

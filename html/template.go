@@ -22,6 +22,7 @@ func GetFiles(keys ...string) []string {
 	filesMap := map[string]string{
 		"Partials.Base": "templates/partials/base.html",
 		"Home":          "templates/home.html",
+		"Signup":        "templates/signup.html",
 	}
 
 	var files []string

@@ -8,6 +8,7 @@ func SetupRoutes() {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("www/css"))))
 
 	http.HandleFunc("/", homePageController)
+	http.HandleFunc("/signup", signupPageController)
 }
 
 func InitializeRouter(port string) error {
