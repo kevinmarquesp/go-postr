@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"go-postr/http"
+	"log"
+)
 
 func main() {
-	fmt.Println("Hello world!")
+	err := http.InitializeRouter(":8080")
+	if err != nil {
+		log.Panicln("http router initialization error:", err)
+	}
 }
