@@ -6,6 +6,7 @@ import (
 
 func SetupRoutes() {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("www/css"))))
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
 
 	http.HandleFunc("/", homePageController)
 	http.HandleFunc("/signup", signupPageController)
