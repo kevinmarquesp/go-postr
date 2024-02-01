@@ -68,18 +68,18 @@ func getFieldValidationStatusComponent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	message := r.Form.Get("message")
-	bsStatus := r.Form.Get("bs_status")
+	bootstrapStatus := r.Form.Get("bootstrap-status")
 
 	log.Println("status msg:", message)
-	log.Println("status bsStatus:", bsStatus)
+	log.Println("status bsStatus:", bootstrapStatus)
 
 	files := html.GetFiles("Components.FieldValidationStatus")
 	tmpl, _ := html.ParseFiles(files...)
 
 	data := struct{Params html.ComponentsFieldvalidationstatusParams}{
 		Params: html.ComponentsFieldvalidationstatusParams{
-			BootstrapStatus: "danger",
-			Message: "Hello world, This is a cool error!",
+			BootstrapStatus: bootstrapStatus,
+			Message: message,
 		},
 	}
 
