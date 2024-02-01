@@ -2,6 +2,7 @@ package http
 
 import (
 	"go-postr/html"
+	"log"
 	"net/http"
 )
 
@@ -48,4 +49,14 @@ func signupPageController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.Execute(w, r, "Partials.Base", data)
+}
+
+func usernameValidationController(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		return
+	}
+
+	username := r.Form.Get("username")
+	log.Println(username)
 }

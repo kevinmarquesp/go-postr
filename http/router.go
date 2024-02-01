@@ -9,7 +9,8 @@ func SetupRoutes() {
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
 
 	http.HandleFunc("/", homePageController)
-	http.HandleFunc("/signup", signupPageController)
+	http.HandleFunc("/auth/signup", signupPageController)
+	http.HandleFunc("/auth/validate/username", usernameValidationController)
 }
 
 func InitializeRouter(port string) error {
