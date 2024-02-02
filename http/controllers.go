@@ -63,6 +63,7 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 	files := html.GetFiles("Components.FieldValidationStatus")
 	tmpl, _ := html.ParseFiles(files...)
 
+	//todo: check if the user is valid and if its already exists on the database
 	data := struct{Params html.ComponentsFieldvalidationstatusParams}{
 		Params: html.ComponentsFieldvalidationstatusParams{
 			BootstrapStatus: "success",
@@ -76,6 +77,7 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, r, "Components.FieldValidationStatus", data)
 }
 
+//todo: add a "controller" at the end of the name of this function
 func getFieldValidationStatusComponent(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -99,4 +101,19 @@ func getFieldValidationStatusComponent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.Execute(w, r, "Components.FieldValidationStatus", data)
+}
+
+func createNewUserController(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		return
+	}
+
+	username := r.Form.Get("username")
+	password := r.Form.Get("password")
+
+	log.Println("username:", username)
+	log.Println("password:", password)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

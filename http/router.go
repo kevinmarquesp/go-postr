@@ -12,6 +12,7 @@ func SetupRoutes() {
 
 	http.HandleFunc("/", homePageController)
 	http.HandleFunc("/auth/signup", signupPageController)
+	http.HandleFunc("/auth/create", createNewUserController)
 	http.HandleFunc("/auth/validate/username", usernameValidationController)
 }
 
