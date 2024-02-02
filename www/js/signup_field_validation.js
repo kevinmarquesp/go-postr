@@ -5,6 +5,10 @@ const USERNAME_SERVER_VALIDATION_PATH = "/auth/validate/username";
 
 const BOOTSTRAP_STATUS_PLACEHOLDER = "BOOTSTRAP_STATUS_PLACEHOLDER";
 const MESSAGE_PLACEHOLDER = "MESSAGE_PLACEHOLDER";
+const USERNAME_SERVER_VALIDATION_DELAY_MS = 1000;
+
+let isPasswordValid = false;
+let isUsernameValid = false;
 
 function writeStatusBoxHtmlElement($statusBox, bootstrapStatus, message) {
 	if ($template.innerHTML.length <= 0) {
@@ -19,6 +23,17 @@ function writeStatusBoxHtmlElement($statusBox, bootstrapStatus, message) {
 	$statusBox.innerHTML = statusBoxNewContent;
 }
 
+function getUsernameValidationStatus(username) {
+	if (username.indexOf(" ") !== -1)
+		return "has_space";
+	else if (!/^[A-Za-z0-9-_]+$/.test(username) && username.length)
+		return "invalid_character";
+	else if (username.length === 0)
+		return "is_empty";
+
+	return "is_valid";
+}
+
 function handleUsernameFieldValidation() {
 	const $usernameInputField = document.querySelector("#username");
 	const $usernameStatusBox = document.querySelector("#username_status");
@@ -26,23 +41,44 @@ function handleUsernameFieldValidation() {
 	let usernameTimeout;
 
 	$usernameInputField.onkeyup = () => {
-		const username = $usernameInputField.value.trim();
+		const validationStatus = getUsernameValidationStatus($usernameInputField.value.trim());
 
+		isUsernameValid = false;
 		clearTimeout(usernameTimeout);
+		
+		switch (validationStatus) {
+			case "has_space":
+				writeStatusBoxHtmlElement($usernameStatusBox, "warning", "Space characters is not allowed");
+				break;
 
-		if (username.indexOf(" ") !== -1)
-			writeStatusBoxHtmlElement($usernameStatusBox,
-				"warning", "Space characters is not allowed");
-		else if (!/^[A-Za-z0-9-_]+$/.test(username) && username.length)
-			writeStatusBoxHtmlElement($usernameStatusBox,
-				"warning", "The only special characters allowed is - and _");
-		else if (username.length === 0)
-			$usernameStatusBox.innerHTML = "";
-		else
-			usernameTimeout = setTimeout(() => {
-				$usernameInputField.dispatchEvent(new Event("username-server-validation"));
-			}, 1000);
+			case "invalid_character":
+				writeStatusBoxHtmlElement($usernameStatusBox, "warning", "The only special characters allowed is - and _");
+				break;
+
+			case "is_valid":  //an htmx:afterRequest event listener will check if the return status was valid or not
+				usernameTimeout = setTimeout(() => {
+					const UsernameServerValidation = new Event("username-server-validation");
+					$usernameInputField.dispatchEvent(UsernameServerValidation);
+				}, USERNAME_SERVER_VALIDATION_DELAY_MS);
+				break;
+
+			default:
+				$usernameStatusBox.innerHTML = "";
+		}
 	};
+}
+
+function getPasswordValidationStatus(password) {
+	const length = password.length;
+		
+	if (length == 0)
+		return "empty";
+	else if (length < 8)
+		return "weak";
+	else if (length >= 8 && length <= 12)
+		return "good";
+
+	return "is_valid";
 }
 
 function handlePasswordFieldValidation() {
@@ -50,19 +86,26 @@ function handlePasswordFieldValidation() {
 	const $passwordStatusBox = document.querySelector("#password_status");
 
 	$passwordInputField.onkeyup = () => {
-		const length = $passwordInputField.value.length;
-			
-		if (length == 0)
-			$passwordStatusBox.innerHTML = "";
-		else if (length < 8)
-			writeStatusBoxHtmlElement($passwordStatusBox,
-				"danger", "Too weak, just like you...");
-		else if (length >= 8 && length <= 12)
-			writeStatusBoxHtmlElement($passwordStatusBox,
-				"warning", "Comon, you could do better!");
-		else
-			writeStatusBoxHtmlElement($passwordStatusBox,
-				"success", "Eh. Good enough.");
+		const validationStatus = getPasswordValidationStatus($passwordInputField.value);
+		isPasswordValid = false;
+
+		switch (validationStatus) {
+			case "weak":
+				writeStatusBoxHtmlElement($passwordStatusBox, "danger", "Too weak, just like you...");
+				break;
+
+			case "good":
+				writeStatusBoxHtmlElement($passwordStatusBox, "warning", "Comon, you could do better!");
+				break;
+
+			case "is_valid":
+				isPasswordValid = true;
+				writeStatusBoxHtmlElement($passwordStatusBox, "success", "Eh. Good enough.");
+				break;
+
+			default:
+				$passwordStatusBox.innerHTML = "";
+		}
 	};
 }
 
