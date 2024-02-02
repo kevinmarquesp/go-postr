@@ -42,6 +42,27 @@ function handleUsernameFieldValidation() {
 	};
 }
 
+function handlePasswordFieldValidation() {
+	const $passwordInputField = document.querySelector("#password");
+	const $passwordStatusBox = document.querySelector("#password_status");
+
+	$passwordInputField.onkeyup = () => {
+		const length = $passwordInputField.value.length;
+			
+		if (length == 0)
+			$passwordStatusBox.innerHTML = "";
+		else if (length < 8)
+			writeStatusBoxHtmlElement($passwordStatusBox,
+				"danger", "Too weak, just like you...");
+		else if (length >= 8 && length <= 12)
+			writeStatusBoxHtmlElement($passwordStatusBox,
+				"warning", "Comon, you could do better!");
+		else
+			writeStatusBoxHtmlElement($passwordStatusBox,
+				"success", "Eh. Good enough.");
+	};
+}
+
 htmx.ajax("POST", "/component/FieldValidationStatus", {
 	target: $template,
 	values: {
@@ -50,4 +71,5 @@ htmx.ajax("POST", "/component/FieldValidationStatus", {
 	}
 }).then(() => {
 	handleUsernameFieldValidation();
+	handlePasswordFieldValidation();
 });
