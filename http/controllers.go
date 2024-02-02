@@ -67,9 +67,12 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 		Params: html.ComponentsFieldvalidationstatusParams{
 			BootstrapStatus: "success",
 			Message: "You're username looks unique, good job!",
+			// BootstrapStatus: "danger",
+			// Message: "Username already taken",
 		},
 	}
 
+	// w.WriteHeader(http.StatusConflict)
 	tmpl.Execute(w, r, "Components.FieldValidationStatus", data)
 }
 

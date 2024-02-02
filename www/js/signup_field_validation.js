@@ -1,5 +1,8 @@
 const $template = document.createElement("div");
 
+const FIELD_VALIDATION_COMPONENT_PATH = "/component/FieldValidationStatus";
+const USERNAME_SERVER_VALIDATION_PATH = "/auth/validate/username";
+
 const BOOTSTRAP_STATUS_PLACEHOLDER = "BOOTSTRAP_STATUS_PLACEHOLDER";
 const MESSAGE_PLACEHOLDER = "MESSAGE_PLACEHOLDER";
 
@@ -63,7 +66,7 @@ function handlePasswordFieldValidation() {
 	};
 }
 
-htmx.ajax("POST", "/component/FieldValidationStatus", {
+htmx.ajax("POST", FIELD_VALIDATION_COMPONENT_PATH, {
 	target: $template,
 	values: {
 		"bootstrap-status": BOOTSTRAP_STATUS_PLACEHOLDER,
@@ -72,4 +75,14 @@ htmx.ajax("POST", "/component/FieldValidationStatus", {
 }).then(() => {
 	handleUsernameFieldValidation();
 	handlePasswordFieldValidation();
+});
+
+document.body.addEventListener("htmx:afterRequest", (event) => {
+	if (event.detail.pathInfo.requestPath !== USERNAME_SERVER_VALIDATION_PATH)
+		return;
+
+	if (event.detail.xhr.status !== 200)
+		console.log("invalid");
+	else
+		console.log("valid");
 });
