@@ -59,6 +59,18 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 
 	username := r.Form.Get("username")
 	log.Println("username:", username)
+
+	files := html.GetFiles("Components.FieldValidationStatus")
+	tmpl, _ := html.ParseFiles(files...)
+
+	data := struct{Params html.ComponentsFieldvalidationstatusParams}{
+		Params: html.ComponentsFieldvalidationstatusParams{
+			BootstrapStatus: "success",
+			Message: "You're username looks unique, good job!",
+		},
+	}
+
+	tmpl.Execute(w, r, "Components.FieldValidationStatus", data)
 }
 
 func getFieldValidationStatusComponent(w http.ResponseWriter, r *http.Request) {
