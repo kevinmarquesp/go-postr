@@ -1,3 +1,6 @@
+"use strict";
+
+const $submitButton = document.querySelector("#create_account");
 const $template = document.createElement("div");
 
 const FIELD_VALIDATION_COMPONENT_PATH = "/component/FieldValidationStatus";
@@ -45,6 +48,7 @@ function handleUsernameFieldValidation() {
 
 		isUsernameValid = false;
 		clearTimeout(usernameTimeout);
+		updateSubmitButtonDisabledState();
 		
 		switch (validationStatus) {
 			case "has_space":
@@ -81,13 +85,22 @@ function getPasswordValidationStatus(password) {
 	return "is_valid";
 }
 
+function updateSubmitButtonDisabledState() {
+	if (isUsernameValid && isPasswordValid)
+		$submitButton.removeAttribute("disabled", "");
+	else
+		$submitButton.setAttribute("disabled", "");
+}
+
 function handlePasswordFieldValidation() {
 	const $passwordInputField = document.querySelector("#password");
 	const $passwordStatusBox = document.querySelector("#password_status");
 
 	$passwordInputField.onkeyup = () => {
 		const validationStatus = getPasswordValidationStatus($passwordInputField.value);
+
 		isPasswordValid = false;
+		updateSubmitButtonDisabledState();
 
 		switch (validationStatus) {
 			case "weak":
@@ -100,6 +113,7 @@ function handlePasswordFieldValidation() {
 
 			case "is_valid":
 				isPasswordValid = true;
+				updateSubmitButtonDisabledState();
 				writeStatusBoxHtmlElement($passwordStatusBox, "success", "Eh. Good enough.");
 				break;
 
@@ -124,8 +138,8 @@ document.body.addEventListener("htmx:afterRequest", (event) => {
 	if (event.detail.pathInfo.requestPath !== USERNAME_SERVER_VALIDATION_PATH)
 		return;
 
-	if (event.detail.xhr.status !== 200)
-		console.log("invalid");
-	else
-		console.log("valid");
+	isUsernameValid = event.detail.xhr.status === 200;
+
+	if (isUsernameValid)
+		updateSubmitButtonDisabledState();
 });
