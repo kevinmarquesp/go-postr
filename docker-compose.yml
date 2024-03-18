@@ -7,8 +7,10 @@ services:
       - "db"
     env_file:
       - ".env"
+    environment:
+      POSTGRES_HOST: "dev"  #using the 'dev' containerized network instead of 'localhost'.
     ports:
-      - "8080:8080"
+      - "8080:8000"  #expose into a different port, 8000 could be used for local development.
     networks:
       - "dev"
     develop:
