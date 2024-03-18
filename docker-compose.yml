@@ -1,4 +1,25 @@
 services:
+  app:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    depends_on:
+      - "db"
+    env_file:
+      - ".env"
+    ports:
+      - "8081:8080"
+    networks:
+      - "dev"
+    develop:
+      watch:
+        - action: "rebuild"
+          path: "."
+          files:
+            - "./**/*.go"
+            - "./go.mod"
+            - "./go.sum"
+
   db:
     build:
       context: "."
