@@ -1,0 +1,15 @@
+/main
+/app
+
+/.git/
+/.gitignore
+/.env
+/migrate.sql
+/insert_dummy.py
+/README.md
+/LICENSE
+
+/.dockerignore
+/Dockerfile
+/db.Dockerfile
+/docker-compose.yml
