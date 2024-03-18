@@ -8,7 +8,7 @@ RUN go mod tidy
 RUN go mod verify
 RUN go mod download
 
-COPY . .
+COPY main.go .
 
 RUN go build -o app .
 

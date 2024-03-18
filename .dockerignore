@@ -4,7 +4,6 @@
 /.git/
 /.gitignore
 /.env
-/migrate.sql
 /insert_dummy.py
 /README.md
 /LICENSE
