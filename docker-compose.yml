@@ -2,7 +2,7 @@ services:
   db:
     build:
       context: "."
-      dockerfile: "./db/Dockerfile"
+      dockerfile: "db.Dockerfile"
     restart: "always"
     env_file:
       - ".env"
