@@ -6,20 +6,71 @@ from requests import get
 from json import loads
 from sys import argv
 from argparse import ArgumentParser
+import bcrypt
+from psycopg2 import connect
+from datetime import datetime
 
 DUMMYUSERS_API = "https://jsonplaceholder.org/users"
 DOTENV_FILE = ".env"
 
 
-def insert_user_credentials(user):
-    pass
+def insert_new_user(args, username, password, bio):
+    """
+    Will insert the user (with the specified username, password and bio
+    description) to the database. Every user is meant to be unique, on the
+    cases that the current username is in conflict with another, it wont do
+    nothing at all - Which means that you can run this function multiple times
+    but still have the same ammount of inserted users on your database.
+
+    :param argparse.Namespace args:
+        This is the arguments given by the command line interface, it should
+        have the correct information to connect to the Postgres server.
+    :param str username:
+        Username to be inserted, should be unique, or else it wont be inserted
+        to the database (will not throw any errors).
+    :param str password:
+        Password for the user, be aware the it will use the bcrypt library to
+        hash the password bites array before actually insert it to the table.
+    :param str bio:
+        Text description about the user, it isn't important at all, but it can
+        be useful when developing the front-end page.
+    """
+    if args is None:
+        return
+
+    concatenated_password = username.encode("utf-8") + password.encode("utf-8")
+    hashed_password = bcrypt.hashpw(concatenated_password, bcrypt.gensalt())
+    curr_time = datetime.now()
+
+    with connect(host=args.host, port=args.port, user=args.username,
+                 password=args.password, database=args.database) as conn:
+        curs = conn.cursor()
+
+        curs.execute('INSERT INTO "user" (username, password, bio,\
+                     created_at, updated_at) VALUES (%s, %s, %s, %s, %s)\
+                     ON CONFLICT (username) DO NOTHING',
+                     (username, hashed_password.decode("utf-8"), bio,
+                      curr_time, curr_time))
+
+        conn.commit()
+        curs.close()
+
+    print(f"[INFO]: Inserted {username} to '{args.database}.user'")
 
 
 def main(args) -> None:
     r = get(DUMMYUSERS_API)
-    _ = loads(r.text)  # users
+    users = loads(r.text)
 
-    print(args)
+    for user in users:
+        username = user["login"]["username"]
+        password = user["login"]["password"]
+        bio = "I'm {} {}. Working for {}\n{}".format(user["firstname"],
+                                                     user["lastname"],
+                                                     user["company"]["name"],
+                                                     user["email"])
+
+        insert_new_user(args, username, password, bio)
 
 
 def parse_args(user_args):
