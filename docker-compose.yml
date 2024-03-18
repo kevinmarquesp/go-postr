@@ -21,6 +21,9 @@ services:
             - "./**/*.go"
             - "./go.mod"
             - "./go.sum"
+    profiles: 
+      - "all"
+      - "app"
 
   db:
     build:
@@ -33,6 +36,11 @@ services:
       - "5432:5432"
     networks:
       - "dev"
+    profiles:
+      - "all"
+      - "app"
+      - "db"
+      - "local"
 
   pgadmin:
     image: "docker.io/dpage/pgadmin4:8.4"
@@ -49,6 +57,9 @@ services:
         limits:
           cpus: "1.5"
           memory: "256M"
+    profiles:
+      - "all"
+      - "local"
 
 networks:
   dev:
