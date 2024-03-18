@@ -2,13 +2,14 @@
 
 import os
 import re
-from requests import get
-from json import loads
-from sys import argv
-from argparse import ArgumentParser
 import bcrypt
-from psycopg2 import connect
+
+from argparse import ArgumentParser
 from datetime import datetime
+from json import loads
+from psycopg2 import connect
+from requests import get
+from sys import argv
 
 DUMMYUSERS_API = "https://jsonplaceholder.org/users"
 DOTENV_FILE = ".env"
