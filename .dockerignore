@@ -2,8 +2,10 @@
 /app
 
 /.git/
+/.venv/
 /.gitignore
 /.env
+/requirements.txt
 /insert_dummy.py
 /README.md
 /LICENSE

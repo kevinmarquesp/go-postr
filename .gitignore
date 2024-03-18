@@ -4,10 +4,11 @@
 /*.dll
 /*.so
 /*.dylib
-*.test
-*.out
-go.work
+/*.test
+/*.out
+/go.work
 
-.env
-main
-app
+/.venv/
+/.env
+/main
+/app
