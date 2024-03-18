@@ -10,9 +10,6 @@ services:
       - "5432:5432"
     networks:
       - "dev"
-    profiles:
-      - "db"
-      - "debug"
 
   pgadmin:
     image: "docker.io/dpage/pgadmin4:8.4"
@@ -29,8 +26,6 @@ services:
         limits:
           cpus: "1.5"
           memory: "256M"
-    profiles:
-      - "debug"
 
 networks:
   dev:
