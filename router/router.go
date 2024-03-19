@@ -7,8 +7,8 @@ import (
 )
 
 func InitRouter(port string) {
-	http.HandleFunc("/", RenderIndexController)
-	http.HandleFunc("/search/user", SearchUsernameController)
+	http.HandleFunc("/", renderIndexController)
+	http.HandleFunc("/search/user", searchUsernameController)
 
 	log.Info("Listening to", "url", "http://localhost" + port)
 	http.ListenAndServe(port, nil)

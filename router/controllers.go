@@ -9,13 +9,13 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-func RenderIndexController(w http.ResponseWriter, r *http.Request) {
+func renderIndexController(w http.ResponseWriter, r *http.Request) {
 	templ := templates.NewTemplateRenderer()
 
 	templ.Render(w, "Index", nil)
 }
 
-func SearchUsernameController(w http.ResponseWriter, r *http.Request) {
+func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 	v := r.URL.Query()
 	query := v.Get("query")
 
