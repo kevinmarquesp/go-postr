@@ -78,11 +78,16 @@ func main() {
 		log.Warn("The server will use the system's environment!")
 	}
 
-	port := ":" + os.Getenv("PORT")
+	port, err := requireEnv("PORT")
+	pgHost, err := requireEnv("POSTGRES_HOST")
+	pgPort, err := requireEnv("POSTGRES_PORT")
+	pgUsernmae, err := requireEnv("POSTGRES_USER")
+	pgPassword, err := requireEnv("POSTGRES_PASSWORD")
+	pgDatabase, err := requireEnv("POSTGRES_DB")
 
-	if port == ":" {
-		log.Warn("PORT variable not specified, using default", "port", ":8000")
-		port = ":8000"
+	if err != nil {
+		log.Fatal("Required variables not satisfied", "error", err)
+		os.Exit(1)
 	}
 
 	log.Info("Starting the server router...")
