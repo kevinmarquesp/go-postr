@@ -14,12 +14,22 @@
 			</ul>
 
 			<br>
-			<h2>Pesquisar Por Nome De Usuário</h2>
-			<hr>
-			<p>Eu ainda preciso fazer a rota, guenta ai!</p>
+			<form action="GET">
+				<label for="query" class="form-label">Pesquisar Usuário</label>
+				<div class="input-group">
+					<input
+						hx-get="/search/user"
+						hx-trigger="keyup delay:25ms changed"
+						hx-target="#search_results"
+						hx-swap="innerHTML"
+						type="text"
+						class="form-control"
+						id="query"
+						name="query"
+						placeholder="Nome do usuário"
+						aria-describedby="Caixa De Pesquisa De Usuário">
+				</div>
+			</form>
 
-			<br>
-			<h2>Posts Recentes</h2>
-			<hr>
-			<p>Isso só vai ficar pronto beeeeem no futuro...</p>
+			<ul id="search_results"></ul>
 {{ end }}
