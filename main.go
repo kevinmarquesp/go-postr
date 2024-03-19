@@ -4,6 +4,8 @@ import (
 	"go-postr/templates"
 	"net/http"
 	"os"
+
+	"github.com/charmbracelet/log"
 )
 
 func router(port string) {
@@ -13,6 +15,7 @@ func router(port string) {
 		templ.Render(w, "Index", nil)
 	})
 
+	log.Info("Listening", "url", "http://localhost" + port)
 	http.ListenAndServe(port, nil)
 }
 
@@ -20,8 +23,10 @@ func main() {
 	port := ":" + os.Getenv("PORT")
 
 	if port == ":" {
+		log.Warn("PORT variable not specified, using default", "port", ":8000")
 		port = ":8000"
 	}
 
+	log.Info("Starting the server router...")
 	router(port)
 }
