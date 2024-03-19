@@ -4,6 +4,7 @@
 /.git/
 /.venv/
 /.gitignore
+/.env.example
 /.env
 /requirements.txt
 /insert_dummy.py
