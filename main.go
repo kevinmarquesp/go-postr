@@ -15,6 +15,12 @@ func router(port string) {
 		templ.Render(w, "Index", nil)
 	})
 
+	http.HandleFunc("/search/user", func(w http.ResponseWriter, r *http.Request) {
+		v := r.URL.Query()
+
+		log.Info(v.Get("query"))
+	})
+
 	log.Info("Listening", "url", "http://localhost" + port)
 	http.ListenAndServe(port, nil)
 }
