@@ -2,9 +2,8 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"go-postr/db"
-	"go-postr/templates"
+	"go-postr/router"
 	"net/http"
 	"os"
 
@@ -14,35 +13,11 @@ import (
 
 const dotenv = ".env"
 
-func router(port string) {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		templ := templates.NewTemplateRenderer()
+func InitRouter(port string) {
+	http.HandleFunc("/", router.RenderIndexController)
+	http.HandleFunc("/search/user", router.SearchUsernameController)
 
-		templ.Render(w, "Index", nil)
-	})
-
-	http.HandleFunc("/search/user", func(w http.ResponseWriter, r *http.Request) {
-		v := r.URL.Query()
-		query := v.Get("query")
-
-		if len(query) == 0 {
-			fmt.Fprintf(w, "")  // insert an empty string in the results tag
-
-			return
-		}
-
-		list, err := db.SearchByUsername(query)
-		if err != nil {
-			log.Error("Couldn't search for user " + query, "error", err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-
-			return
-		}
-
-		fmt.Fprintf(w, list)
-	})
-
-	log.Info("Listening", "url", "http://localhost" + port)
+	log.Info("Listening to", "url", "http://localhost" + port)
 	http.ListenAndServe(port, nil)
 }
 
@@ -85,5 +60,5 @@ func main() {
 	})
 
 	log.Info("Starting the server router...")
-	router(port)
+	InitRouter(port)
 }
