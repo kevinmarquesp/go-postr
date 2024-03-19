@@ -90,6 +90,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	port = ":" + port  //add a little ":" to be compatible with the http.ListenAndServe() function
+
+	_ = db.Connect(db.ConnCredentials{
+		Host: pgHost,
+		Port: pgPort,
+		Username: pgUsernmae,
+		Password: pgPassword,
+		DatabaseName: pgDatabase,
+	})
+
 	log.Info("Starting the server router...")
 	router(port)
 }
