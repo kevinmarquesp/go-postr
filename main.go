@@ -8,7 +8,10 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
+	"github.com/joho/godotenv"
 )
+
+const dotenv = ".env"
 
 func router(port string) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +62,12 @@ func router(port string) {
 }
 
 func main() {
+	err := godotenv.Load(dotenv)
+	if err != nil {
+		log.Error("Couldn't load the " + dotenv + " file", "error", err)
+		log.Warn("The server will use the system's environment!")
+	}
+
 	port := ":" + os.Getenv("PORT")
 
 	if port == ":" {
