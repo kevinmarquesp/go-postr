@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"go-postr/db"
 	"go-postr/templates"
@@ -59,6 +60,15 @@ func router(port string) {
 
 	log.Info("Listening", "url", "http://localhost" + port)
 	http.ListenAndServe(port, nil)
+}
+
+func requireEnv(key string) (string, error) {
+	value := os.Getenv(key)
+	if value == "" {
+		return "", errors.New("required environment variable " + key + " doesn't exist or is empty")
+	}
+
+	return value, nil
 }
 
 func main() {
