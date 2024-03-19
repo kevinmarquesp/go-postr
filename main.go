@@ -27,32 +27,16 @@ func router(port string) {
 
 		if len(query) == 0 {
 			fmt.Fprintf(w, "")  // insert an empty string in the results tag
+
 			return
 		}
 
-		rows, err := db.Connection().Query(`SELECT username FROM "user" WHERE username LIKE $1`,
-			"%" + query + "%")
+		list, err := db.SearchByUsername(query)
 		if err != nil {
-			log.Error("Could not fetch usernames like " + query, "error", err)
+			log.Error("Couldn't search for user " + query, "error", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
 			return
-		}
-
-		list := ""
-
-		for rows.Next() {
-			var username string
-
-			err = rows.Scan(&username)
-			if err != nil {
-				log.Error("Could not scan db column...", "error", err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-
-				return
-			}
-
-			list += fmt.Sprintf(`<li><a href="/u/%s">%s</a></li>`, username, username)
 		}
 
 		fmt.Fprintf(w, list)
