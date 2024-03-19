@@ -4,7 +4,6 @@ import (
 	"errors"
 	"go-postr/db"
 	"go-postr/router"
-	"net/http"
 	"os"
 
 	"github.com/charmbracelet/log"
@@ -12,14 +11,6 @@ import (
 )
 
 const dotenv = ".env"
-
-func InitRouter(port string) {
-	http.HandleFunc("/", router.RenderIndexController)
-	http.HandleFunc("/search/user", router.SearchUsernameController)
-
-	log.Info("Listening to", "url", "http://localhost" + port)
-	http.ListenAndServe(port, nil)
-}
 
 func requireEnv(key string) (string, error) {
 	value := os.Getenv(key)
@@ -60,5 +51,5 @@ func main() {
 	})
 
 	log.Info("Starting the server router...")
-	InitRouter(port)
+	router.InitRouter(port)
 }
