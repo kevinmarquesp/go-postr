@@ -57,21 +57,38 @@ def insert_new_user(conn, username, password, bio):
         conn.commit()
 
 
+def get_login_info(user):
+    username = user["login"]["username"]
+    password = user["login"]["password"]
+
+    firstname = user["firstname"]
+    lastname = user["lastname"]
+    company_name = user["company"]["name"]
+    email = user["email"]
+
+    bio = f"I'm {firstname} {lastname}. Working for {company_name}\n{email}"
+
+    return username, password, bio
+
+
+def insert_data(conn, users):
+    for user in users:
+        username, password, bio = get_login_info(user)
+
+        insert_new_user(conn, username, password, bio)
 
 
 def main(args) -> None:
     r = get(DUMMYUSERS_API)
     users = loads(r.text)
 
-    for user in users:
-        username = user["login"]["username"]
-        password = user["login"]["password"]
-        bio = "I'm {} {}. Working for {}\n{}".format(user["firstname"],
-                                                     user["lastname"],
-                                                     user["company"]["name"],
-                                                     user["email"])
+    try:
+        with connect(host=args.host, port=args.port, user=args.username,
+                     password=args.password, database=args.database) as conn:
+            insert_data(conn, users)
 
-        insert_new_user(args, username, password, bio)
+    except Exception as err:
+        print(f"\033[31m{err}\033[m")
 
 
 def parse_args(user_args):
