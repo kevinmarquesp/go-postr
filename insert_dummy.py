@@ -15,7 +15,7 @@ DUMMYUSERS_API = "https://jsonplaceholder.org/users"
 DOTENV_FILE = ".env"
 
 
-def insert_new_user(args, username, password, bio):
+def insert_new_user(conn, username, password, bio):
     """
     Will insert the user (with the specified username, password and bio
     description) to the database. Every user is meant to be unique, on the
@@ -23,9 +23,9 @@ def insert_new_user(args, username, password, bio):
     nothing at all - Which means that you can run this function multiple times
     but still have the same ammount of inserted users on your database.
 
-    :param argparse.Namespace args:
-        This is the arguments given by the command line interface, it should
-        have the correct information to connect to the Postgres server.
+    :param psycopg2.exensions.connection conn:
+        Database connection object, it will be used to actually change the
+        dtabases's schema.
     :param str username:
         Username to be inserted, should be unique, or else it wont be inserted
         to the database (will not throw any errors).
@@ -43,22 +43,20 @@ def insert_new_user(args, username, password, bio):
     hashed_password = bcrypt.hashpw(concatenated_password, bcrypt.gensalt())
     curr_time = datetime.now()
 
-    with connect(host=args.host, port=args.port, user=args.username,
-                 password=args.password, database=args.database) as conn:
-        curs = conn.cursor()
-
+    with conn.cursor() as curs:
         try:
             curs.execute('INSERT INTO "user" (username, password, bio,\
                          created_at, updated_at) VALUES (%s, %s, %s, %s, %s)',
                          (username, hashed_password.decode("utf-8"), bio,
                           curr_time, curr_time))
-            conn.commit()
             print(f"[INFO]: Inserted {username} to '{args.database}.user'")
 
         except errors.UniqueViolation:
             print(f"[ERRO]: {username} already inserted!")
 
-        curs.close()
+        conn.commit()
+
+
 
 
 def main(args) -> None:
