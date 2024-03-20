@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS article (
 );
 
 CREATE TABLE IF NOT EXISTS relationship (
-	followed_user	INTEGER NOT NULL,
 	follower_user	INTEGER NOT NULL,
+	followed_user	INTEGER NOT NULL,
 
-	FOREIGN	KEY (followed_user) REFERENCES "user" (id),
-	FOREIGN	KEY (follower_user) REFERENCES "user" (id)
+	PRIMARY KEY (follower_user, followed_user),
+	FOREIGN	KEY (follower_user) REFERENCES "user" (id),
+	FOREIGN	KEY (followed_user) REFERENCES "user" (id)
 );
