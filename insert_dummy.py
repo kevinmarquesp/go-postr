@@ -7,7 +7,7 @@ import bcrypt
 from argparse import ArgumentParser
 from datetime import datetime
 from json import loads
-from psycopg2 import connect
+from psycopg2 import connect, errors
 from requests import get
 from sys import argv
 
@@ -47,16 +47,18 @@ def insert_new_user(args, username, password, bio):
                  password=args.password, database=args.database) as conn:
         curs = conn.cursor()
 
-        curs.execute('INSERT INTO "user" (username, password, bio,\
-                     created_at, updated_at) VALUES (%s, %s, %s, %s, %s)\
-                     ON CONFLICT (username) DO NOTHING',
-                     (username, hashed_password.decode("utf-8"), bio,
-                      curr_time, curr_time))
+        try:
+            curs.execute('INSERT INTO "user" (username, password, bio,\
+                         created_at, updated_at) VALUES (%s, %s, %s, %s, %s)',
+                         (username, hashed_password.decode("utf-8"), bio,
+                          curr_time, curr_time))
+            conn.commit()
+            print(f"[INFO]: Inserted {username} to '{args.database}.user'")
 
-        conn.commit()
+        except errors.UniqueViolation:
+            print(f"[ERRO]: {username} already inserted!")
+
         curs.close()
-
-    print(f"[INFO]: Inserted {username} to '{args.database}.user'")
 
 
 def main(args) -> None:
