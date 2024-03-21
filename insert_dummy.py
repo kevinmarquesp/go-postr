@@ -3,6 +3,7 @@
 import os
 import re
 import bcrypt
+import random as r
 
 from argparse import ArgumentParser
 from datetime import datetime
@@ -83,6 +84,30 @@ def insert_data(conn, curs, users):
         username, password, bio = get_login_info(user)
 
         insert_new_user(conn, curs, username, password, bio)
+
+    curs.execute('SELECT (COUNT(*)) AS row_count FROM "user"')
+
+    size = curs.fetchone()[0]
+
+    curs.execute('SELECT (id) FROM "user"')
+
+    ids = [row[0] for row in curs.fetchall()]
+
+    for id in ids:
+        followed_ids = r.choices(ids, k=r.randint(0, size))
+
+        for followed_id in followed_ids:
+            try:
+                curs.execute("INSERT INTO relationship VALUES (%s, %s)",
+                             (id, followed_id))
+
+            except errors.CheckViolation:
+                print(f"[ERRO]: Not valid relationship: {id} to {followed_id}")
+
+            except errors.UniqueViolation:
+                print(f"[WARN]: Duplicated {id} to {followed_id} relationship")
+
+            conn.commit()
 
 
 def main(args) -> None:
