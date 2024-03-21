@@ -11,9 +11,14 @@ from json import loads
 from psycopg2 import connect, errors
 from requests import get
 from sys import argv
+from lorem import get_sentence
 
 DUMMYUSERS_API = "https://jsonplaceholder.org/users"
 DOTENV_FILE = ".env"
+
+MIN_SENTENCES = 3
+MAX_SENTENCES = 7
+MAX_ARTICLES = 15
 
 
 def insert_new_user(conn, curs, username, password, bio):
@@ -85,6 +90,22 @@ def insert_relationship(conn, curs, follower_id, followed_ids):
         conn.commit()
 
 
+def insert_articles(conn, curs, user_id, articles):
+    curr_time = datetime.now()
+
+    for art in articles:
+        try:
+            curs.execute("INSERT INTO article (content, user_id, created_at,"
+                         "updated_at) VALUES (%s, %s, %s, %s)",
+                         (art, user_id, curr_time, curr_time))
+            print(f"[INFO]: Insert an {len(art)} word article to {user_id}")
+
+        except Exception as err:
+            print(f"[ERRO]: Couldn't insert article to {user_id} ID, {err}")
+
+        conn.commit()
+
+
 def insert_data(conn, curs, users):
     reset_db(conn, curs)
 
@@ -100,6 +121,12 @@ def insert_data(conn, curs, users):
         followed_ids = r.choices(ids, k=r.randint(0, users_len))
 
         insert_relationship(conn, curs, follower_id, followed_ids)
+
+    for user_id in ids:
+        articles = [get_sentence(count=r.randint(MIN_SENTENCES, MAX_SENTENCES))
+                    for _ in range(r.randint(0, MAX_ARTICLES))]
+
+        insert_articles(conn, curs, user_id, articles)
 
 
 def main(args) -> None:
@@ -120,7 +147,9 @@ def parse_args(user_args):
     parser = ArgumentParser(description="insert dummy users information in a\
                             postgres database connection, by default it will\
                             read the environment variables if any argument was\
-                            specified")
+                            specified; also, it will wipe out any data on the\
+                            database before inserting the dummy users and the\
+                            dummy users content (relationships and articles)")
 
     parser.add_argument("-u", "--username", type=str,
                         default=os.getenv("POSTGRES_USER"),
