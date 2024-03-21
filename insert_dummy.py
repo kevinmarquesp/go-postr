@@ -147,6 +147,43 @@ def get_users_ids(conn, curs):
     return [row[0] for row in curs.fetchall()]
 
 
+def insert_relationship(conn, curs, follower_id, followed_ids):
+    """
+    For each followed_id inside followed_ids, it will insert the relationship
+    between the follower_id and that followed_id. Also, if the query throws
+    some error, it will only be warned on the stdout and the code will keep
+    executing.
+
+    :param psycopg2.exensions.connection conn:
+        PostgreSQL connection object, will be used to commit the SQL command
+        actions/changes.
+    :param psycopg2.exensions.cursor curs:
+        Cursor to send the commands to the database, this parameter can be
+        given from the conn object with conn.cursor().
+    :param int follower_id:
+        ID of the user that will follow one or more users.
+    :param list[int] followed_ids:
+        List of IDs of the users that the user with the ID follower_id will
+        follow.
+
+    WARNING: It's important to noe the the IDs inside the followed_ids should
+    be valid ones, the same with the follower_id. If not, this code will throw
+    any error because it only inserts numbers inside a table, be aware of that!
+    """
+    for followed_id in followed_ids:
+        try:
+            curs.execute("INSERT INTO relationship VALUES (%s, %s)",
+                         (follower_id, followed_id))
+
+        except errors.CheckViolation:
+            print(f"[ERRO]: Invalid relation: {follower_id} to {followed_id}")
+
+        except errors.UniqueViolation:
+            print(f"[WARN]: {follower_id} to {followed_id} already inserted")
+
+        conn.commit()
+
+
 def insert_data(conn, curs, users):
     reset_db(conn, curs)
 
@@ -158,21 +195,10 @@ def insert_data(conn, curs, users):
     users_len = get_users_len(conn, curs)
     ids = get_users_ids(conn, curs)
 
-    for id in ids:
+    for follower_id in ids:
         followed_ids = r.choices(ids, k=r.randint(0, users_len))
 
-        for followed_id in followed_ids:
-            try:
-                curs.execute("INSERT INTO relationship VALUES (%s, %s)",
-                             (id, followed_id))
-
-            except errors.CheckViolation:
-                print(f"[ERRO]: Not valid relationship: {id} to {followed_id}")
-
-            except errors.UniqueViolation:
-                print(f"[WARN]: Duplicated {id} to {followed_id} relationship")
-
-            conn.commit()
+        insert_relationship(conn, curs, follower_id, followed_ids)
 
 
 def main(args) -> None:
