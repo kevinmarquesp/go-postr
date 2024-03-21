@@ -74,6 +74,11 @@ def get_login_info(user):
 
 
 def insert_data(conn, curs, users):
+    curs.execute("DELETE FROM relationship")
+    curs.execute("DELETE FROM article")
+    curs.execute('DELETE FROM "user"')
+    conn.commit()
+
     for user in users:
         username, password, bio = get_login_info(user)
 
