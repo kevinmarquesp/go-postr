@@ -126,6 +126,27 @@ def get_users_len(conn, curs):
     return curs.fetchone()[0]
 
 
+def get_users_ids(conn, curs):
+    """
+    Get the id column of the table "user", it will also convert the the list
+    of tuples into a simple list of integers.
+
+    :param psycopg2.exensions.connection conn:
+        PostgreSQL connection object, will be used to commit the SQL command
+        actions/changes.
+    :param psycopg2.exensions.cursor curs:
+        Cursor to send the commands to the database, this parameter can be
+        given from the conn object with conn.cursor().
+
+    :returns list[int]:
+        List of the user IDs, its important to know that it may not starts with
+        0 or 1, even if the users table already has ben deleted!
+    """
+    curs.execute('SELECT (id) FROM "user"')
+
+    return [row[0] for row in curs.fetchall()]
+
+
 def insert_data(conn, curs, users):
     reset_db(conn, curs)
 
@@ -135,10 +156,7 @@ def insert_data(conn, curs, users):
         insert_new_user(conn, curs, username, password, bio)
 
     users_len = get_users_len(conn, curs)
-
-    curs.execute('SELECT (id) FROM "user"')
-
-    ids = [row[0] for row in curs.fetchall()]
+    ids = get_users_ids(conn, curs)
 
     for id in ids:
         followed_ids = r.choices(ids, k=r.randint(0, users_len))
