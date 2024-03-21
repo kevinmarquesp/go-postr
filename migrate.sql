@@ -23,5 +23,6 @@ CREATE TABLE IF NOT EXISTS relationship (
 
 	PRIMARY KEY (follower_user, followed_user),
 	FOREIGN	KEY (follower_user) REFERENCES "user" (id),
-	FOREIGN	KEY (followed_user) REFERENCES "user" (id)
+	FOREIGN	KEY (followed_user) REFERENCES "user" (id),
+	CHECK (follower_user != followed_user)
 );
