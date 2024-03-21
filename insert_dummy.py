@@ -15,7 +15,7 @@ DUMMYUSERS_API = "https://jsonplaceholder.org/users"
 DOTENV_FILE = ".env"
 
 
-def insert_new_user(conn, username, password, bio):
+def insert_new_user(conn, curs, username, password, bio):
     """
     Will insert the user (with the specified username, password and bio
     description) to the database. Every user is meant to be unique, on the
@@ -26,6 +26,9 @@ def insert_new_user(conn, username, password, bio):
     :param psycopg2.exensions.connection conn:
         Database connection object, it will be used to actually change the
         dtabases's schema.
+    :param psycopg2.exensions.cursor curs:
+        Connection cursor, this will be use to get information from the
+        database and cache the changes to the conn object commit them.
     :param str username:
         Username to be inserted, should be unique, or else it wont be inserted
         to the database (will not throw any errors).
@@ -43,18 +46,17 @@ def insert_new_user(conn, username, password, bio):
     hashed_password = bcrypt.hashpw(concatenated_password, bcrypt.gensalt())
     curr_time = datetime.now()
 
-    with conn.cursor() as curs:
-        try:
-            curs.execute('INSERT INTO "user" (username, password, bio,\
-                         created_at, updated_at) VALUES (%s, %s, %s, %s, %s)',
-                         (username, hashed_password.decode("utf-8"), bio,
-                          curr_time, curr_time))
-            print(f"[INFO]: Inserted {username} to '{args.database}.user'")
+    try:
+        curs.execute('INSERT INTO "user" (username, password, bio,\
+                     created_at, updated_at) VALUES (%s, %s, %s, %s, %s)',
+                     (username, hashed_password.decode("utf-8"), bio,
+                      curr_time, curr_time))
+        print(f"[INFO]: Inserted {username} to '{args.database}.user'")
 
-        except errors.UniqueViolation:
-            print(f"[ERRO]: {username} already inserted!")
+    except errors.UniqueViolation:
+        print(f"[WARN]: {username} already inserted!")
 
-        conn.commit()
+    conn.commit()
 
 
 def get_login_info(user):
@@ -71,21 +73,22 @@ def get_login_info(user):
     return username, password, bio
 
 
-def insert_data(conn, users):
+def insert_data(conn, curs, users):
     for user in users:
         username, password, bio = get_login_info(user)
 
-        insert_new_user(conn, username, password, bio)
+        insert_new_user(conn, curs, username, password, bio)
 
 
 def main(args) -> None:
-    r = get(DUMMYUSERS_API)
-    users = loads(r.text)
+    req = get(DUMMYUSERS_API)
+    users = loads(req.text)
 
     try:
         with connect(host=args.host, port=args.port, user=args.username,
                      password=args.password, database=args.database) as conn:
-            insert_data(conn, users)
+            with conn.cursor() as curs:
+                insert_data(conn, curs, users)
 
     except Exception as err:
         print(f"\033[31m{err}\033[m")
