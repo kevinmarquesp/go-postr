@@ -87,11 +87,27 @@ def get_login_info(user):
     return username, password, bio
 
 
-def insert_data(conn, curs, users):
+def reset_db(conn, curs):
+    """
+    Deletes all users, relationships and post articles from the database. The
+    rest of the code will generate all that information again properly only if
+    the database is empty.
+
+    :param psycopg2.exensions.connection conn:
+        PostgreSQL connection object, will be used to commit the SQL command
+        actions/changes.
+    :param psycopg2.exensions.cursor curs:
+        Cursor to send the commands to the database, this parameter can be
+        given from the conn object with conn.cursor().
+    """
     curs.execute("DELETE FROM relationship")
     curs.execute("DELETE FROM article")
     curs.execute('DELETE FROM "user"')
     conn.commit()
+
+
+def insert_data(conn, curs, users):
+    reset_db(conn, curs)
 
     for user in users:
         username, password, bio = get_login_info(user)
