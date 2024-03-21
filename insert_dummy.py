@@ -106,6 +106,26 @@ def reset_db(conn, curs):
     conn.commit()
 
 
+def get_users_len(conn, curs):
+    """
+    Yet another wrapper. This will ask the database how much rows the users
+    table has, then it will count and return that number for you.
+
+    :param psycopg2.exensions.connection conn:
+        PostgreSQL connection object, will be used to commit the SQL command
+        actions/changes.
+    :param psycopg2.exensions.cursor curs:
+        Cursor to send the commands to the database, this parameter can be
+        given from the conn object with conn.cursor().
+
+    :returns int:
+        The length of the users tables, how much rows it has.
+    """
+    curs.execute('SELECT (COUNT(*)) AS row_count FROM "user"')
+
+    return curs.fetchone()[0]
+
+
 def insert_data(conn, curs, users):
     reset_db(conn, curs)
 
@@ -114,16 +134,14 @@ def insert_data(conn, curs, users):
 
         insert_new_user(conn, curs, username, password, bio)
 
-    curs.execute('SELECT (COUNT(*)) AS row_count FROM "user"')
-
-    size = curs.fetchone()[0]
+    users_len = get_users_len(conn, curs)
 
     curs.execute('SELECT (id) FROM "user"')
 
     ids = [row[0] for row in curs.fetchall()]
 
     for id in ids:
-        followed_ids = r.choices(ids, k=r.randint(0, size))
+        followed_ids = r.choices(ids, k=r.randint(0, users_len))
 
         for followed_id in followed_ids:
             try:
