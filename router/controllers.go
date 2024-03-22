@@ -37,26 +37,17 @@ func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
-	conn := db.Connection()
+	list, err := db.GetRecentArticles()
+	if err != nil {
+		log.Error("Couldn't list recent articles", "error", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
-	const limit = 5
-
-	rows, _ := conn.Query(`SELECT u."username" as "author", a."content" as "article" FROM "article" a
-		LEFT JOIN "user" u on u."id" = a."user_id" ORDER BY RANDOM() LIMIT $1`, limit)
-
-	defer rows.Close()
-
-	res := ""
-
-	for rows.Next() {
-		var username, article string
-		
-		_ = rows.Scan(&username, &article)
-
-		res += fmt.Sprintf(`<li>
-			<em>"%s"</em> &mdash; <a href="#">%s</a>
-		</li>`, article, username)
+		return
 	}
 
-	fmt.Fprintf(w, res)
+	if len(list) == 0 {
+		fmt.Fprintf(w, "Any posts created yet")
+	}
+
+	fmt.Fprintf(w, list)
 }

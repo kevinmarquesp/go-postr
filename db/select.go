@@ -27,3 +27,34 @@ func SearchByUsername(query string) (string, error) {
 
 	return res, nil
 }
+
+// No, it will not fetch the most recent articles, but it will look like it does
+// that. And that's enough...
+func GetRecentArticles() (string, error) {
+	const limit = 5
+
+	rows, err := conn.Query(`SELECT u."username" as "author", a."content" as "article" FROM "article" a
+		LEFT JOIN "user" u on u."id" = a."user_id" ORDER BY RANDOM() LIMIT $1`, limit)
+	if err != nil {
+		return "", err
+	}
+
+	defer rows.Close()
+
+	res := ""
+
+	for rows.Next() {
+		var username, article string
+		
+		err = rows.Scan(&username, &article)
+		if err != nil {
+			return "", err
+		}
+
+		res += fmt.Sprintf(`<li>
+			<em>"%s"</em> &mdash; <a href="#">%s</a>
+		</li>`, article, username)
+	}
+
+	return res, nil
+}
