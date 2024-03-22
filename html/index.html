@@ -31,5 +31,15 @@
 				</div>
 			</form>
 
+			<br>
+			<h2>Posts Recentes</h2>
+			<hr>
+			<ul
+				hx-get="/get/articles"
+				hx-trigger="intersect delay:2s"
+			>
+				<span class="spinner-grow text-secondary"></span>
+			</ul>
+
 			<ul id="search_results"></ul>
 {{ end }}

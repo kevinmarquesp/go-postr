@@ -35,3 +35,28 @@ func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, list)
 }
+
+func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
+	conn := db.Connection()
+
+	const limit = 5
+
+	rows, _ := conn.Query(`SELECT u."username" as "author", a."content" as "article" FROM "article" a
+		LEFT JOIN "user" u on u."id" = a."user_id" ORDER BY RANDOM() LIMIT $1`, limit)
+
+	defer rows.Close()
+
+	res := ""
+
+	for rows.Next() {
+		var username, article string
+		
+		_ = rows.Scan(&username, &article)
+
+		res += fmt.Sprintf(`<li>
+			<em>"%s"</em> &mdash; <a href="#">%s</a>
+		</li>`, article, username)
+	}
+
+	fmt.Fprintf(w, res)
+}
