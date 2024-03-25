@@ -1,0 +1,54 @@
+{{ define "Signup" }}
+	<!DOCTYPE html>
+	<html lang="pt-br">
+		<head>
+			{{ template "BaseHeader.Partial" "Signup" }}
+		</head>
+		<body>
+			<div id="app" class="vh-100 w-auto d-flex align-items-center justify-content-center">
+
+				<div style="max-width: 60ch" class="card w-100 shadow-lg">
+					<div class="card-body p-5">
+
+						<h5 class="card-title fw-bold text-secondary mb-4 pb-2 border-bottom">Sign up!</h5>
+
+						<form method="PUT">
+							<div class="mb-2">
+								<label for="username">Username:</label>
+								<input
+									type="text"
+									id="username"
+									name="username"
+									class="form-control"
+									required
+								>
+								<div id="UsernameStatus"></div>
+							</div>
+
+							<div class="mb-2">
+								<label for="password">Password:</label>
+								<input
+									type="password"
+									id="password"
+									name="password"
+									class="form-control mb-3"
+									required
+								>
+							</div>
+
+							<input
+								type="submit"
+								id="submit"
+								value="Create account"
+								class="btn btn-primary"
+								disabled
+							>
+						</form>
+
+					</div>
+				</div>
+
+			</div>
+		</body>
+	</html>
+{{ end }}
