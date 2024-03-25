@@ -8,6 +8,7 @@ import (
 
 func InitRouter(port string) {
 	http.HandleFunc("/", renderIndexController)
+	http.HandleFunc("/signup", renderSignupController)
 	http.HandleFunc("/search/user", searchUsernameController)
 	http.HandleFunc("/get/articles", getRecentArticlesController)
 

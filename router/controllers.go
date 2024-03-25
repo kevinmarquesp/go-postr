@@ -51,3 +51,8 @@ func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, list)
 }
+
+func renderSignupController(w http.ResponseWriter, r *http.Request) {
+	templ := templates.NewTemplateRenderer()
+	templ.Render(w, "Signup", nil)
+}
