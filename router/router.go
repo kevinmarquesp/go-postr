@@ -7,6 +7,8 @@ import (
 )
 
 func InitRouter(port string) {
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
+
 	http.HandleFunc("/", renderIndexController)
 	http.HandleFunc("/signup", renderSignupController)
 	http.HandleFunc("/search/user", searchUsernameController)
