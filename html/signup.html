@@ -2,7 +2,12 @@
 	<!DOCTYPE html>
 	<html lang="pt-br">
 		<head>
+
 			{{ template "BaseHeader.Partial" "Signup" }}
+
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+			<script defer src="/js/signupFieldValidation.js"></script>
+
 		</head>
 		<body>
 			<div id="app" class="vh-100 w-auto d-flex align-items-center justify-content-center">
@@ -25,15 +30,16 @@
 								<div id="UsernameStatus"></div>
 							</div>
 
-							<div class="mb-2">
+							<div class="mb-4">
 								<label for="password">Password:</label>
 								<input
 									type="password"
 									id="password"
 									name="password"
-									class="form-control mb-3"
+									class="form-control"
 									required
 								>
+								<div id="PasswordStatus"></div>
 							</div>
 
 							<input
