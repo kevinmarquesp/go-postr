@@ -38,7 +38,9 @@ const BS_VALID_ICON = "bi-check-circle-fill";
 
 const usernameStatus = {
 	alreadyTaken: new StatusBox(BS_DANGER, BS_ERROR_ICON, "This username was already taken"),
-	validUsername: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "This username is valid")
+	hasSpaces: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "Use - or _ instead of spaces"),
+	invalidChars: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "Invalid characters are not allowed"),
+	validUsername: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "This username is valid"),
 };
 
 const passwordStatus = {
@@ -48,6 +50,55 @@ const passwordStatus = {
 };
 
 let isPasswordValid = false;
+let isUsernameValid = false;
+
+const $username = document.querySelector("#username");
+const $userStatusBox = document.querySelector("#UsernameStatus");
+const VERIFICATION_DELAY = 870;
+
+let usernameTimeout;
+
+function validateUsername(username) {
+	if (username.indexOf(" ") !== -1)
+		return "spaced";
+
+	else if (!/^[A-Za-z0-9-_]+$/.test(username) && username.length)
+		return "invalid";
+
+	else if (username.length === 0)
+		return "empty";
+
+	return "valid";
+}
+
+$username.onkeyup = () => {
+	const username = $username.value;
+	const status = validateUsername(username);
+
+	clearTimeout(usernameTimeout);
+
+	switch (status) {
+		case "spaced":
+			usernameStatus.hasSpaces.render($userStatusBox);
+			break;
+
+		case "invalid":
+			usernameStatus.invalidChars.render($userStatusBox);
+			break;
+
+		case "valid":
+			usernameTimeout = setTimeout(() => {
+				isUsernameValid = true;
+
+				usernameStatus.validUsername.render($userStatusBox);
+			}, VERIFICATION_DELAY);
+
+			break;
+
+		default:
+			$userStatusBox.innerHTML = "";
+	}
+};
 
 const $password = document.querySelector("#password");
 const $passStatusBox = document.querySelector("#PasswordStatus");
