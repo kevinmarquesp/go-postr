@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-postr/db"
 	"go-postr/templates"
+	"io"
 	"net/http"
 
 	"github.com/charmbracelet/log"
@@ -55,4 +56,21 @@ func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 func renderSignupController(w http.ResponseWriter, r *http.Request) {
 	templ := templates.NewTemplateRenderer()
 	templ.Render(w, "Signup", nil)
+}
+
+func usernameValidationController(w http.ResponseWriter, r *http.Request) {
+	usernameb, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Error("Couldn't fetch the body from the username validation request", "error", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+
+		return
+	}
+
+	username := string(usernameb)
+
+	log.Info(username)
+
+	w.WriteHeader(http.StatusOK)
+	// w.WriteHeader(http.StatusBadRequest)
 }
