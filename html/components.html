@@ -1,0 +1,18 @@
+{{ define "UsernameSearchItemResult.Component" }}
+	<li>
+		<a class="dropdown-item {{ if .IsSelected }} active {{ end }}" href="/u/{{ .Username }}">
+			{{ .Username }}
+		</a>
+	</li>
+{{ end }}
+
+{{ define "ArticleCard.Component" }}
+	<div class="card p-4 rounded-4 mb-3 shadow">
+		<p class="mb-3">{{ .Article }}</p>
+		<div class="text-end">
+			<a href="/u/{{ .Author }}" class="fst-italic text-secondary link-underline link-underline-opacity-0">
+				&mdash; {{ .Author }}
+			</a>
+		</div>
+	</div>
+{{ end }}

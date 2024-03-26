@@ -1,16 +1,20 @@
 package db
 
-import "fmt"
+import (
+	"go-postr/templates"
+)
 
 func SearchByUsername(query string) (string, error) {
-	res := ""
-
 	rows, err := conn.Query(`SELECT username FROM "user" WHERE username LIKE $1`, "%" + query + "%")
 	if err != nil {
 		return "", err
 	}
 
 	defer rows.Close()
+
+	templ := templates.NewTemplateRenderer()
+	res := ""
+	i := 0
 
 	for rows.Next() {
 		var username string
@@ -20,9 +24,18 @@ func SearchByUsername(query string) (string, error) {
 			return "", err
 		}
 
-		res += fmt.Sprintf(`<li>
-			<a href="#">%s</a>
-		</li>`, username)
+		props := &templates.UsernameSearchItemResultComponentProps{
+			IsSelected: i == 0,
+			Username: username,
+		}
+
+		resElm, err := templ.RenderString("UsernameSearchItemResult.Component", props)
+		if err != nil {
+			return "", err
+		}
+
+		res += resElm
+		i++
 	}
 
 	return res, nil
@@ -41,19 +54,28 @@ func GetRecentArticles() (string, error) {
 
 	defer rows.Close()
 
+	templ := templates.NewTemplateRenderer()
 	res := ""
 
 	for rows.Next() {
-		var username, article string
+		var author, article string
 		
-		err = rows.Scan(&username, &article)
+		err = rows.Scan(&author, &article)
 		if err != nil {
 			return "", err
 		}
 
-		res += fmt.Sprintf(`<li>
-			<em>"%s"</em> &mdash; <a href="#">%s</a>
-		</li>`, article, username)
+		props := &templates.ArticleCardComponentProps{
+			Article: article,
+			Author: author,
+		}
+
+		resElm, err := templ.RenderString("ArticleCard.Component", props)
+		if err != nil {
+			return "", err
+		}
+
+		res += resElm
 	}
 
 	return res, nil
