@@ -69,8 +69,17 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 
 	username := string(usernameb)
 
-	log.Info(username)
+	wasTaken, err := db.WasUsernameAlreadyTaken(username)
+	if err != nil {
+		log.Error("Database connection when trying to verify username name", "error",  err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
-	w.WriteHeader(http.StatusOK)
-	// w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if wasTaken {
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 }

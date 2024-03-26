@@ -58,3 +58,27 @@ func GetRecentArticles() (string, error) {
 
 	return res, nil
 }
+
+func WasUsernameAlreadyTaken(username string) (bool, error) {
+	rows, err := conn.Query(`SELECT username FROM "user" WHERE username LIKE $1`, username)
+	if err != nil {
+		return false, err
+	}
+	
+	defer rows.Close()
+
+	for rows.Next() {
+		var dbusername string
+
+		err = rows.Scan(&dbusername)
+		if err != nil {
+			return false, err
+		}
+
+		if dbusername == username {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
