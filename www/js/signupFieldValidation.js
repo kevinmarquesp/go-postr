@@ -28,16 +28,31 @@ class StatusBox {
 	}
 }
 
-const usernameAlreadyTakenError = new StatusBox("danger", "bi-x-circle-fill", "This username was already taken")
-const passwordTooShortError = new StatusBox("danger", "bi-x-circle-fill", "You're password is too weak, just like you");
-const passwordCouldBeBetterWarning = new StatusBox("warning", "bi-exclamation-triangle-fill", "C'mon, you could do better than this")
-const passwordGoodEnoughInfo = new StatusBox("success", "bi-check-circle-fill", "Meh... Good enough...")
+const BS_DANGER = "danger";
+const BS_WARNING = "warning";
+const BS_SUCCESS = "success";
 
-const $UsernameStatus = document.querySelector("#UsernameStatus");
-const $PasswordStatus = document.querySelector("#PasswordStatus");
+const BS_ERROR_ICON = "bi-x-circle-fill";
+const BS_WARNNING_ICON = "bi-exclamation-triangle-fill";
+const BS_VALID_ICON = "bi-check-circle-fill";
 
-// usernameAlreadyTakenError.render($UsernameStatus);
+const usernameStatus = {
+	alreadyTaken: new StatusBox(BS_DANGER, BS_ERROR_ICON, "This username was already taken"),
+	validUsername: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "This username is valid")
+};
 
-// passwordTooShortError.render($PasswordStatus);
-// passwordCouldBeBetterWarning.render($PasswordStatus);
-// passwordGoodEnoughInfo.render($PasswordStatus);
+const passwordStatus = {
+	tooShort: new StatusBox(BS_DANGER, BS_ERROR_ICON, "You're password is too weak, just like you"),
+	couldBeBetter: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "C'mon, you could do better than this"),
+	goodEnough: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
+};
+
+const $userStatusBox = document.querySelector("#UsernameStatus");
+const $passStatusBox = document.querySelector("#PasswordStatus");
+
+// usernameStatus.alreadyTaken.render($userStatusBox);
+// usernameStatus.validUsername.render($userStatusBox);
+
+// passwordStatus.tooShort.render($passStatusBox);
+// passwordStatus.couldBeBetter.render($passStatusBox);
+// passwordStatus.goodEnough.render($passStatusBox);
