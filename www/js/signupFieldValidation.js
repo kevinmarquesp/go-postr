@@ -76,6 +76,8 @@ $username.onkeyup = () => {
 	const username = $username.value;
 	const status = validateUsername(username);
 
+	isUsernameValid = false;
+
 	clearTimeout(usernameTimeout);
 
 	switch (status) {
@@ -138,6 +140,8 @@ function validatePassword(password) {
 $password.onkeyup = () => {
 	const password = $password.value;
 	const status = validatePassword(password);
+
+	isPasswordValid = false;
 
 	switch (status) {
 		case "weak":
