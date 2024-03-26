@@ -1,44 +1,59 @@
 {{ define "Index" }}
 	<!DOCTYPE html>
-	<html lang="pt-br"\>
+	<html lang="pt-br">
 		<head>
 			{{ template "BaseHeader.Partial" "Home Page" }}
 		</head>
-		<body class="p-5"\>
+		<body class="pb-5">
 
-			<h1>Página Inicial</h1>
-			<hr>
-			<ul>
-				<li><a href="/signup">Registrar-se</a></li>
-				<li><a href="#">Entrar</a></li>
-			</ul>
-
-			<br>
-			<form action="GET">
-				<label for="query" class="form-label">Pesquisar Usuário</label>
-				<div class="input-group">
-					<input
-						hx-get="/search/user"
-						hx-trigger="keyup delay:25ms changed"
-						hx-target="#search_results"
-						hx-swap="innerHTML"
-						type="text"
-						class="form-control"
-						id="query"
-						name="query"
-						placeholder="Nome do usuário"
-						aria-describedby="Caixa De Pesquisa De Usuário">
+			<div class="bg-dark shadow-md mb-3">
+				<div class="container d-flex align-items-center justify-content-between px-4 py-2">
+					<h1 class="text-white fs-2 mt-2">
+						Go Postr
+					</h1>
+					<div class="d-flex gap-2">
+						<a
+							href="#"
+							class="btn btn-outline-light"
+						>Login</a>
+						<a
+							href="/signup"
+							class="btn btn-light"
+						>Signup</a>
+					</div>
 				</div>
-			</form>
-			<div id="search_results"></div>
+			</div>
 
-			<br>
-			<h2>Posts Recentes</h2>
-			<hr>
-			<ul
-				hx-get="/get/articles"
-				hx-trigger="intersect delay:1.5s"
-			>
-				<span class="spinner-grow text-secondary"></span>
-			</ul>
+			<div class="container-sm mb-5">
+				<form class="mb-5" action="GET">
+					<div class="input-group">
+						<input
+							hx-get="/search/user"
+							hx-trigger="keyup changed"
+							hx-target="#search_results"
+							hx-swap="innerHTML"
+							data-bs-toggle="dropdown"
+							type="text"
+							class="form-control show"
+							id="query"
+							name="query"
+							placeholder="Search by username"
+							autocomplete="off">
+						<ul
+							id="search_results"
+							class="dropdown-menu w-100 dropdown-menu-dark"></ul>
+					</div>
+				</form>
+
+				<div
+					hx-get="/get/articles"
+					hx-trigger="intersect"
+					class=""
+				>
+					<span class="spinner-grow text-secondary"></span>
+				</div>
+			</div>
+
+		</body>
+	</html>
 {{ end }}
