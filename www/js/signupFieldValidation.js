@@ -50,8 +50,17 @@ const passwordStatus = {
 	goodEnough: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
 };
 
-let isPasswordValid = false;
 let isUsernameValid = false;
+let isPasswordValid = false;
+
+const $submit = document.querySelector("#submit");
+
+function updateSubmitButtonState() {
+	if (isUsernameValid && isPasswordValid)
+		$submit.removeAttribute("disabled", "");
+	else
+		$submit.setAttribute("disabled", "");
+}
 
 const $username = document.querySelector("#username");
 const $userStatusBox = document.querySelector("#UsernameStatus");
@@ -79,6 +88,7 @@ $username.onkeyup = () => {
 	isUsernameValid = false;
 
 	clearTimeout(usernameTimeout);
+	updateSubmitButtonState();
 
 	switch (status) {
 		case "spaced":
@@ -98,6 +108,7 @@ $username.onkeyup = () => {
 						isUsernameValid = true;
 
 						usernameStatus.validUsername.render($userStatusBox);
+						updateSubmitButtonState();
 
 					} else if (xhr.status === 400) {
 						usernameStatus.alreadyTaken.render($userStatusBox);
@@ -143,6 +154,8 @@ $password.onkeyup = () => {
 
 	isPasswordValid = false;
 
+	updateSubmitButtonState();
+
 	switch (status) {
 		case "weak":
 			passwordStatus.tooShort.render($passStatusBox);
@@ -156,6 +169,7 @@ $password.onkeyup = () => {
 			isPasswordValid = true;
 
 			passwordStatus.goodEnough.render($passStatusBox);
+			updateSubmitButtonState();
 			break;
 
 		default:
