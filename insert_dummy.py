@@ -13,7 +13,7 @@ from requests import get
 from sys import argv
 from lorem import get_sentence
 
-DUMMYUSERS_API = "https://jsonplaceholder.org/users"
+DUMMYUSERS_API = "https://jsonplaceholder.typicode.com/users"
 DOTENV_FILE = ".env"
 
 MIN_SENTENCES = 3
@@ -43,15 +43,14 @@ def insert_new_user(conn, curs, username, password, bio):
 
 
 def get_login_info(user):
-    username = user["login"]["username"]
-    password = user["login"]["password"]
+    username = user["username"]
+    password = "dummypassword123"
 
-    firstname = user["firstname"]
-    lastname = user["lastname"]
+    name = user["name"]
     company_name = user["company"]["name"]
     email = user["email"]
 
-    bio = f"I'm {firstname} {lastname}. Working for {company_name}\n{email}"
+    bio = f"I'm {name}. Working for {company_name}\n{email}"
 
     return username, password, bio
 
