@@ -47,12 +47,46 @@ const passwordStatus = {
 	goodEnough: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
 };
 
-const $userStatusBox = document.querySelector("#UsernameStatus");
+let isPasswordValid = false;
+
+const $password = document.querySelector("#password");
 const $passStatusBox = document.querySelector("#PasswordStatus");
 
-// usernameStatus.alreadyTaken.render($userStatusBox);
-// usernameStatus.validUsername.render($userStatusBox);
+function validatePassword(password) {
+	const length = password.length;
 
-// passwordStatus.tooShort.render($passStatusBox);
-// passwordStatus.couldBeBetter.render($passStatusBox);
-// passwordStatus.goodEnough.render($passStatusBox);
+	if (length == 0)
+		return "empty";
+
+	else if (length < 8)
+		return "weak";
+
+	else if (length >= 8 && length <= 12)
+		return "good";
+
+	return "strong";
+}
+
+$password.onkeyup = () => {
+	const password = $password.value;
+	const status = validatePassword(password);
+
+	switch (status) {
+		case "weak":
+			passwordStatus.tooShort.render($passStatusBox);
+			break;
+
+		case "good":
+			passwordStatus.couldBeBetter.render($passStatusBox);
+			break;
+
+		case "strong":
+			isPasswordValid = true;
+
+			passwordStatus.goodEnough.render($passStatusBox);
+			break;
+
+		default:
+			$passStatusBox.innerHTML = "";
+	}
+};
