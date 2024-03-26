@@ -38,6 +38,7 @@ const BS_VALID_ICON = "bi-check-circle-fill";
 
 const usernameStatus = {
 	alreadyTaken: new StatusBox(BS_DANGER, BS_ERROR_ICON, "This username was already taken"),
+	serverError: new StatusBox(BS_DANGER, BS_ERROR_ICON, "Internal server error, sorry..."),
 	hasSpaces: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "Use - or _ instead of spaces"),
 	invalidChars: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "Invalid characters are not allowed"),
 	validUsername: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "This username is valid"),
@@ -88,9 +89,25 @@ $username.onkeyup = () => {
 
 		case "valid":
 			usernameTimeout = setTimeout(() => {
-				isUsernameValid = true;
+				const xhr = new XMLHttpRequest();
 
-				usernameStatus.validUsername.render($userStatusBox);
+				xhr.onload = () => {
+					if (xhr.status === 200) {
+						isUsernameValid = true;
+
+						usernameStatus.validUsername.render($userStatusBox);
+
+					} else if (xhr.status === 400) {
+						usernameStatus.alreadyTaken.render($userStatusBox);
+
+					} else {
+						usernameStatus.serverError.render($userStatusBox);
+					}
+				};
+
+				xhr.open("POST", "/validate/username")
+				xhr.send(username)
+
 			}, VERIFICATION_DELAY);
 
 			break;
