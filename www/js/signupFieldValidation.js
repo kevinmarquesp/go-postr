@@ -66,6 +66,7 @@ const $username = document.querySelector("#username");
 const $userStatusBox = document.querySelector("#UsernameStatus");
 const VERIFICATION_DELAY = 870;
 
+let usernameBuffer;
 let usernameTimeout;
 
 function validateUsername(username) {
@@ -88,7 +89,9 @@ $username.onkeyup = () => {
 	isUsernameValid = false;
 
 	clearTimeout(usernameTimeout);
-	updateSubmitButtonState();
+
+	if (usernameBuffer !== username)
+		updateSubmitButtonState();
 
 	switch (status) {
 		case "spaced":
@@ -106,6 +109,7 @@ $username.onkeyup = () => {
 				xhr.onload = () => {
 					if (xhr.status === 200) {
 						isUsernameValid = true;
+						usernameBuffer = username;
 
 						usernameStatus.validUsername.render($userStatusBox);
 						updateSubmitButtonState();
