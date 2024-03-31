@@ -48,12 +48,36 @@
 				<div
 					hx-get="/get/articles"
 					hx-trigger="intersect"
-					class=""
+					hx-indicator="#recent_articles"
+					class="text-secondary fst-italic"
 				>
-					<span class="spinner-grow text-secondary"></span>
+					Anything was posted yet... Be the first one to post!
+					<div id="recent_articles" class="htmx-indicator d-inline-block ms-3">
+						<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+						<span class="visually-hidden" role="status">Loading...</span>
+					</div>
 				</div>
 			</div>
 
+			<script defer type="text/javascript">
+				const RETRY_DELAY = 5_700;
+
+				document.body.addEventListener("htmx:afterRequest", (ev) => {
+					switch (ev.detail.xhr.status) {
+						case 204:  // no content
+						case 503:  // service unavailable
+							const $target = ev.target;
+							const trigger = $target.getAttribute("hx-trigger") || "click";
+
+							console.log("Retrying HTMX request", ev);
+
+							setTimeout(() =>
+								htmx.trigger($target, trigger), RETRY_DELAY);
+
+							break;
+					}
+				});
+			</script>
 		</body>
 	</html>
 {{ end }}
