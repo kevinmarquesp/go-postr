@@ -12,6 +12,7 @@ from psycopg2 import connect, errors
 from requests import get
 from sys import argv
 from lorem import get_sentence
+from icecream import ic
 
 DUMMYUSERS_API = "https://jsonplaceholder.typicode.com/users"
 DOTENV_FILE = ".env"
@@ -34,10 +35,13 @@ def insert_new_user(conn, curs, username, password, bio):
                      created_at, updated_at) VALUES (%s, %s, %s, %s, %s)',
                      (username, hashed_password.decode("utf-8"), bio,
                       curr_time, curr_time))
-        print(f"[INFO]: Inserted {username} to '{args.database}.user'")
 
-    except errors.UniqueViolation:
-        print(f"[WARN]: {username} already inserted!")
+        info = f"Inserted {username} to '{args.database}.user'"
+
+        ic(info)
+
+    except errors.UniqueViolation as warning:
+        ic(warning)
 
     conn.commit()
 
@@ -80,11 +84,11 @@ def insert_relationship(conn, curs, follower_id, followed_ids):
             curs.execute("INSERT INTO relationship VALUES (%s, %s)",
                          (follower_id, followed_id))
 
-        except errors.CheckViolation:
-            print(f"[ERRO]: Invalid relation: {follower_id} to {followed_id}")
+        except errors.CheckViolation as error:
+            ic(error)
 
-        except errors.UniqueViolation:
-            print(f"[WARN]: {follower_id} to {followed_id} already inserted")
+        except errors.UniqueViolation as warning:
+            ic(warning)
 
         conn.commit()
 
@@ -97,10 +101,13 @@ def insert_articles(conn, curs, user_id, articles):
             curs.execute("INSERT INTO article (content, user_id, created_at,"
                          "updated_at) VALUES (%s, %s, %s, %s)",
                          (art, user_id, curr_time, curr_time))
-            print(f"[INFO]: Insert an {len(art)} word article to {user_id}")
 
-        except Exception as err:
-            print(f"[ERRO]: Couldn't insert article to {user_id} ID, {err}")
+            info = f"Insert an {len(art)} word article to the {user_id} user"
+
+            ic(info)
+
+        except Exception as error:
+            ic(error)
 
         conn.commit()
 
@@ -138,8 +145,8 @@ def main(args) -> None:
             with conn.cursor() as curs:
                 insert_data(conn, curs, users)
 
-    except Exception as err:
-        print(f"\033[31m{err}\033[m")
+    except Exception as error:
+        ic(error)
 
 
 def parse_args(user_args):
