@@ -50,13 +50,19 @@ const passwordStatus = {
 	goodEnough: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
 };
 
+const retypeStatus = {
+	match: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "You don't seem to have alzeimer, good"),
+	missmatch: new StatusBox(BS_DANGER, BS_ERROR_ICON, "Can you type like a human for once?"),
+}
+
 let isUsernameValid = false;
 let isPasswordValid = false;
+let isRetypeValid = false;
 
 const $submit = document.querySelector("#submit");
 
 function updateSubmitButtonState() {
-	if (isUsernameValid && isPasswordValid)
+	if (isUsernameValid && isPasswordValid && isRetypeValid)
 		$submit.removeAttribute("disabled", "");
 	else
 		$submit.setAttribute("disabled", "");
@@ -68,6 +74,9 @@ const VERIFICATION_DELAY = 870;
 
 let usernameBuffer;
 let usernameTimeout;
+
+const $retype = document.querySelector("#retype");
+const $retypeStatusBox = document.querySelector("#RetypeStatus");
 
 const $password = document.querySelector("#password");
 const $passStatusBox = document.querySelector("#PasswordStatus");
@@ -98,6 +107,19 @@ function validatePassword(password) {
 		return "good";
 
 	return "strong";
+}
+
+function validateRetype(retype, password) {
+	const passwordStatus = validatePassword(password);
+
+	if (retype.length === 0 || password.length === 0)
+		return "empty"
+
+	else if (retype !== password || passwordStatus !== "strong")
+		return "missmatch";
+
+	return "match";
+
 }
 
 $username.onkeyup = () => {
@@ -179,5 +201,31 @@ $password.onkeyup = () => {
 
 		default:
 			$passStatusBox.innerHTML = "";
+	}
+};
+
+$retype.onkeyup = () => {
+	const retype = $retype.value;
+	const password = $password.value;
+	const status = validateRetype(password, retype);
+
+	isRetypeValid = false;
+
+	updateSubmitButtonState();
+
+	switch (status) {
+		case "missmatch":
+			retypeStatus.missmatch.render($retypeStatusBox);
+			break;
+
+		case "match":
+			isRetypeValid = true;
+
+			retypeStatus.match.render($retypeStatusBox);
+			updateSubmitButtonState();
+			break;
+
+		default:
+			$retypeStatusBox.innerHTML = "";
 	}
 };
