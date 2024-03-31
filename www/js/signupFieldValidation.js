@@ -55,17 +55,29 @@ const usernameStatus = {
 	hasSpaces: new StatusBox($userStatusBox, BS_WARNING, BS_WARNNING_ICON, "Use - or _ instead of spaces"),
 	invalidChars: new StatusBox($userStatusBox, BS_WARNING, BS_WARNNING_ICON, "Invalid characters are not allowed"),
 	validUsername: new StatusBox($userStatusBox, BS_SUCCESS, BS_VALID_ICON, "This username is valid"),
+
+	reset() {
+		$userStatusBox.innerHTML = "";
+	},
 };
 
 const passwordStatus = {
 	tooShort: new StatusBox($passStatusBox, BS_DANGER, BS_ERROR_ICON, "You're password is too weak, just like you"),
 	couldBeBetter: new StatusBox($passStatusBox, BS_WARNING, BS_WARNNING_ICON, "C'mon, you could do better than this"),
 	goodEnough: new StatusBox($passStatusBox, BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
+
+	reset() {
+		$passStatusBox.innerHTML = "";
+	},
 };
 
 const retypeStatus = {
 	match: new StatusBox($retypeStatusBox, BS_SUCCESS, BS_VALID_ICON, "You don't seem to have alzeimer, good"),
 	missmatch: new StatusBox($retypeStatusBox, BS_DANGER, BS_ERROR_ICON, "Can you type like a human for once?"),
+
+	reset() {
+		$retypeStatusBox.innerHTML = "";
+	},
 }
 
 let isUsernameValid = false;
@@ -171,7 +183,7 @@ $username.onkeyup = () => {
 			break;
 
 		default:
-			$userStatusBox.innerHTML = "";
+			usernameStatus.reset();
 	}
 };
 
@@ -201,7 +213,7 @@ $password.onkeyup = () => {
 			break;
 
 		default:
-			$passStatusBox.innerHTML = "";
+			passwordStatus.reset();
 	}
 };
 
@@ -227,6 +239,6 @@ $retype.onkeyup = () => {
 			break;
 
 		default:
-			$retypeStatusBox.innerHTML = "";
+			retypeStatus.reset();
 	}
 };
