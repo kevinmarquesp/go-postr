@@ -69,6 +69,9 @@ const VERIFICATION_DELAY = 870;
 let usernameBuffer;
 let usernameTimeout;
 
+const $password = document.querySelector("#password");
+const $passStatusBox = document.querySelector("#PasswordStatus");
+
 function validateUsername(username) {
 	if (username.indexOf(" ") !== -1)
 		return "spaced";
@@ -80,6 +83,21 @@ function validateUsername(username) {
 		return "empty";
 
 	return "valid";
+}
+
+function validatePassword(password) {
+	const length = password.length;
+
+	if (length == 0)
+		return "empty";
+
+	else if (length < 8)
+		return "weak";
+
+	else if (length >= 8 && length <= 12)
+		return "good";
+
+	return "strong";
 }
 
 $username.onkeyup = () => {
@@ -134,24 +152,6 @@ $username.onkeyup = () => {
 	}
 };
 
-const $password = document.querySelector("#password");
-const $passStatusBox = document.querySelector("#PasswordStatus");
-
-function validatePassword(password) {
-	const length = password.length;
-
-	if (length == 0)
-		return "empty";
-
-	else if (length < 8)
-		return "weak";
-
-	else if (length >= 8 && length <= 12)
-		return "good";
-
-	return "strong";
-}
-
 $password.onkeyup = () => {
 	const password = $password.value;
 	const status = validatePassword(password);
@@ -159,6 +159,7 @@ $password.onkeyup = () => {
 	isPasswordValid = false;
 
 	updateSubmitButtonState();
+	$retype.onkeyup();
 
 	switch (status) {
 		case "weak":
