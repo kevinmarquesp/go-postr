@@ -1,5 +1,24 @@
 "use strict";
 
+const BS_DANGER = "danger";
+const BS_WARNING = "warning";
+const BS_SUCCESS = "success";
+
+const BS_ERROR_ICON = "bi-x-circle-fill";
+const BS_WARNNING_ICON = "bi-exclamation-triangle-fill";
+const BS_VALID_ICON = "bi-check-circle-fill";
+
+const VERIFICATION_DELAY = 870;
+
+const $retype = document.querySelector("#retype");
+const $password = document.querySelector("#password");
+const $username = document.querySelector("#username");
+const $submit = document.querySelector("#submit");
+
+const $userStatusBox = document.querySelector("#UsernameStatus");
+const $passStatusBox = document.querySelector("#PasswordStatus");
+const $retypeStatusBox = document.querySelector("#RetypeStatus");
+
 class StatusBox {
 	#bsColor;
 	#bsIcon;
@@ -28,14 +47,6 @@ class StatusBox {
 	}
 }
 
-const BS_DANGER = "danger";
-const BS_WARNING = "warning";
-const BS_SUCCESS = "success";
-
-const BS_ERROR_ICON = "bi-x-circle-fill";
-const BS_WARNNING_ICON = "bi-exclamation-triangle-fill";
-const BS_VALID_ICON = "bi-check-circle-fill";
-
 const usernameStatus = {
 	alreadyTaken: new StatusBox(BS_DANGER, BS_ERROR_ICON, "This username was already taken"),
 	serverError: new StatusBox(BS_DANGER, BS_ERROR_ICON, "Internal server error, sorry..."),
@@ -59,7 +70,8 @@ let isUsernameValid = false;
 let isPasswordValid = false;
 let isRetypeValid = false;
 
-const $submit = document.querySelector("#submit");
+let usernameBuffer;
+let usernameTimeout;
 
 function updateSubmitButtonState() {
 	if (isUsernameValid && isPasswordValid && isRetypeValid)
@@ -67,19 +79,6 @@ function updateSubmitButtonState() {
 	else
 		$submit.setAttribute("disabled", "");
 }
-
-const $username = document.querySelector("#username");
-const $userStatusBox = document.querySelector("#UsernameStatus");
-const VERIFICATION_DELAY = 870;
-
-let usernameBuffer;
-let usernameTimeout;
-
-const $retype = document.querySelector("#retype");
-const $retypeStatusBox = document.querySelector("#RetypeStatus");
-
-const $password = document.querySelector("#password");
-const $passStatusBox = document.querySelector("#PasswordStatus");
 
 function validateUsername(username) {
 	if (username.indexOf(" ") !== -1)
