@@ -41,13 +41,16 @@ func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 	list, err := db.GetRecentArticles()
 	if err != nil {
 		log.Error("Couldn't list recent articles", "error", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(w, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
 
 		return
 	}
 
 	if len(list) == 0 {
-		fmt.Fprintf(w, "Any posts created yet")
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusNoContent)
+
+		return
 	}
 
 	fmt.Fprintf(w, list)
