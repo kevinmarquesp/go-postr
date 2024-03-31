@@ -14,6 +14,7 @@ func InitRouter(port string) {
 	http.HandleFunc("/search/user", searchUsernameController)
 	http.HandleFunc("/get/articles", getRecentArticlesController)
 	http.HandleFunc("/validate/username", usernameValidationController)
+	http.HandleFunc("/insert/user", createNewUserController)
 
 	log.Info("Listening to", "url", "http://localhost" + port)
 	http.ListenAndServe(port, nil)
