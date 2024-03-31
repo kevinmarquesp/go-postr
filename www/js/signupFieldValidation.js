@@ -20,11 +20,13 @@ const $passStatusBox = document.querySelector("#PasswordStatus");
 const $retypeStatusBox = document.querySelector("#RetypeStatus");
 
 class StatusBox {
+	#$status;
 	#bsColor;
 	#bsIcon;
 	#message;
 
-	constructor(color, prefix, message) {
+	constructor($status, color, prefix, message) {
+		this.#$status = $status;
 		this.#bsColor = color;
 		this.#bsIcon = prefix;
 		this.#message = message;
@@ -39,7 +41,7 @@ class StatusBox {
 		</span>`
 	}
 
-	render($target, overwrite = true) {
+	render($target = this.#$status, overwrite = true) {
 		if (overwrite)
 			$target.innerHTML = this.build();
 		else
@@ -48,22 +50,22 @@ class StatusBox {
 }
 
 const usernameStatus = {
-	alreadyTaken: new StatusBox(BS_DANGER, BS_ERROR_ICON, "This username was already taken"),
-	serverError: new StatusBox(BS_DANGER, BS_ERROR_ICON, "Internal server error, sorry..."),
-	hasSpaces: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "Use - or _ instead of spaces"),
-	invalidChars: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "Invalid characters are not allowed"),
-	validUsername: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "This username is valid"),
+	alreadyTaken: new StatusBox($userStatusBox, BS_DANGER, BS_ERROR_ICON, "This username was already taken"),
+	serverError: new StatusBox($userStatusBox, BS_DANGER, BS_ERROR_ICON, "Internal server error, sorry..."),
+	hasSpaces: new StatusBox($userStatusBox, BS_WARNING, BS_WARNNING_ICON, "Use - or _ instead of spaces"),
+	invalidChars: new StatusBox($userStatusBox, BS_WARNING, BS_WARNNING_ICON, "Invalid characters are not allowed"),
+	validUsername: new StatusBox($userStatusBox, BS_SUCCESS, BS_VALID_ICON, "This username is valid"),
 };
 
 const passwordStatus = {
-	tooShort: new StatusBox(BS_DANGER, BS_ERROR_ICON, "You're password is too weak, just like you"),
-	couldBeBetter: new StatusBox(BS_WARNING, BS_WARNNING_ICON, "C'mon, you could do better than this"),
-	goodEnough: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
+	tooShort: new StatusBox($passStatusBox, BS_DANGER, BS_ERROR_ICON, "You're password is too weak, just like you"),
+	couldBeBetter: new StatusBox($passStatusBox, BS_WARNING, BS_WARNNING_ICON, "C'mon, you could do better than this"),
+	goodEnough: new StatusBox($passStatusBox, BS_SUCCESS, BS_VALID_ICON, "Meh... Good enough..."),
 };
 
 const retypeStatus = {
-	match: new StatusBox(BS_SUCCESS, BS_VALID_ICON, "You don't seem to have alzeimer, good"),
-	missmatch: new StatusBox(BS_DANGER, BS_ERROR_ICON, "Can you type like a human for once?"),
+	match: new StatusBox($retypeStatusBox, BS_SUCCESS, BS_VALID_ICON, "You don't seem to have alzeimer, good"),
+	missmatch: new StatusBox($retypeStatusBox, BS_DANGER, BS_ERROR_ICON, "Can you type like a human for once?"),
 }
 
 let isUsernameValid = false;
@@ -134,11 +136,11 @@ $username.onkeyup = () => {
 
 	switch (status) {
 		case "spaced":
-			usernameStatus.hasSpaces.render($userStatusBox);
+			usernameStatus.hasSpaces.render();
 			break;
 
 		case "invalid":
-			usernameStatus.invalidChars.render($userStatusBox);
+			usernameStatus.invalidChars.render();
 			break;
 
 		case "valid":
@@ -150,14 +152,14 @@ $username.onkeyup = () => {
 						isUsernameValid = true;
 						usernameBuffer = username;
 
-						usernameStatus.validUsername.render($userStatusBox);
+						usernameStatus.validUsername.render();
 						updateSubmitButtonState();
 
 					} else if (xhr.status === 400) {
-						usernameStatus.alreadyTaken.render($userStatusBox);
+						usernameStatus.alreadyTaken.render();
 
 					} else {
-						usernameStatus.serverError.render($userStatusBox);
+						usernameStatus.serverError.render();
 					}
 				};
 
@@ -184,17 +186,17 @@ $password.onkeyup = () => {
 
 	switch (status) {
 		case "weak":
-			passwordStatus.tooShort.render($passStatusBox);
+			passwordStatus.tooShort.render();
 			break;
 
 		case "good":
-			passwordStatus.couldBeBetter.render($passStatusBox);
+			passwordStatus.couldBeBetter.render();
 			break;
 
 		case "strong":
 			isPasswordValid = true;
 
-			passwordStatus.goodEnough.render($passStatusBox);
+			passwordStatus.goodEnough.render();
 			updateSubmitButtonState();
 			break;
 
@@ -214,13 +216,13 @@ $retype.onkeyup = () => {
 
 	switch (status) {
 		case "missmatch":
-			retypeStatus.missmatch.render($retypeStatusBox);
+			retypeStatus.missmatch.render();
 			break;
 
 		case "match":
 			isRetypeValid = true;
 
-			retypeStatus.match.render($retypeStatusBox);
+			retypeStatus.match.render();
 			updateSubmitButtonState();
 			break;
 
