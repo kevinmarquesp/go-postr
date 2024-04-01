@@ -160,18 +160,21 @@ $username.onkeyup = () => {
 				const xhr = new XMLHttpRequest();
 
 				xhr.onload = () => {
-					if (xhr.status === 200) {
-						isUsernameValid = true;
-						usernameBuffer = username;
+					switch (xhr.status) {
+						case 200:
+							isUsernameValid = true;
+							usernameBuffer = username;
 
-						usernameStatus.validUsername.render();
-						updateSubmitButtonState();
+							usernameStatus.validUsername.render();
+							updateSubmitButtonState();
+							break;
 
-					} else if (xhr.status === 400) {
-						usernameStatus.alreadyTaken.render();
+						case 400:
+							usernameStatus.alreadyTaken.render();
+							break;
 
-					} else {
-						usernameStatus.serverError.render();
+						default:
+							usernameStatus.serverError.render();
 					}
 				};
 
