@@ -2,23 +2,26 @@ package router
 
 import (
 	"net/http"
-
-	"github.com/charmbracelet/log"
 )
 
 func InitRouter(port string) {
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
+	app := http.NewServeMux()
 
-	http.HandleFunc("/", redirectToHomePage)
-	http.HandleFunc("/home", renderIndexView)
-	http.HandleFunc("/signup", renderSignupView)
+	app.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
 
-	http.HandleFunc("/search/user", searchUsernameController)
-	http.HandleFunc("/get/articles", getRecentArticlesController)
-	http.HandleFunc("/validate/username", usernameValidationController)
-	http.HandleFunc("POST /insert/user", createNewUserController)
+	app.HandleFunc("/", renderIndexView)
+	app.HandleFunc("/signup", renderSignupView)
 
-	log.Info("Listening to", "url", "http://localhost" + port)
-	http.ListenAndServe(port, nil)
+	app.HandleFunc("/search/user", searchUsernameController)
+	app.HandleFunc("/get/articles", getRecentArticlesController)
+	app.HandleFunc("/validate/username", usernameValidationController)
+	app.HandleFunc("POST /insert/user", createNewUserController)
+
+	server := http.Server{
+		Addr:    port,
+		Handler: app,
+	}
+
+	server.ListenAndServe()
 }
 
