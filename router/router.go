@@ -9,6 +9,7 @@ import (
 func InitRouter(port string) {
 	http.Handle("GET /js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
 
+	http.HandleFunc("/", redirectToHomePage)
 	http.HandleFunc("GET /home", renderIndexView)
 	http.HandleFunc("GET /signup", renderSignupView)
 
