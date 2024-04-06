@@ -7,15 +7,15 @@ import (
 )
 
 func InitRouter(port string) {
-	http.Handle("GET /js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
 
 	http.HandleFunc("/", redirectToHomePage)
-	http.HandleFunc("GET /home", renderIndexView)
-	http.HandleFunc("GET /signup", renderSignupView)
+	http.HandleFunc("/home", renderIndexView)
+	http.HandleFunc("/signup", renderSignupView)
 
-	http.HandleFunc("GET /search/user", searchUsernameController)
-	http.HandleFunc("GET /get/articles", getRecentArticlesController)
-	http.HandleFunc("GET /validate/username", usernameValidationController)
+	http.HandleFunc("/search/user", searchUsernameController)
+	http.HandleFunc("/get/articles", getRecentArticlesController)
+	http.HandleFunc("/validate/username", usernameValidationController)
 	http.HandleFunc("POST /insert/user", createNewUserController)
 
 	log.Info("Listening to", "url", "http://localhost" + port)
