@@ -1,6 +1,6 @@
 module go-postr
 
-go 1.21.6
+go 1.22.1
 
 require (
 	github.com/charmbracelet/log v0.3.1

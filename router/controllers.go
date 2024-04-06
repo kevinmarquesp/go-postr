@@ -78,11 +78,6 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 }
 
 func createNewUserController(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		log.Error("Create new user controller, the expected method was 'POST' and not '" + r.Method + "'")
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	}
-
 	err := r.ParseForm()
 	if err != nil {
 		log.Error("Couldn't parse the new user credentials form", "error", err)
@@ -111,5 +106,5 @@ func createNewUserController(w http.ResponseWriter, r *http.Request) {
 
 	//end.
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
