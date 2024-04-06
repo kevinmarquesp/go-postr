@@ -1,8 +1,36 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 )
+
+type wrappedWriter struct {
+	http.ResponseWriter
+	status int
+}
+
+func (ww *wrappedWriter) WriteHeader(status int) {
+	ww.ResponseWriter.WriteHeader(status)
+
+	ww.status = status
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		ww := &wrappedWriter{
+			ResponseWriter: w,
+			status:         http.StatusOK,
+		}
+
+		next.ServeHTTP(ww, r)
+
+		fmt.Println(time.Since(start), "\t", ww.status, r.Method, "\t", r.URL.Path)
+	})
+}
 
 func InitRouter(port string) {
 	app := http.NewServeMux()
@@ -19,7 +47,7 @@ func InitRouter(port string) {
 
 	server := http.Server{
 		Addr:    port,
-		Handler: app,
+		Handler: loggingMiddleware(app),
 	}
 
 	server.ListenAndServe()
