@@ -3,7 +3,6 @@ package router
 import (
 	"fmt"
 	"go-postr/db"
-	"go-postr/templates"
 	"io"
 	"net/http"
 	"time"
@@ -11,12 +10,6 @@ import (
 	"github.com/charmbracelet/log"
 	"golang.org/x/crypto/bcrypt"
 )
-
-func renderIndexController(w http.ResponseWriter, r *http.Request) {
-	templ := templates.NewTemplateRenderer()
-
-	templ.Render(w, "Index", nil)
-}
 
 func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 	v := r.URL.Query()
@@ -56,11 +49,6 @@ func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, list)
-}
-
-func renderSignupController(w http.ResponseWriter, r *http.Request) {
-	templ := templates.NewTemplateRenderer()
-	templ.Render(w, "Signup", nil)
 }
 
 func usernameValidationController(w http.ResponseWriter, r *http.Request) {
