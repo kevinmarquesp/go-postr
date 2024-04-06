@@ -12,10 +12,10 @@ func InitRouter(port string) {
 	app.HandleFunc("/", renderIndexView)
 	app.HandleFunc("/signup", renderSignupView)
 
-	app.HandleFunc("/search/user", searchUsernameController)
-	app.HandleFunc("/get/articles", getRecentArticlesController)
-	app.HandleFunc("/validate/username", usernameValidationController)
-	app.HandleFunc("POST /insert/user", createNewUserController)
+	app.HandleFunc("/api/search/user", searchUsernameController)
+	app.HandleFunc("/api/get/articles", getRecentArticlesController)
+	app.HandleFunc("/api/validate/username", usernameValidationController)
+	app.HandleFunc("POST /api/insert/user", createNewUserController)
 
 	server := http.Server{
 		Addr:    port,

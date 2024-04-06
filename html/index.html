@@ -28,7 +28,7 @@
 				<form class="mb-5" action="GET">
 					<div class="input-group">
 						<input
-							hx-get="/search/user"
+							hx-get="/api/search/user"
 							hx-trigger="keyup changed"
 							hx-target="#search_results"
 							hx-swap="innerHTML"
@@ -46,7 +46,7 @@
 				</form>
 
 				<div
-					hx-get="/get/articles"
+					hx-get="/api/get/articles"
 					hx-trigger="intersect"
 					hx-indicator="#recent_articles"
 					class="text-secondary fst-italic"

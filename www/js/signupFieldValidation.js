@@ -178,8 +178,8 @@ $username.onkeyup = () => {
 					}
 				};
 
-				xhr.open("POST", "/validate/username")
-				xhr.send(username)
+				xhr.open("POST", "/api/validate/username");
+				xhr.send(username);
 
 			}, VERIFICATION_DELAY);
 
