@@ -4,9 +4,9 @@ import (
 	"errors"
 	"go-postr/db"
 	"go-postr/router"
+	"log"
 	"os"
 
-	"github.com/charmbracelet/log"
 	"github.com/joho/godotenv"
 )
 
@@ -24,8 +24,8 @@ func requireEnv(key string) (string, error) {
 func main() {
 	err := godotenv.Load(dotenv)
 	if err != nil {
-		log.Error("Couldn't load the " + dotenv + " file", "error", err)
-		log.Warn("The server will use the system's environment!")
+		log.Println("WARNING: Could not find the", dotenv, "file")
+		log.Println("WARNING: This code will use the system's environment")
 	}
 
 	port, err := requireEnv("PORT")
@@ -36,8 +36,8 @@ func main() {
 	pgDatabase, err := requireEnv("POSTGRES_DB")
 
 	if err != nil {
-		log.Fatal("Required variables not satisfied", "error", err)
-		os.Exit(1)
+		log.Println("ERROR: Required variables not satisfied")
+		log.Fatalln(err)
 	}
 
 	port = ":" + port  //add a little ":" to be compatible with the http.ListenAndServe() function
@@ -50,6 +50,6 @@ func main() {
 		DatabaseName: pgDatabase,
 	})
 
-	log.Info("Starting the server router...")
+	log.Println("Starting the server router")
 	router.InitRouter(port)
 }

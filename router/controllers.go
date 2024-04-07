@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"go-postr/db"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
-	"github.com/charmbracelet/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,7 +23,9 @@ func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 
 	list, err := db.SearchByUsername(query)
 	if err != nil {
-		log.Error("Couldn't search for user " + query, "error", err)
+		log.Println("ERROR: Could not search for user", query)
+		log.Println("DETAIL:", err)
+
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
 		return
@@ -35,7 +37,9 @@ func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 	list, err := db.GetRecentArticles()
 	if err != nil {
-		log.Error("Couldn't list recent articles", "error", err)
+		log.Println("ERROR: Could not list recent articles")
+		log.Println("DETAIL:", err)
+
 		http.Error(w, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
 
 		return
@@ -54,7 +58,9 @@ func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 	usernameb, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Error("Couldn't fetch the body from the username validation request", "error", err)
+		log.Println("ERROR: Could not fetch the body from the username validation request")
+		log.Println("DETAIL:", err)
+
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
 		return
@@ -64,7 +70,9 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 
 	wasTaken, err := db.WasUsernameAlreadyTaken(username)
 	if err != nil {
-		log.Error("Database connection when trying to verify username name", "error",  err)
+		log.Println("ERROR: Database connection when trying to verify username name")
+		log.Println("DETAIL:", err)
+
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 
 		return
@@ -72,6 +80,7 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 
 	if wasTaken {
 		w.WriteHeader(http.StatusBadRequest)
+
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}
@@ -80,7 +89,9 @@ func usernameValidationController(w http.ResponseWriter, r *http.Request) {
 func createNewUserController(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Error("Couldn't parse the new user credentials form", "error", err)
+		log.Println("ERROR: Could not parse the new user credentials form")
+		log.Println("DETAIL:", err)
+
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 
@@ -100,11 +111,13 @@ func createNewUserController(w http.ResponseWriter, r *http.Request) {
 		//note: this block should be replace by a simple return "", err  on the db package
 		//note: this block is what it should be in this package (router)
 		
-		log.Error("Couldn't insert the new user to the table", "error", err)
+		log.Println("ERROR: Could not insert the new user to the table")
+		log.Println("DETAIL:", err)
+
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 
 	//end.
 
-	http.Redirect(w, r, "/home", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

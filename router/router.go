@@ -1,7 +1,7 @@
 package router
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -28,7 +28,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(ww, r)
 
-		fmt.Println(time.Since(start), "\t", ww.status, r.Method, "\t", r.URL.Path)
+		log.Println("\t", time.Since(start), "\t", ww.status, r.Method, "\t", r.URL.Path)
 	})
 }
 
