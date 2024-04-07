@@ -3,7 +3,6 @@ package router
 import (
 	"fmt"
 	"go-postr/db"
-	"io"
 	"log"
 	"net/http"
 	"time"
@@ -56,17 +55,7 @@ func getRecentArticlesController(w http.ResponseWriter, r *http.Request) {
 }
 
 func usernameValidationController(w http.ResponseWriter, r *http.Request) {
-	usernameb, err := io.ReadAll(r.Body)
-	if err != nil {
-		log.Println("ERROR: Could not fetch the body from the username validation request")
-		log.Println("DETAIL:", err)
-
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-
-		return
-	}
-
-	username := string(usernameb)
+	username := r.PathValue("username")
 
 	wasTaken, err := db.WasUsernameAlreadyTaken(username)
 	if err != nil {

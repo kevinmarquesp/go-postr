@@ -42,7 +42,7 @@ func InitRouter(port string) {
 
 	app.HandleFunc("GET /api/search/user", searchUsernameController)
 	app.HandleFunc("GET /api/get/articles", getRecentArticlesController)
-	app.HandleFunc("GET /api/validate/username", usernameValidationController)
+	app.HandleFunc("GET /api/validate/u/{username}", usernameValidationController)
 	app.HandleFunc("POST /api/insert/user", createNewUserController)
 
 	server := http.Server{

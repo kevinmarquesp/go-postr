@@ -1,5 +1,7 @@
 "use strict";
 
+const VALIDATE_USERNAME_ROUTE = "/api/validate/u/";
+
 const BS_DANGER = "danger";
 const BS_WARNING = "warning";
 const BS_SUCCESS = "success";
@@ -178,8 +180,8 @@ $username.onkeyup = () => {
 					}
 				};
 
-				xhr.open("GET", "/api/validate/username");
-				xhr.send(username);
+				xhr.open("GET", VALIDATE_USERNAME_ROUTE + username);
+				xhr.send();
 
 			}, VERIFICATION_DELAY);
 
