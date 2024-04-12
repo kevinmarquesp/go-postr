@@ -8,11 +8,11 @@ import (
 )
 
 type ConnCredentials struct {
-	Host			string
-	Port			string
-	Username		string
-	Password		string
-	DatabaseName	string
+	Host         string
+	Port         string
+	Username     string
+	Password     string
+	DatabaseName string
 }
 
 var conn *sql.DB

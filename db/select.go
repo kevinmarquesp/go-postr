@@ -6,7 +6,7 @@ import "go-postr/templates"
 //  TODO: Create a separate file that will build the HTML response strings
 
 func SearchByUsername(query string) (string, error) {
-	rows, err := conn.Query(`SELECT username FROM "user" WHERE username LIKE $1`, "%" + query + "%")
+	rows, err := conn.Query(`SELECT username FROM "user" WHERE username LIKE $1`, "%"+query+"%")
 	if err != nil {
 		return "", err
 	}
@@ -27,7 +27,7 @@ func SearchByUsername(query string) (string, error) {
 
 		props := &templates.UsernameSearchItemResultComponentProps{
 			IsSelected: i == 0,
-			Username: username,
+			Username:   username,
 		}
 
 		resElm, err := templ.RenderString("UsernameSearchItemResult.Component", props)
@@ -60,7 +60,7 @@ func GetRecentArticles() (string, error) {
 
 	for rows.Next() {
 		var author, article string
-		
+
 		err = rows.Scan(&author, &article)
 		if err != nil {
 			return "", err
@@ -68,7 +68,7 @@ func GetRecentArticles() (string, error) {
 
 		props := &templates.ArticleCardComponentProps{
 			Article: article,
-			Author: author,
+			Author:  author,
 		}
 
 		resElm, err := templ.RenderString("ArticleCard.Component", props)
@@ -87,7 +87,7 @@ func WasUsernameAlreadyTaken(username string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	
+
 	defer rows.Close()
 
 	for rows.Next() {

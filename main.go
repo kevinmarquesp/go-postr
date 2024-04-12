@@ -40,13 +40,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	port = ":" + port  //add a little ":" to be compatible with the http.ListenAndServe() function
+	port = ":" + port //add a little ":" to be compatible with the http.ListenAndServe() function
 
 	_ = db.Connect(db.ConnCredentials{
-		Host: pgHost,
-		Port: pgPort,
-		Username: pgUsernmae,
-		Password: pgPassword,
+		Host:         pgHost,
+		Port:         pgPort,
+		Username:     pgUsernmae,
+		Password:     pgPassword,
 		DatabaseName: pgDatabase,
 	})
 

@@ -27,4 +27,3 @@ func InitRouter(port string) {
 
 	server.ListenAndServe()
 }
-

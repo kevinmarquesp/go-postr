@@ -15,7 +15,7 @@ func searchUsernameController(w http.ResponseWriter, r *http.Request) {
 	query := v.Get("query")
 
 	if len(query) == 0 {
-		fmt.Fprintf(w, "")  // insert an empty string in the results tag if there is no users
+		fmt.Fprintf(w, "") // insert an empty string in the results tag if there is no users
 
 		return
 	}
@@ -90,7 +90,7 @@ func createNewUserController(w http.ResponseWriter, r *http.Request) {
 
 	conn := db.Connection()
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username + password), bcrypt.MinCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), bcrypt.MinCost)
 	bio := "Hello there, checkout my brand new profile! 🤓"
 
 	_, err = conn.Query(`INSERT INTO "user" (username, password, bio, created_at, updated_at)
@@ -98,7 +98,7 @@ func createNewUserController(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//  NOTE: This block should be replace by a simple return "", err  on the db package
 		//  NOTE: This block is what it should be in this package (router)
-		
+
 		log.Println("ERROR: Could not insert the new user to the table")
 		log.Println("DETAIL:", err)
 
