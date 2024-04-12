@@ -17,6 +17,8 @@ type ConnCredentials struct {
 
 var conn *sql.DB
 
+// Expose the connection object to the other parts of the code, but this
+// package should abstract the database interaction through specific functions.
 func Connection() *sql.DB {
 	return conn
 }

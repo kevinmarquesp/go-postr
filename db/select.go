@@ -1,8 +1,9 @@
 package db
 
-import (
-	"go-postr/templates"
-)
+import "go-postr/templates"
+
+//  TODO: Make these functions return palain golang object types
+//  TODO: Create a separate file that will build the HTML response strings
 
 func SearchByUsername(query string) (string, error) {
 	rows, err := conn.Query(`SELECT username FROM "user" WHERE username LIKE $1`, "%" + query + "%")
