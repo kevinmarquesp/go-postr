@@ -8,6 +8,9 @@ func InitRouter(port string) {
 	// frontend related routes, views and static files
 	// that static files should be in a external cdn in a real project
 
+	app.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "www/favicon.ico")
+	})
 	app.Handle("GET /js/", http.StripPrefix("/js/", http.FileServer(http.Dir("www/js"))))
 
 	app.HandleFunc("GET /", renderIndexView)
