@@ -5,9 +5,6 @@ import (
 	"go-postr/db"
 	"log"
 	"net/http"
-	"time"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func searchUsernameController(w http.ResponseWriter, r *http.Request) {
@@ -86,21 +83,9 @@ func createNewUserController(w http.ResponseWriter, r *http.Request) {
 	username := r.Form.Get("username")
 	password := r.Form.Get("password")
 
-	//  TODO: Abstract this section into a function in db/insert.go
-
-	conn := db.Connection()
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), bcrypt.MinCost)
-	bio := "Hello there, checkout my brand new profile! 🤓"
-
-	_, err = conn.Query(`INSERT INTO "user" (username, password, bio, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $4)`, username, hashedPassword, bio, time.Now())
+	err = db.InsertNewUser(username, password)
 	if err != nil {
-		//  NOTE: This block should be replace by a simple return "", err  on the db package
-		//  NOTE: This block is what it should be in this package (router)
-
-		log.Println("ERROR: Could not insert the new user to the table")
-		log.Println("DETAIL:", err)
+		log.Println(err)
 
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
