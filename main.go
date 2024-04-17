@@ -1,11 +1,10 @@
 package main
 
 import (
-	"errors"
 	"go-postr/db"
 	"go-postr/router"
+	"go-postr/utils"
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -15,32 +14,27 @@ const dotenv = ".env"
 func main() {
 	err := godotenv.Load(dotenv)
 	if err != nil {
-		log.Println("WARNING: Could not find the", dotenv, "file")
-		log.Println("WARNING: This code will use the system's environment")
+		log.Println("The " + dotenv + " file was not found, it will use the system's environment then.")
 	}
 
-	port, err := requireEnv("PORT")
-	pgHost, err := requireEnv("POSTGRES_HOST")
-	pgPort, err := requireEnv("POSTGRES_PORT")
-	pgUsernmae, err := requireEnv("POSTGRES_USER")
-	pgPassword, err := requireEnv("POSTGRES_PASSWORD")
-	pgDatabase, err := requireEnv("POSTGRES_DB")
-
+	creds, err := db.DefaultCredentials()
 	if err != nil {
-		log.Println("ERROR: Required variables not satisfied")
-		log.Fatalln(err)
+		log.Fatalln("Could not retrieve postgres environment variables.")
 	}
 
-	port = ":" + port //add a little ":" to be compatible with the http.ListenAndServe() function
+	// This function sets up a global variable inside this package. All database
+	// interactions will trhow an error if this function was not ran previously.
 
-	_ = db.Connect(db.ConnCredentials{
-		Host:         pgHost,
-		Port:         pgPort,
-		Username:     pgUsernmae,
-		Password:     pgPassword,
-		DatabaseName: pgDatabase,
-	})
+	err = db.Connect(creds)
+	if err != nil {
+		log.Fatalln("Postgres connection failed.")
+	}
 
-	log.Println("Starting the server router")
-	router.InitRouter(port)
+	port, err := utils.RequireEnv("PORT")
+	if err != nil {
+		log.Fatalln("PORT environment variable not found.")
+	}
+
+	log.Println("Starting up the server router.")
+	router.InitRouter(":" + port) // This ":" is required by the http.Server{} struct.
 }
