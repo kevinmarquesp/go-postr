@@ -12,15 +12,6 @@ import (
 
 const dotenv = ".env"
 
-func requireEnv(key string) (string, error) {
-	value := os.Getenv(key)
-	if value == "" {
-		return "", errors.New("required environment variable " + key + " doesn't exist or is empty")
-	}
-
-	return value, nil
-}
-
 func main() {
 	err := godotenv.Load(dotenv)
 	if err != nil {
