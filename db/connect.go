@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"go-postr/utils"
 
 	_ "github.com/lib/pq"
 )
@@ -21,6 +22,28 @@ var conn *sql.DB
 // package should abstract the database interaction through specific functions.
 func Connection() *sql.DB {
 	return conn
+}
+
+func DefaultCredentials() (ConnCredentials, error) {
+	pgHost, err := utils.RequireEnv("POSTGRES_HOST")
+	pgPort, err := utils.RequireEnv("POSTGRES_PORT")
+	pgUsernmae, err := utils.RequireEnv("POSTGRES_USER")
+	pgPassword, err := utils.RequireEnv("POSTGRES_PASSWORD")
+	pgDatabase, err := utils.RequireEnv("POSTGRES_DB")
+
+	if err != nil {
+		return ConnCredentials{}, err
+	}
+
+	creds := ConnCredentials{
+		Host:         pgHost,
+		Port:         pgPort,
+		Username:     pgUsernmae,
+		Password:     pgPassword,
+		DatabaseName: pgDatabase,
+	}
+
+	return creds, nil
 }
 
 func Connect(cred ConnCredentials) error {
