@@ -9,10 +9,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const dotenv = ".env"
-
 func main() {
-	err := godotenv.Load(dotenv)
+	err := godotenv.Load(db.Dotenv)
 	if err != nil {
 		log.Println("The " + dotenv + " file was not found, it will use the system's environment then.")
 	}

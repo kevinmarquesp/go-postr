@@ -8,6 +8,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const Dotenv = ".env"
+
 type ConnCredentials struct {
 	Host         string
 	Port         string
