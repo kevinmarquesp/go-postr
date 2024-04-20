@@ -5,6 +5,33 @@ import "go-postr/templates"
 //  TODO: Make these functions return palain golang object types
 //  TODO: Create a separate file that will build the HTML response strings
 
+// NOTE: Not implemented yet
+func SearchUsername(targetUsername string) ([]string, error) {
+	const searchQuery = `SELECT username FROM "user" WHERE username LIKE $1`
+
+	rows, err := conn.Query(searchQuery, "%"+targetUsername+"%")
+	if err != nil {
+		return []string{}, err
+	}
+
+	defer rows.Close()
+
+	res := []string{}
+
+	for rows.Next() {
+		var username string
+
+		err = rows.Scan(&username)
+		if err != nil {
+			return []string{}, err
+		}
+
+		res = append(res, username)
+	}
+
+	return res, nil
+}
+
 func SearchByUsername(query string) (string, error) {
 	rows, err := conn.Query(`SELECT username FROM "user" WHERE username LIKE $1`, "%"+query+"%")
 	if err != nil {
