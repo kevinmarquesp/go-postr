@@ -4,7 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"go-postr/utils"
+	"os"
+	"strings"
 
+	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -60,4 +64,65 @@ func Connect(cred ConnCredentials) error {
 	}
 
 	return nil
+}
+
+// This function is meant to be used on the test files, it will create a dummy
+// database with an unique UUID in the name (e.g.: test_799b1dc43f8d49d69341184b244a4013)
+// and store its connection on the global `conn` variable in this package --
+// like the `Connect()` function does.
+func SetupDummyTestDatabaseConnection() (string, error) {
+	const migrateSqlFile = "migrate.sql"
+	testid := uuid.New().String()
+	testdb := "test_" + strings.ReplaceAll(testid, "-", "")
+
+	// go to the root of the project to load the environment file before anything
+
+	os.Chdir("..")
+
+	err := godotenv.Load(Dotenv)
+	if err != nil {
+		return "", err
+	}
+
+	creds, err := DefaultCredentials()
+	if err != nil {
+		return "", err
+	}
+
+	// connect to the admin database to create a new one
+
+	creds.DatabaseName = "postgres"
+
+	err = Connect(creds)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = conn.Exec("CREATE DATABASE " + testdb)
+	if err != nil {
+		return "", err
+	}
+
+	// update the connection to use the database created on the previous step
+
+	conn.Close()
+
+	creds.DatabaseName = testdb
+
+	err = Connect(creds)
+	if err != nil {
+		return "", err
+	}
+
+	migrate, err := os.ReadFile(migrateSqlFile)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = conn.Exec(string(migrate))
+	if err != nil {
+		return "", err
+	}
+
+	return testdb, nil
 }
