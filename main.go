@@ -12,7 +12,7 @@ import (
 func main() {
 	err := godotenv.Load(db.Dotenv)
 	if err != nil {
-		log.Println("The " + dotenv + " file was not found, it will use the system's environment then.")
+		log.Println("The " + db.Dotenv + " file was not found, it will use the system's environment then.")
 	}
 
 	creds, err := db.DefaultCredentials()
