@@ -20,7 +20,7 @@ cp .env.example .env
 ```
 
 Then you can just build the application and start both the application and the
-Postgres database (only this two, check the *Docker* session for mor
+Postgres database (only this two, check the *Docker* session for more
 information) with:
 
 ```bash
@@ -55,3 +55,19 @@ execute it at the root of the project as the code snippet above shows.
 
 If the application is already running, along side with the database, it should
 update the home page with the new users content in some seconds.
+
+#### Clean
+
+Once you tested this application, don't forget to clean your system from the
+images created by the Docker Compose command with:
+
+```bash
+docker-compose --profile app down --rmi all
+```
+
+It's good to remove the Python environment too if you don't plan to use it
+anymore:
+
+```bash
+rm -rf .venv
+```
