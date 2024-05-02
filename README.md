@@ -6,7 +6,7 @@ frameworks that does most what I'm doing by hand here for me.
 
 ## How to Run
 
-### Quick Result
+### Quick Final Result
 
 Git clone this repository and move the `.env.example` file to `.env` - maybe
 you would like to change some auth information on this file, but it's not
@@ -71,3 +71,15 @@ anymore:
 ```bash
 rm -rf .venv
 ```
+
+## Todos
+
+Features:
+* [ ]   Save a login sessino cokie on the user's browser.
+    * [ ]   Change the homepage navbar is the user has an active session.
+
+Development:
+* [ ]   Create a `GetRecentArticles()` alternative that returns a Golang's
+        structure type.
+* [ ]   Remove the `TODO` comments in the code and migrate them to this
+        document.
