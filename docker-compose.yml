@@ -13,14 +13,6 @@ services:
       - "8080:8000"  #expose into a different port, 8000 could be used for local development.
     networks:
       - "dev"
-    develop:
-      watch:
-        - action: "rebuild"
-          path: "."
-          files:
-            - "./**/*.go"
-            - "./go.mod"
-            - "./go.sum"
     profiles: 
       - "all"
       - "app"
