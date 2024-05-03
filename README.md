@@ -22,7 +22,7 @@ Ubuntu/Debian:
 
 ```bash
 sudo apt install git docker docker-compose  # basic
-sudo apt install golang python3             # development
+sudo apt install golang python3 python3-dev python3.10-venv postgresql libpq-dev  # development
 
 # Minimal Docker setup.
 
