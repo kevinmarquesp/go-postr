@@ -10,12 +10,15 @@ frameworks that does most what I'm doing by hand here for me.
 ### Dependencies
 
 Basic dependencies to quickly run the project without any trouble:
-*   `git`
-*   `docker`
-*   `docker-compose`
+*   `git`.
+*   `docker`.
+*   `docker-compose`.
 
 Development dependencies:
-*   `python3`
+*   `python3`.
+*   Python's `venv` package.
+*   `postgresql`
+*   `libpq` libraries.
 
 
 #### Installation & Setup Snippets
