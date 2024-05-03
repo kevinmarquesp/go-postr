@@ -1,9 +1,28 @@
 # Go Postr
 
+<p align="center">
+  <br>
+  <img
+    height="125.5rem"
+    src="docs/static/logo.png"
+  >
+  <br>
+  <br>
+</p>
+
 Small web application that I created from scratch in orther to learn more about
 some web development concepts that is useful to have when dealing with other
 frameworks that does most what I'm doing by hand here for me.
 
+**Contents**:
+*   [How to Run](#how-to-run)
+    *   [Dependencies](#dependencies)
+        *   [Installation & Setup Snippets](#installation-setup-snippets)
+        *   [See Also](#see-also)
+    * [Quick Final Result](#quick-final-result)
+        *   [Insert Dummy Users](#insert-dummy-users)
+        *   [Clean](#clean)
+*   [Todos](#todos)
 
 ## How to Run
 
