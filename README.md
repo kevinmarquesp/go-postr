@@ -4,6 +4,7 @@ Small web application that I created from scratch in orther to learn more about
 some web development concepts that is useful to have when dealing with other
 frameworks that does most what I'm doing by hand here for me.
 
+
 ## How to Run
 
 ### Dependencies
@@ -16,7 +17,8 @@ Basic dependencies to quickly run the project without any trouble:
 Development dependencies:
 *   `python3`
 
-#### Install Snippets
+
+#### Installation & Setup Snippets
 
 Ubuntu/Debian:
 
@@ -38,10 +40,12 @@ sudo service docker restart
 su - $USER  # or logout and login again to your user account
 ```
 
+
 ##### See Also
 
 *   [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
 *   [How to install psycopg2 with "pip" on Python?](https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python)
+
 
 ### Quick Final Result
 
@@ -76,6 +80,7 @@ docker-compose --profile app up -d
 Once everything was built and it's running, open your browser and check the
 result at the **localhost:8080** address.
 
+
 #### Insert Dummy Users
 
 You'll need to have **Python** installed. Start a new Python environment to
@@ -96,6 +101,7 @@ execute it at the root of the project as the code snippet above shows.
 If the application is already running, along side with the database, it should
 update the home page with the new users content in some seconds.
 
+
 #### Clean
 
 Once you tested this application, don't forget to clean your system from the
@@ -112,6 +118,7 @@ anymore:
 rm -rf .venv
 ```
 
+
 ## Todos
 
 Features:
@@ -123,3 +130,10 @@ Development:
         structure type.
 * [ ]   Remove the `TODO` comments in the code and migrate them to this
         document.
+* [ ]   Change the Docker Compose port to another one; to avoid conflics with
+        the **:5432** default Postgres port.
+
+Documentation:
+* [ ]   Describe the Docker process.
+    * [ ]   Explain each Docker Compose profile.
+    * [ ]   Why each port was chose in that way.
