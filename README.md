@@ -6,6 +6,37 @@ frameworks that does most what I'm doing by hand here for me.
 
 ## How to Run
 
+### Dependencies
+
+Basic dependencies to quickly run the project without any trouble:
+*   `git`
+*   `docker`
+*   `docker-compose`
+
+Development dependencies:
+*   `python3`
+
+#### Install Snippets
+
+Ubuntu/Debian:
+
+```bash
+sudo apt install git docker docker-compose  # basic
+sudo apt install golang python3             # development
+
+# Minimal Docker setup.
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo service docker restart
+
+su - $USER  # or logout and login again to your user account
+```
+
+##### Install Snippets
+
+*   [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
+
 ### Quick Final Result
 
 Git clone this repository and move the `.env.example` file to `.env` - maybe
