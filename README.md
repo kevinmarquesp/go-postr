@@ -67,6 +67,9 @@ docker-compose --profile app up -d
 > expect that it will read the `.env` file if the environment variables is not
 > defined in your system.
 
+Once everything was built and it's running, open your browser and check the
+result at the **localhost:8080** address.
+
 #### Insert Dummy Users
 
 You'll need to have **Python** installed. Start a new Python environment to
