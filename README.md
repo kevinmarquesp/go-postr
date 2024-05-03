@@ -24,6 +24,11 @@ Ubuntu/Debian:
 sudo apt install git docker docker-compose  # basic
 sudo apt install golang python3 python3-dev python3.10-venv postgresql libpq-dev  # development
 
+# Disable PostgreSQL service to free the :5432 port.
+
+sudo systemctl stop postgresql
+sudo systemctl disable postgresql
+
 # Minimal Docker setup.
 
 sudo groupadd docker
@@ -33,9 +38,10 @@ sudo service docker restart
 su - $USER  # or logout and login again to your user account
 ```
 
-##### Install Snippets
+##### See Also
 
 *   [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
+*   [How to install psycopg2 with "pip" on Python?](https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python)
 
 ### Quick Final Result
 
