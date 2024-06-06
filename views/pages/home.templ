@@ -1,0 +1,12 @@
+package pages
+
+import "github.com/kevinmarquesp/go-postr/views/base"
+
+templ HomePage() {
+	@base.Regular("Home") {
+		<session id="home" class="m-12 text-blue-100">
+			<h1 class="text-5xl font-bold">Hello world!</h1>
+			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, ea?</p>
+		</session>
+	}
+}

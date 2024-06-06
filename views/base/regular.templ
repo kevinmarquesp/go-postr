@@ -1,0 +1,23 @@
+package base
+
+templ Regular(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>Go Postr | { title }</title>
+			<!-- TailwindCSS static file. -->
+			<link href="static/css/tailwind.css" rel="stylesheet"/>
+		</head>
+		<body class="bg-black text-white">
+			<header id="topnav">
+				<p>The top navigation bar is not done yet</p>
+			</header>
+			{ children... }
+			<footer id="footer">
+				<p>The footer is not done yet</p>
+			</footer>
+		</body>
+	</html>
+}
