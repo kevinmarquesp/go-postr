@@ -1,15 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/kevinmarquesp/go-postr/views/home"
 )
 
 func main() {
 	app := http.NewServeMux()
 
-	app.HandleFunc("GET /", func(w http.ResponseWriter, _r *http.Request) {
-		fmt.Fprint(w, "<h1>Hello world! From Go 1.22.1</h1>")
+	app.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		home.Home().Render(r.Context(), w)
 	})
 
 	server := http.Server{

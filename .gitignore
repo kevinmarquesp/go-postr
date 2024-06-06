@@ -22,3 +22,6 @@
 
 # Go workspace file
 go.work
+
+# Templ files
+**/*_templ.go
