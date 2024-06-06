@@ -1,16 +1,27 @@
-BIN_NAME := gopostr
-VERSION := 0.1.0
-ARCH := amd64
+NPM := pnpm
+NPX := pnpm
 
 SERVER_SRC := cmd/server/main.go
-TARGET := bin
+SERVER_BIN := bin/server
+STATIC_TAILWINDCSS := static/css/tailwind.css
 
-run:
+.PHONY: build
+build:
 	templ generate
-	go run $(SERVER_SRC)
-.PHONY: run
+	go build -o $(SERVER_BIN) $(SERVER_SRC)
+	$(NPX) tailwindcss build --output $(STATIC_TAILWINDCSS) --minify
 
-depget:
-	go install github.com/a-h/templ/cmd/templ@v0.2.707
-	go mod tidy
+.PHONY: run
+run: build
+	./$(SERVER_BIN)
+
 .PHONY: depget
+depget:
+	$(NPM) add --save-dev tailwindcss
+	go install github.com/a-h/templ/cmd/templ@v0.2.707
+	go install github.com/air-verse/air@v1.52.2
+	go mod tidy
+
+.PHONY: dev
+dev:
+	air -build.bin "$(SERVER_BIN)"
