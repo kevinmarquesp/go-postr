@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// TODO: Add a little documentation for this struct.
+// PostgreSQL service (used in production).
 type Postgres struct {
 	conn *sql.DB
 }
