@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: "docker.io/postgres"
+    restart: "always"
+    env_file:
+      - ".env"
+    ports:
+      - "5432:5432"
+    networks:
+      - "netdev"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "512M"
+    profiles:
+      - "postgres"
+      - "all"
+      - "db"
+
+  pgadmin:
+    image: "docker.io/dpage/pgadmin4"
+    depends_on:
+      - "postgres"
+    env_file:
+      - ".env"
+    ports:
+      - "5050:80"
+    networks:
+      - "netdev"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "256M"
+    profiles:
+      - "pgadmin"
+      - "all"
+      - "db"
+
+networks:
+  netdev:
+    driver: "bridge"
