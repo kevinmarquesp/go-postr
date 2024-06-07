@@ -1,4 +1,4 @@
-SERVER_SRC := cmd/server/main.go
+SERVER_SRC := github.com/kevinmarquesp/go-postr/cmd/server
 SERVER_BIN := bin/server
 STATIC_TAILWINDCSS := static/css/tailwind.css
 MIGRATION_DIR := db/migrations
