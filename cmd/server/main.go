@@ -1,24 +1,27 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
 
-	"github.com/kevinmarquesp/go-postr/views/pages"
+	"github.com/charmbracelet/log"
+	"github.com/joho/godotenv"
+	"github.com/kevinmarquesp/go-postr/internal/models"
 )
 
+const DOTENV = ".env"
+
 func main() {
-	app := http.NewServeMux()
+	log.Info("Application initialized.")
 
-	app.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	app.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		pages.HomePage().Render(r.Context(), w)
-	})
-
-	server := http.Server{
-		Addr:    ":8080",
-		Handler: app,
+	if err := godotenv.Load(DOTENV); err != nil {
+		log.Error("Could not load the "+DOTENV+" file.", "error", err)
 	}
 
-	server.ListenAndServe()
+	db_service := &models.Postgres{}
+
+	if err := db_service.Connect(); err != nil {
+		log.Fatal("Could not connect to the specifyed database service.", "error", err)
+	}
+
+	fmt.Println(db_service)
 }
