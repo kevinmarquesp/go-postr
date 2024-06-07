@@ -32,3 +32,6 @@ go.work
 
 # Air tmp direcotry
 /tmp
+
+# Development environment variables file
+.env
