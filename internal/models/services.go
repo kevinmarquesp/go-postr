@@ -9,4 +9,7 @@ type DatabaseService interface {
 	// the systems's environment variables in the implementation of this
 	// function.
 	Connect() error
+
+	// TODO: Add a documentation for this function
+	InsertUser(username, description, password string) error
 }

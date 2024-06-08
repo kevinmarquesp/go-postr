@@ -6,11 +6,13 @@ import (
 
 	"github.com/charmbracelet/log"
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // PostgreSQL service (used in production).
 type Postgres struct {
-	conn *sql.DB
+	conn        *sql.DB
+	bcrypt_cost int
 }
 
 func (pg *Postgres) Connect() error {
@@ -34,5 +36,20 @@ func (pg *Postgres) Connect() error {
 	pg.conn.SetMaxIdleConns(25)
 	pg.conn.SetConnMaxLifetime(0)
 
+	// Bcrypt encription settings.
+	pg.bcrypt_cost = bcrypt.MinCost
+
 	return pg.conn.Ping()
+}
+
+func (pg *Postgres) InsertUser(username, password, description string) error {
+	hashed_password, err := bcrypt.GenerateFromPassword([]byte(username+password), pg.bcrypt_cost)
+	if err != nil {
+		return err
+	}
+
+	_, err = pg.conn.Query("INSERT INTO users (username, password, description) VALUES ($1, $2, $3)",
+		username, hashed_password, description)
+
+	return err
 }
