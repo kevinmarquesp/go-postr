@@ -1,0 +1,31 @@
+package components
+
+templ Navbar() {
+	<nav id="navbar" class="flex justify-between items-center py-4 px-6 relative before:border-b before:border-zinc-300 before:border-opacity-10 before:absolute before:w-[90%] before:h-full before:top-o before:left-1/2 before:translate-x-[-50%] before:z-[-1]">
+		<h1 class="font-extrabold text-2xl h-fit">
+			Go Postr
+		</h1>
+		<div class="flex gap-3">
+			<div id="topnav_search" class="m-0 px-1 bg-gray-800 border border-zinc-300 border-opacity-10 rounded-lg flex gap-3 items-center">
+				<span class="ms-2 opacity-50">
+					<i class="bi bi-search"></i>
+				</span>
+				<input
+					id="topnav_search_box"
+					class="w-full h-full py-2 bg-transparent focus:outline-none"
+					type="text"
+					name="search"
+					placeholder="Pesquisar"
+				/>
+			</div>
+			<button class="py-1 px-5 bg-gradient-to-r from-sky-700 to-sky-600 border border-zinc-300 border-opacity-30 rounded-lg flex items-center gap-3">
+				<span class="text-2xl">
+					<i class="bi bi-box-arrow-in-left"></i>
+				</span>
+				<span>
+					Login
+				</span>
+			</button>
+		</div>
+	</nav>
+}

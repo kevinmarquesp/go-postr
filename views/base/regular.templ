@@ -1,5 +1,7 @@
 package base
 
+import "github.com/kevinmarquesp/go-postr/views/components"
+
 templ Regular(title string) {
 	<!DOCTYPE html>
 	<html lang="en">
@@ -7,17 +9,16 @@ templ Regular(title string) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<title>Go Postr | { title }</title>
-			<!-- TailwindCSS static file. -->
+			<!-- Tailwindcss file. -->
 			<link href="static/css/tailwind.css" rel="stylesheet"/>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 		</head>
-		<body class="bg-black text-white">
-			<header id="topnav">
-				<p>The top navigation bar is not done yet</p>
-			</header>
-			{ children... }
-			<footer id="footer">
-				<p>The footer is not done yet</p>
-			</footer>
+		<body class="h-screen bg-gradient-to-t from-gray-950 to-gray-900 text-gray-50">
+			<div class="max-w-6xl m-auto">
+				<header>
+					@components.Navbar()
+				</header>
+			</div>
 		</body>
 	</html>
 }
