@@ -1,4 +1,24 @@
 services:
+  server:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    depends_on:
+      - "postgres"
+    env_file:
+      - ".env"
+    ports:
+      - "8080:8000" # Expose to a different port.
+    environment:
+      POSTGRES_HOST: "postgres" # Overwrite the host inside the container.
+    entrypoint: "sh -c 'while true; do make postgres/migrations/up && break; done; ./bin/server'"
+    networks:
+      - "netdev"
+    profiles:
+      - "server"
+      - "all"
+      - "app"
+
   postgres:
     image: "docker.io/postgres"
     restart: "always"
@@ -17,6 +37,7 @@ services:
       - "postgres"
       - "all"
       - "db"
+      - "app"
 
   pgadmin:
     image: "docker.io/dpage/pgadmin4"
