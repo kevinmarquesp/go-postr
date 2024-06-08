@@ -1,15 +1,9 @@
-SERVER_SRC := github.com/kevinmarquesp/go-postr/cmd/server
-SERVER_BIN := bin/server
-STATIC_TAILWINDCSS := static/css/tailwind.css
-MIGRATION_DIR := db/migrations
-ENV := .env
+SERVER_SRC = github.com/kevinmarquesp/go-postr/cmd/server
+SERVER_BIN = bin/server
+STATIC_TAILWINDCSS = static/css/tailwind.css
 
-DATABASE := postgres
-DATABASE_DNS := postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB?sslmode=disable
-GOOSE_VARS := GOOSE_DRIVER=$(DATABASE) GOOSE_DBSTRING=$(DATABASE_DNS)
-
-NPM := pnpm
-NPX := pnpm
+NPM = pnpm
+NPX = pnpm
 
 .PHONY: build
 build:
@@ -23,34 +17,56 @@ run: build
 
 .PHONY: deps
 deps:
-	go install github.com/a-h/templ/cmd/templ@v0.2.707       # to render the views
-	go install github.com/air-verse/air@v1.52.2              # to allow live reloading
-	go install github.com/pressly/goose/v3/cmd/goose@v3.20.0 # to do migrations
-	$(NPM) add --save-dev tailwindcss
-	which asdf &>/dev/null && asdf reshim
+	$(NPM) install --force
 	go mod tidy
+	go install github.com/a-h/templ/cmd/templ@v0.2.707       # To render the views.
+	go install github.com/air-verse/air@v1.52.2              # To allow live reloading.
+	go install github.com/pressly/goose/v3/cmd/goose@v3.20.0 # To do migrations.
 
 .PHONY: dev
 dev:
 	air -build.bin "$(SERVER_BIN)"
 
-.PHONY: db/connect
-db/connect:
-	@. ./$(ENV) && psql "$(DATABASE_DNS)"
+# ------------------------------------------------------------------------------
+# Postgres related recipes (connect with `psql` and migrate the schema).
+#
+# To run the migrations properly, the recipes will require the postgres
+# credentials on the environment. Check the `POSTGRES_*` variables in the
+# `.env.example` file.
+#
+# If a `.env` file exits (this file is useful in development stage), each
+# recipe will try to source its variables before actually run the migrations.
+#
+# Be aware.
 
-.PHONY: migrations/create
-migrations/create:
+MIGRATION_DIR = db/migrations
+DOTENV = .env
+
+DATABASE := postgres
+DATABASE_DNS := postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB?sslmode=disable
+GOOSE_VARS := GOOSE_DRIVER=$(DATABASE) GOOSE_DBSTRING=$(DATABASE_DNS)
+
+.PHONY: postgres
+postgres:
+	@[ -e ./$(DOTENV) ] && . ./$(DOTENV); \
+		psql "$(DATABASE_DNS)"
+
+.PHONY: postgres/migrations/create
+postgres/migrations/create:
 	@read -rp "Migration name: " new_migration; \
 		$(GOOSE_VARS) goose -dir=${MIGRATION_DIR} create "$$new_migration" sql
 
-.PHONY: migrations/up
-migrations/up:
-	@. ./$(ENV) && $(GOOSE_VARS) goose -dir=${MIGRATION_DIR} up
+.PHONY: postgres/migrations/up
+postgres/migrations/up:
+	@[ -e ./$(DOTENV) ] && . ./$(DOTENV); \
+		$(GOOSE_VARS) goose -dir=${MIGRATION_DIR} up
 
-.PHONY: migrations/status
-migrations/status:
-	@. ./$(ENV) && $(GOOSE_VARS) goose -dir=${MIGRATION_DIR} status
+.PHONY: postgres/migrations/status
+postgres/migrations/status:
+	@[ -e ./$(DOTENV) ] && . ./$(DOTENV); \
+		$(GOOSE_VARS) goose -dir=${MIGRATION_DIR} status
 
-.PHONY: migrations/reset
-migrations/reset:
-	@. ./$(ENV) && $(GOOSE_VARS) goose -dir=${MIGRATION_DIR} reset
+.PHONY: postgres/migrations/reset
+postgres/migrations/reset:
+	@[ -e ./$(DOTENV) ] && . ./$(DOTENV); \
+		$(GOOSE_VARS) goose -dir=${MIGRATION_DIR} reset
