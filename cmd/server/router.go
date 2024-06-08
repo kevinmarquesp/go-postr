@@ -9,7 +9,7 @@ import (
 )
 
 func StartRouter(db_service models.DatabaseService, port string) error {
-	log.Info("Starting the server mux of the application...")
+	log.Info("Starting the server mux of the application in the ':" + port + "' port.")
 
 	handler := http.NewServeMux()
 
