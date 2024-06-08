@@ -18,7 +18,7 @@ run: build
 .PHONY: deps
 deps:
 	$(NPM) install --force
-	go mod tidy
+	go mod download
 	go install github.com/a-h/templ/cmd/templ@v0.2.707       # To render the views.
 	go install github.com/air-verse/air@v1.52.2              # To allow live reloading.
 	go install github.com/pressly/goose/v3/cmd/goose@v3.20.0 # To do migrations.
