@@ -34,7 +34,6 @@ func main() {
 		log.Fatal("Could not fetch users from teh JSON Placeholder API.", "error", err)
 	}
 
-	// TODO: Create a method to insert data to the database
 	db_service := &models.Postgres{}
 
 	if err := db_service.Connect(); err != nil {
@@ -42,7 +41,12 @@ func main() {
 	}
 
 	for _, user := range users {
-		fmt.Printf("Inserting... %+v\n\n", user)
+		err := db_service.InsertUser(user.Username, user.Password, user.Description)
+		if err != nil {
+			log.Error("Could not insert user to the database", "error", err)
+		} else {
+			log.Info("Inserted user '" + user.Username + "' to the database with success!")
+		}
 	}
 }
 
