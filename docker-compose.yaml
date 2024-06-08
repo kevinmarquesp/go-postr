@@ -11,7 +11,13 @@ services:
       - "8080:8000" # Expose to a different port.
     environment:
       POSTGRES_HOST: "postgres" # Overwrite the host inside the container.
-    entrypoint: "sh -c 'while true; do make postgres/migrations/up 2>/dev/null && break; done; ./bin/server'"
+    entrypoint: |
+      sh -c 'while true; do
+               make postgres/migrations/up 2>/dev/null &&
+                 break;
+             done;
+             make postgres/seed
+             ./bin/server'
     networks:
       - "netdev"
     profiles:
