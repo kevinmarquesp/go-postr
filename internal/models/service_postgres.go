@@ -53,3 +53,26 @@ func (pg *Postgres) InsertUser(username, password, description string) error {
 
 	return err
 }
+
+func (pg *Postgres) RecentlyCreatedUsers(size int) ([]UserBasicInfo, error) {
+	var users_result []UserBasicInfo
+
+	rows, err := pg.conn.Query("SELECT username, description FROM users ORDER BY created_at DESC LIMIT $1", size)
+	if err != nil {
+		return []UserBasicInfo{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user UserBasicInfo
+
+		if err = rows.Scan(&user.Username, &user.Description); err != nil {
+			return []UserBasicInfo{}, err
+		}
+
+		users_result = append(users_result, user)
+
+	}
+
+	return users_result, nil
+}

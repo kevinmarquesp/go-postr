@@ -12,4 +12,7 @@ type DatabaseService interface {
 
 	// TODO: Add a documentation for this function
 	InsertUser(username, description, password string) error
+
+	// TODO: Add a documentation for this function
+	RecentlyCreatedUsers(size int) ([]UserBasicInfo, error)
 }
