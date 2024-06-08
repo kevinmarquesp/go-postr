@@ -39,6 +39,7 @@ dev:
 #
 # Be aware.
 
+SEED_SRC = github.com/kevinmarquesp/go-postr/cmd/seed
 MIGRATION_DIR = db/migrations
 DOTENV = .env
 
@@ -50,6 +51,10 @@ GOOSE_VARS := GOOSE_DRIVER=$(DATABASE) GOOSE_DBSTRING=$(DATABASE_DNS)
 postgres:
 	@[ -e ./$(DOTENV) ] && . ./$(DOTENV); \
 		psql "$(DATABASE_DNS)"
+
+.PHONY: postgres/seed
+postgres/seed:
+	go run $(SEED_SRC)
 
 .PHONY: postgres/migrations/create
 postgres/migrations/create:
