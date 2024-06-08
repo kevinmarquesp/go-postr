@@ -1,12 +1,30 @@
 package pages
 
 import "github.com/kevinmarquesp/go-postr/views/base"
+import "github.com/kevinmarquesp/go-postr/internal/models"
 
-templ HomePage() {
+templ InlineGlassCard(username, description string) {
+	<a href="#" class="px-12 py-8 min-w-[min(80vw,75ch)] max-w-[min(80vw,75ch)] border border-zinc-300 border-opacity-10 rounded-xl bg-gradient-to-br from-gray-700/35 to-gray-800/30 transition-all duration-75 group hover:scale-[1.025]">
+		<div class="opacity-70 transition-all duration-100 group-hover:opacity-100">
+			<h2 class="mb-2 text-3xl font-bold">
+				&commat;{ username }
+			</h2>
+			<p
+				class="text-xl max-h-44 overflow-hidden text-gray-300"
+				style="mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));"
+			>
+				{ description }
+			</p>
+		</div>
+	</a>
+}
+
+templ HomePage(users_basic_info []models.UserBasicInfo) {
 	@base.Regular("Home") {
-		<session id="home" class="m-12 text-blue-100">
-			<h1 class="text-5xl font-bold">Hello world!</h1>
-			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, ea?</p>
+		<session id="recent_users" class="flex gap-4 overflow-scroll mt-12 p-4">
+			for _, user := range users_basic_info {
+				@InlineGlassCard(user.Username, user.Description)
+			}
 		</session>
 	}
 }

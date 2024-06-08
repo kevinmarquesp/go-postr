@@ -18,5 +18,7 @@ func NewPagesController(db_service models.DatabaseService) PagesController {
 }
 
 func (pc PagesController) HomePage(w http.ResponseWriter, r *http.Request) {
-	pages.HomePage().Render(r.Context(), w)
+	users_basic_info, _ := pc.db_service.RecentlyCreatedUsers(6)
+
+	pages.HomePage(users_basic_info).Render(r.Context(), w)
 }
