@@ -10,15 +10,11 @@ run:
 		./$(SERVER_BIN)
 
 .PHONY: build
-build: templ tailwind
+build:
 	go build -o $(SERVER_BIN) $(SERVER_SRC)
 
-.PHONY: build/src
-build/src:
-	go build -o $(SERVER_BIN) $(SERVER_SRC)
-
-.PHONY: build/deps
-build/deps: deps build
+.PHONY: build/production
+build/production: templ tailwind build
 
 .PHONY: deps
 deps:
@@ -32,8 +28,8 @@ deps:
 clean:
 	rm -vr node_modules bin static/css/* views/**/*_templ.go
 
-.PHONY: dev
-dev:
+.PHONY: air
+air:
 	air -build.bin "$(SERVER_BIN)"
 
 # ------------------------------------------------------------------------------
