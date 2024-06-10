@@ -11,10 +11,12 @@ run:
 		./$(SERVER_BIN)
 
 .PHONY: build
-build:
-	templ generate
+build: templ tailwind
 	go build -o $(SERVER_BIN) $(SERVER_SRC)
-	$(NPX) tailwindcss build --output $(STATIC_TAILWINDCSS) --minify
+
+.PHONY: build/src
+build/src:
+	go build -o $(SERVER_BIN) $(SERVER_SRC)
 
 .PHONY: build/deps
 build/deps: deps build
@@ -34,6 +36,30 @@ clean:
 .PHONY: dev
 dev:
 	air -build.bin "$(SERVER_BIN)"
+
+# ------------------------------------------------------------------------------
+# Tailwind related recipes.
+
+.PHONY: tailwind
+tailwind:
+	$(NPX) tailwindcss build --output $(STATIC_TAILWINDCSS) --minify
+
+.PHONY: tailwind/watch
+tailwind/watch:
+	$(NPX) tailwindcss --watch --output $(STATIC_TAILWINDCSS) --minify
+
+# ------------------------------------------------------------------------------
+# Go's Templ related recipes, to build the `.templ` files (deppends on the
+# `.env` file, or just its environment variables).
+
+.PHONY: templ
+templ:
+	templ generate
+
+.PHONY: templ/watch
+templ/watch:
+	[ -e ./$(DOTENV) ] && . ./$(DOTENV); \
+		templ generate -watch -proxy=http://localhost:$${PORT}
 
 # ------------------------------------------------------------------------------
 # Postgres related recipes (connect with `psql` and migrate the schema).
