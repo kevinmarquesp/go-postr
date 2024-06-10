@@ -12,8 +12,9 @@ build:
 	$(NPX) tailwindcss build --output $(STATIC_TAILWINDCSS) --minify
 
 .PHONY: run
-run: build
-	./$(SERVER_BIN)
+run:
+	[ -e ./$(SERVER_BIN) ] || make build; \
+		./$(SERVER_BIN)
 
 .PHONY: deps
 deps:
