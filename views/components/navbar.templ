@@ -2,30 +2,55 @@ package components
 
 templ Navbar() {
 	<nav id="navbar" class="flex justify-between items-center py-4 px-6 relative before:border-b before:border-zinc-300 before:border-opacity-10 before:absolute before:w-[90%] before:h-full before:top-o before:left-1/2 before:translate-x-[-50%] before:z-[-1]">
-		<h1 class="font-extrabold text-2xl h-fit">
+		<h1 class="font-extrabold text-2xl h-fit text-nowrap me-4">
 			Go Postr
 		</h1>
 		<div class="flex gap-3">
-			<div id="topnav_search" class="m-0 px-1 bg-gray-800 border border-zinc-300 border-opacity-10 rounded-lg flex gap-3 items-center">
-				<span class="ms-2 opacity-50">
-					<i class="bi bi-search"></i>
-				</span>
-				<input
-					id="topnav_search_box"
-					class="w-full h-full py-2 bg-transparent focus:outline-none"
-					type="text"
-					name="search"
-					placeholder="Pesquisar"
-				/>
-			</div>
-			<button class="py-1 px-5 bg-gradient-to-r from-sky-700 to-sky-600 border border-zinc-300 border-opacity-30 rounded-lg flex items-center gap-3">
+			@SearchBox()
+			<button class="py-1 px-5 bg-gray-800 border border-zinc-300 border-opacity-10 rounded-lg flex items-center gap-3">
 				<span class="text-2xl">
 					<i class="bi bi-box-arrow-in-left"></i>
 				</span>
-				<span>
-					Login
+				<span class="text-nowrap">
+					Log in
+				</span>
+			</button>
+			<button class="py-1 px-5 bg-gradient-to-r from-sky-700 to-sky-600 border border-zinc-300 border-opacity-30 rounded-lg flex items-center gap-3">
+				<span class="text-2xl">
+					<i class="bi bi-person"></i>
+				</span>
+				<span class="text-nowrap">
+					Sign in
 				</span>
 			</button>
 		</div>
 	</nav>
+}
+
+templ SearchBox() {
+	<div id="topnav_search" class="m-0 px-1 bg-gray-800 border border-zinc-300 border-opacity-10 rounded-lg flex gap-3 items-center relative">
+		<span class="ms-2 opacity-50">
+			<i class="bi bi-search"></i>
+		</span>
+		<input
+			id="search"
+			class="w-full h-full py-2 bg-transparent focus:outline-none peer"
+			type="text"
+			name="search"
+			placeholder="Pesquisar"
+		/>
+		<ul id="results" class="absolute w-full mt-8 top-full left-0 z-10 bg-gray-800 border border-zinc-300 border-opacity-10 rounded-lg scale-0 peer-focus:scale-100 transition-all duration-100 peer-focus:translate-y-0 translate-y-[-75%] opacity-0 peer-focus:opacity-100">
+			@SearchResultItem("Fulano")
+			@SearchResultItem("Ciclano")
+			@SearchResultItem("Beltrano")
+		</ul>
+	</div>
+}
+
+templ SearchResultItem(username string) {
+	<li class="border-b border-zinc-300 border-opacity-10 last:border-none">
+		<a href="#" class="text-lg w-full block py-4 px-8 hover:bg-gray-900/50 transition-all duration-300 font-bold">
+			&commat;{ username }
+		</a>
+	</li>
 }
