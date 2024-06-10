@@ -1,6 +1,5 @@
 SERVER_SRC = github.com/kevinmarquesp/go-postr/cmd/server
 SERVER_BIN = bin/server
-STATIC_TAILWINDCSS = static/css/tailwind.css
 
 NPM = pnpm
 NPX = pnpm
@@ -40,6 +39,8 @@ dev:
 # ------------------------------------------------------------------------------
 # Tailwind related recipes.
 
+STATIC_TAILWINDCSS = static/css/dist/tailwind.css
+
 .PHONY: tailwind
 tailwind:
 	$(NPX) tailwindcss build --output $(STATIC_TAILWINDCSS) --minify
@@ -62,24 +63,16 @@ templ/watch:
 		templ generate -watch -proxy=http://localhost:$${PORT}
 
 # ------------------------------------------------------------------------------
-# Postgres related recipes (connect with `psql` and migrate the schema).
-#
-# To run the migrations properly, the recipes will require the postgres
-# credentials on the environment. Check the `POSTGRES_*` variables in the
-# `.env.example` file.
-#
-# If a `.env` file exits (this file is useful in development stage), each
-# recipe will try to source its variables before actually run the migrations.
-#
-# Be aware.
+# Postgres related recipes, to connect and run migrations (deppends on the
+# `.env` file, or just its environment variables).
 
 SEED_SRC = github.com/kevinmarquesp/go-postr/cmd/seed
 MIGRATION_DIR = db/migrations
 DOTENV = .env
 
-DATABASE := postgres
-DATABASE_DNS := postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB?sslmode=disable
-GOOSE_VARS := GOOSE_DRIVER=$(DATABASE) GOOSE_DBSTRING=$(DATABASE_DNS)
+DATABASE = postgres
+DATABASE_DNS = postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB?sslmode=disable
+GOOSE_VARS = GOOSE_DRIVER=$(DATABASE) GOOSE_DBSTRING=$(DATABASE_DNS)
 
 .PHONY: postgres
 postgres:
