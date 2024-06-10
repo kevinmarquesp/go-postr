@@ -29,7 +29,7 @@ go.work
 
 # Tailwind css related
 /node_modules
-/static/css/tailwind.css
+/static/dist
 
 # Air tmp direcotry
 /tmp

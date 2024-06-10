@@ -39,7 +39,7 @@ dev:
 # ------------------------------------------------------------------------------
 # Tailwind related recipes.
 
-STATIC_TAILWINDCSS = static/css/dist/tailwind.css
+STATIC_TAILWINDCSS = static/dist/css/tailwind.css
 
 .PHONY: tailwind
 tailwind:
