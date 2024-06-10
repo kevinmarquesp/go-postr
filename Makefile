@@ -14,7 +14,7 @@ build:
 	go build -o $(SERVER_BIN) $(SERVER_SRC)
 
 .PHONY: build/production
-build/production: templ tailwind build
+build/production: deps templ tailwind build
 
 .PHONY: deps
 deps:
