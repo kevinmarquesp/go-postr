@@ -16,6 +16,10 @@ run:
 	[ -e ./$(SERVER_BIN) ] || make build; \
 		./$(SERVER_BIN)
 
+.PHONY: clean
+clean:
+	rm -vr node_modules bin static/css/* views/**/*_templ.go
+
 .PHONY: deps
 deps:
 	$(NPM) install --force
