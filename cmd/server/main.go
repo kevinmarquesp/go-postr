@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/kevinmarquesp/go-postr/internal/models"
+	"github.com/kevinmarquesp/go-postr/internal/router"
 )
 
 const DOTENV = ".env"
@@ -24,7 +25,7 @@ func main() {
 		log.Fatal("Could not connect to the database.", "err", err)
 	}
 
-	if err := initServerRouter(os.Getenv("PORT")); err != nil {
+	if err := router.InitRouter(os.Getenv("PORT")); err != nil {
 		log.Fatal("Router error.", "err", err)
 	}
 }

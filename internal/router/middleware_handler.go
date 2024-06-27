@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
 	"net/http"
@@ -35,11 +35,4 @@ func MiddlewareHandler(handler http.Handler) http.Handler {
 
 		log.Printf("%s\t%d %s\t%s", time.Since(timerStart), sw.status, r.Method, r.URL.Path)
 	})
-}
-
-func Middleware(sw http.ResponseWriter, r *http.Request) bool {
-	log.Info("Nuh uh.")
-	sw.WriteHeader(http.StatusForbidden)
-
-	return false
 }

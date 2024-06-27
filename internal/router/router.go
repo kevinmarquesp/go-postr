@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func initServerRouter(port string) error {
+func InitRouter(port string) error {
 	if port == "" {
 		return errors.New("The port environment was not specified.")
 	}
