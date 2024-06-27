@@ -23,5 +23,10 @@ func initServerRouter(port string) error {
 
 	router.Handle("/api/", http.StripPrefix("/api", apiRouter))
 
-	return http.ListenAndServe(":"+port, router)
+	server := http.Server{
+		Addr:    ":" + port,
+		Handler: MiddlewareHandler(router),
+	}
+
+	return server.ListenAndServe()
 }
