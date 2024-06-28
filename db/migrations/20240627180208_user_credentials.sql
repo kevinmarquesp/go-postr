@@ -6,8 +6,8 @@ CREATE TABLE users (
   password        TEXT,
   session_token   TEXT UNIQUE,
   session_expires TIMESTAMP,
-  created_at      TIMESTAMP,
-  updated_at      TIMESTAMP
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- +goose StatementEnd
 
