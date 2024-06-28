@@ -2,26 +2,32 @@ package router
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
+
+	"github.com/kevinmarquesp/go-postr/internal/api"
+	"github.com/kevinmarquesp/go-postr/internal/models"
 )
 
-func InitRouter(port string) error {
+func InitRouter(port string, db models.DatabaseProvider) error {
 	if port == "" {
 		return errors.New("The port environment was not specified.")
 	}
 
+	// API router.
+
 	apiRouter := http.NewServeMux()
 
-	apiRouter.HandleFunc("GET /hello", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+	authController := api.AuthController{Database: db}
 
-		fmt.Fprint(w, `{ "message": "Hello world!" }`)
-	})
+	apiRouter.HandleFunc("POST /auth/register", authController.RegisterNewUser)
+
+	// Global router.
 
 	router := http.NewServeMux()
 
 	router.Handle("/api/", http.StripPrefix("/api", apiRouter))
+
+	// Application server setup.
 
 	server := http.Server{
 		Addr:    ":" + port,
