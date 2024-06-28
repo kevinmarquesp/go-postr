@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWriteJsonError(t *testing.T) {
+func TestWriteGenericJsonError(t *testing.T) {
 	w := httptest.NewRecorder()
 	err := fmt.Errorf("Something went wrong")
 	status := http.StatusInternalServerError
