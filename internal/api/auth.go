@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/charmbracelet/log"
 	"github.com/kevinmarquesp/go-postr/internal/data"
@@ -35,14 +36,28 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// TODO: Create a functino to validate each input field.
+	body.Username = strings.Trim(body.Username, " ")
+	body.Password = strings.Trim(body.Password, " ")
+
+	if err = utils.ValidateUsernameString(body.Username); err != nil {
+		utils.WriteJsonError(w, http.StatusBadRequest, err)
+
+		return
+	}
+
+	if err = utils.ValidatePasswordString(body.Password); err != nil {
+		utils.WriteJsonError(w, http.StatusBadRequest, err)
+
+		return
+	}
+
+	// TODO: Register the new username and password, then return a session token.
+	// --> TODO: Check if the user exists on the database.
+	// --> TODO: Generate a new access token for that user.
+	// --> TODO: Register that token in the database.
+	// TODO: Return the token string to the final user.
 
 	log.Print(body)
-
-	// TODO: Check if the user exists on the database.
-	// TODO: Generate a new access token for that user.
-	// TODO: Register that token in the database.
-	// TODO: Return the token string to the final user.
 
 	fmt.Fprint(w, `{ "message": "Registering a new user" }`)
 }
