@@ -17,7 +17,7 @@ func TestWriteJsonError(t *testing.T) {
 	err := fmt.Errorf("Something went wrong")
 	status := http.StatusInternalServerError
 
-	utils.WriteJsonError(w, status, err)
+	utils.WriteGenericJsonError(w, status, err)
 
 	if w.Code != status {
 		t.Errorf("Expected status code %d, but got %d", status, w.Code)

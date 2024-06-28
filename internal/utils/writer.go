@@ -8,7 +8,7 @@ import (
 	"github.com/kevinmarquesp/go-postr/internal/data"
 )
 
-func WriteJsonError(w http.ResponseWriter, status int, err error) {
+func WriteGenericJsonError(w http.ResponseWriter, status int, err error) {
 	w.WriteHeader(status)
 
 	jsonError := &data.ErrorResponse{

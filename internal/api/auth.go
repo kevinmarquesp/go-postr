@@ -21,7 +21,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	rawBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -29,7 +29,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -39,12 +39,12 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 	password := strings.Trim(body.Password, " ")
 
 	if err = utils.ValidateUsernameString(username); err != nil {
-		utils.WriteJsonError(w, http.StatusBadRequest, err)
+		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	if err = utils.ValidatePasswordString(password); err != nil {
-		utils.WriteJsonError(w, http.StatusBadRequest, err)
+		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	sessionToken, err := ac.Database.RegisterNewUser(username, password)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusBadRequest, err)
+		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -63,7 +63,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	successfulReponseJsonData, err := json.Marshal(successfulReponseData)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusConflict, err)
+		utils.WriteGenericJsonError(w, http.StatusConflict, err)
 		return
 	}
 
@@ -75,7 +75,7 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 
 	rawBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -83,7 +83,7 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -94,13 +94,13 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 	// TODO: Try this update session task with the user credentials instead.
 
 	if len(sessionToken) == 0 {
-		utils.WriteJsonError(w, http.StatusNotImplemented, err)
+		utils.WriteGenericJsonError(w, http.StatusNotImplemented, err)
 		return
 	}
 
 	newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusUnauthorized, err)
+		utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
 		return
 	}
 
