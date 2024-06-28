@@ -8,7 +8,7 @@ import (
 	"github.com/kevinmarquesp/go-postr/internal/models"
 )
 
-func InitRouter(port string, db models.DatabaseProvider) error {
+func InitRouter(port string, db models.GenericDatabaseProvider) error {
 	if port == "" {
 		return errors.New("The port environment was not specified.")
 	}

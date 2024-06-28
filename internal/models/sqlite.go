@@ -17,7 +17,7 @@ const (
 )
 
 type Sqlite struct {
-	DatabaseProvider
+	GenericDatabaseProvider
 
 	conn *sql.DB
 }

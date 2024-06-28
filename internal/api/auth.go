@@ -13,7 +13,7 @@ import (
 )
 
 type AuthController struct {
-	Database models.DatabaseProvider
+	Database models.GenericDatabaseProvider
 }
 
 func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request) {
