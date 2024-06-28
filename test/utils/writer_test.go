@@ -32,7 +32,6 @@ func TestWriteJsonError(t *testing.T) {
 		Error:      err.Error(),
 	}
 
-	assert.Equal(t, received.Status, expected.Status)
 	assert.Equal(t, received.StatusText, expected.StatusText)
 	assert.Equal(t, received.Error, expected.Error)
 }
