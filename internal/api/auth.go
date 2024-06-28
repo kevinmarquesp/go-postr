@@ -75,3 +75,40 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	fmt.Fprint(w, string(successfulReponseJsonData))
 }
+
+func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	rawBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	var body data.UpdateUserSessionTokenIncome
+
+	err = json.Unmarshal(rawBody, &body)
+	if err != nil {
+		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	username := strings.Trim(body.Username, " ")
+	// password := strings.Trim(body.Password, " ")
+	sessionToken := strings.Trim(body.SessionToken, " ")
+
+	// TODO: Try this update session task with the user credentials instead.
+
+	if len(sessionToken) == 0 {
+		utils.WriteJsonError(w, http.StatusNotImplemented, err)
+		return
+	}
+
+	newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
+	if err != nil {
+		utils.WriteJsonError(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	fmt.Fprintf(w, `{ "newSessionToken": "%s" }`, newSessionToken)
+}
