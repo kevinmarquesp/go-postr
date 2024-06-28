@@ -7,16 +7,10 @@ import (
 	"net/http"
 
 	"github.com/charmbracelet/log"
+	"github.com/kevinmarquesp/go-postr/internal/data"
 	"github.com/kevinmarquesp/go-postr/internal/models"
+	"github.com/kevinmarquesp/go-postr/internal/utils"
 )
-
-// TODO: Move this struct to a JSON data pakcage.
-
-type RegisterCredentials struct {
-	Fullname string `json:"fullname"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
 
 type AuthController struct {
 	Database models.DatabaseProvider
@@ -27,16 +21,16 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	rawBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		WriteError(w, http.StatusInternalServerError, err)
+		utils.WriteJsonError(w, http.StatusInternalServerError, err)
 
 		return
 	}
 
-	var body RegisterCredentials
+	var body data.RegisterCredentialsIncome
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {
-		WriteError(w, http.StatusInternalServerError, err)
+		utils.WriteJsonError(w, http.StatusInternalServerError, err)
 
 		return
 	}
@@ -51,11 +45,4 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 	// TODO: Return the token string to the final user.
 
 	fmt.Fprint(w, `{ "message": "Registering a new user" }`)
-}
-
-// TODO: Move this function to an utils package.
-
-func WriteError(w http.ResponseWriter, status int, err error) {
-	w.WriteHeader(status)
-	fmt.Fprintf(w, `{ "error": "%s" }`, err)
 }
