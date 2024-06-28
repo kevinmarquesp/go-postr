@@ -25,7 +25,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var body data.RegisterCredentialsIncome
+	var body data.RegisterNewUserBodyCredentialsBody
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {
@@ -56,7 +56,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	successfulReponseData := data.RegisterSuccessfulSessionTokenResponse{
+	successfulReponseData := data.RegisterNewUserSuccessfulResponse{
 		Username:     username,
 		SessionToken: sessionToken,
 	}
@@ -79,7 +79,7 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	var body data.UpdateUserSessionTokenIncome
+	var body data.UpdateUserSessionTokenCredentialsBody
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {

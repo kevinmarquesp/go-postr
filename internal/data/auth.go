@@ -1,17 +1,17 @@
 package data
 
-type RegisterCredentialsIncome struct {
+type RegisterNewUserBodyCredentialsBody struct {
 	Fullname string `json:"fullname"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type RegisterSuccessfulSessionTokenResponse struct {
+type RegisterNewUserSuccessfulResponse struct {
 	Username     string `json:"username"`
 	SessionToken string `json:"sessionToken"`
 }
 
-type UpdateUserSessionTokenIncome struct {
+type UpdateUserSessionTokenCredentialsBody struct {
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	SessionToken string `json:"sessionToken"`
