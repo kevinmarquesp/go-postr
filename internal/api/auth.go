@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/charmbracelet/log"
 	"github.com/kevinmarquesp/go-postr/internal/data"
 	"github.com/kevinmarquesp/go-postr/internal/models"
 	"github.com/kevinmarquesp/go-postr/internal/utils"
@@ -36,28 +35,43 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	body.Username = strings.Trim(body.Username, " ")
-	body.Password = strings.Trim(body.Password, " ")
+	// Field validation.
 
-	if err = utils.ValidateUsernameString(body.Username); err != nil {
+	username := strings.Trim(body.Username, " ")
+	password := strings.Trim(body.Password, " ")
+
+	if err = utils.ValidateUsernameString(username); err != nil {
 		utils.WriteJsonError(w, http.StatusBadRequest, err)
 
 		return
 	}
 
-	if err = utils.ValidatePasswordString(body.Password); err != nil {
+	if err = utils.ValidatePasswordString(password); err != nil {
 		utils.WriteJsonError(w, http.StatusBadRequest, err)
 
 		return
 	}
 
-	// TODO: Register the new username and password, then return a session token.
-	// --> TODO: Check if the user exists on the database.
-	// --> TODO: Generate a new access token for that user.
-	// --> TODO: Register that token in the database.
-	// TODO: Return the token string to the final user.
+	// Register and respond.
 
-	log.Print(body)
+	sessionToken, err := ac.Database.RegisterNewUser(username, password)
+	if err != nil {
+		utils.WriteJsonError(w, http.StatusInternalServerError, err)
 
-	fmt.Fprint(w, `{ "message": "Registering a new user" }`)
+		return
+	}
+
+	successfulReponseData := data.RegisterSuccessfulSessionTokenResponse{
+		Username:     username,
+		SessionToken: sessionToken,
+	}
+
+	successfulReponseJsonData, err := json.Marshal(successfulReponseData)
+	if err != nil {
+		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+
+		return
+	}
+
+	fmt.Fprint(w, string(successfulReponseJsonData))
 }
