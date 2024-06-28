@@ -28,7 +28,6 @@ func TestWriteJsonError(t *testing.T) {
 	json.Unmarshal([]byte(w.Body.String()), &received)
 
 	expected := data.ErrorResponse{
-		Status:     500,
 		StatusText: http.StatusText(http.StatusInternalServerError),
 		Error:      err.Error(),
 	}

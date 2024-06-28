@@ -12,7 +12,6 @@ func WriteGenericJsonError(w http.ResponseWriter, status int, err error) {
 	w.WriteHeader(status)
 
 	jsonError := &data.ErrorResponse{
-		Status:     status,
 		StatusText: http.StatusText(status),
 		Error:      err.Error(),
 	}
