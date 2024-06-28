@@ -38,8 +38,13 @@ func (s *Sqlite) RegisterNewUser(username string, password string) (string, erro
 	token := utils.GenerateSessionToken(username)
 	expirationDate := time.Now().Add(SESSION_EXPIRES)
 
-	_, err = s.conn.Query(`INSERT INTO users (username, password, session_token, session_expires)
-        VALUES ($1, $2, $3, $4)`, username, hashedPassword, token, expirationDate)
+	statement, err := s.conn.Prepare(`INSERT INTO users (username, password, session_token, session_expires)
+        VALUES (?, ?, ?, ?)`)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = statement.Exec(username, hashedPassword, token, expirationDate)
 	if err != nil {
 		return "", err
 	}
