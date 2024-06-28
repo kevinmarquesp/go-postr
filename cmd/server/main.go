@@ -25,7 +25,7 @@ func main() {
 		log.Fatal("Could not connect to the database.", "err", err)
 	}
 
-	if err := router.InitRouter(os.Getenv("PORT")); err != nil {
+	if err := router.InitRouter(os.Getenv("PORT"), db); err != nil {
 		log.Fatal("Router error.", "err", err)
 	}
 }
