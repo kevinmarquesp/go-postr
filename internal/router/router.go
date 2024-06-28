@@ -20,6 +20,7 @@ func InitRouter(port string, db models.DatabaseProvider) error {
 	authController := api.AuthController{Database: db}
 
 	apiRouter.HandleFunc("POST /auth/register", authController.RegisterNewUser)
+	apiRouter.HandleFunc("POST /auth/update", authController.UpdateUserSessionToken)
 
 	// Global router.
 
