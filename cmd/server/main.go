@@ -19,7 +19,7 @@ func main() {
 		log.Warn("Could not load the" + DOTENV + " file, using the system's environment.")
 	}
 
-	db := &models.Sqlite{} // TODO: Pass this database provider to the router function.
+	db := &models.Sqlite{}
 
 	if err := db.Connect(os.Getenv("DATABASE_URL")); err != nil {
 		log.Fatal("Could not connect to the database.", "err", err)
