@@ -68,7 +68,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	successfulReponseJsonData, err := json.Marshal(successfulReponseData)
 	if err != nil {
-		utils.WriteJsonError(w, http.StatusInternalServerError, err)
+		utils.WriteJsonError(w, http.StatusConflict, err)
 
 		return
 	}
