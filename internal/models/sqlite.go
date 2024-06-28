@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/kevinmarquesp/go-postr/internal/utils"
@@ -10,8 +11,9 @@ import (
 )
 
 const (
-	BCRYPT_COST     = bcrypt.MinCost
-	SESSION_EXPIRES = 30 * time.Second
+	BCRYPT_COST                          = bcrypt.MinCost
+	SESSION_EXPIRES                      = 10 * time.Second
+	CANNOT_MATCH_TOKEN_TO_USERNAME_ERROR = "invalid token for username or session expired"
 )
 
 type Sqlite struct {
@@ -50,4 +52,31 @@ func (s *Sqlite) RegisterNewUser(username string, password string) (string, erro
 	}
 
 	return token, nil
+}
+
+func (s *Sqlite) AuthorizeUserWithSessionToken(username string, sessionToken string) (string, error) {
+	newSessionToken := utils.GenerateSessionToken(username)
+	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
+
+	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
+        WHERE username == ? AND session_token == ? AND session_expires < ?`)
+	if err != nil {
+		return "", err
+	}
+
+	rows, err := statement.Exec(newSessionToken, newExpirationDate, username, sessionToken, time.Now())
+	if err != nil {
+		return "", err
+	}
+
+	rowsAffected, err := rows.RowsAffected()
+	if err != nil {
+		return "", err
+	}
+
+	if rowsAffected < 1 {
+		return "", errors.New(CANNOT_MATCH_TOKEN_TO_USERNAME_ERROR)
+	}
+
+	return newSessionToken, nil
 }
