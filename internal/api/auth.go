@@ -61,18 +61,18 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	successfulReponseData := data.RegisterNewUserSuccessfulResponse{
+	response := data.RegisterNewUserSuccessfulResponse{
 		Username:     username,
 		SessionToken: sessionToken,
 	}
 
-	successfulReponseJsonData, err := json.Marshal(successfulReponseData)
+	responseJsonBytes, err := json.Marshal(response)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusConflict, err)
 		return
 	}
 
-	fmt.Fprint(w, string(successfulReponseJsonData))
+	fmt.Fprint(w, string(responseJsonBytes))
 }
 
 func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.Request) {
