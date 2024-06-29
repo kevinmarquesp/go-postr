@@ -2,7 +2,7 @@ package models
 
 type GenericDatabaseProvider interface {
 	Connect(url string) error
-	RegisterNewUser(username string, password string) (string, error)
-	AuthorizeUserWithSessionToken(username string, sessionToken string) (string, error)
-	AuthorizeUserWithCredentials(username string, password string) (string, error)
+	RegisterNewUser(username, password string) (string, error)
+	AuthorizeUserWithSessionToken(username, sessionToken string) (string, error)
+	AuthorizeUserWithCredentials(username, password string) (string, error)
 }

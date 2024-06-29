@@ -34,7 +34,7 @@ func (s *Sqlite) Connect(url string) error {
 	return nil
 }
 
-func (s *Sqlite) RegisterNewUser(username string, password string) (string, error) {
+func (s *Sqlite) RegisterNewUser(username, password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), BCRYPT_COST)
 	if err != nil {
 		return "", err
@@ -57,7 +57,7 @@ func (s *Sqlite) RegisterNewUser(username string, password string) (string, erro
 	return token, nil
 }
 
-func (s *Sqlite) AuthorizeUserWithSessionToken(username string, sessionToken string) (string, error) {
+func (s *Sqlite) AuthorizeUserWithSessionToken(username, sessionToken string) (string, error) {
 	newSessionToken := utils.GenerateSessionToken(username)
 	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
 
@@ -84,23 +84,7 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(username string, sessionToken str
 	return newSessionToken, nil
 }
 
-func (s *Sqlite) comparePassword(username string, password string) error {
-	const SELECT_QUERY = "SELECT password FROM users WHERE username IS ?"
-
-	var hashedPassword string
-
-	if err := s.conn.QueryRow(SELECT_QUERY, username).Scan(&hashedPassword); err != nil {
-		return err
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(username+password)); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Sqlite) AuthorizeUserWithCredentials(username string, password string) (string, error) {
+func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string, error) {
 	if err := s.comparePassword(username, password); err != nil {
 		return "", err
 	}
@@ -129,4 +113,20 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username string, password string) 
 	}
 
 	return newSessionToken, nil
+}
+
+func (s *Sqlite) comparePassword(username, password string) error {
+	const SELECT_QUERY = "SELECT password FROM users WHERE username IS ?"
+
+	var hashedPassword string
+
+	if err := s.conn.QueryRow(SELECT_QUERY, username).Scan(&hashedPassword); err != nil {
+		return err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(username+password)); err != nil {
+		return err
+	}
+
+	return nil
 }
