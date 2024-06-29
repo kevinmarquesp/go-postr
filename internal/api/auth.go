@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR = "username and password or a session token is required to authorize"
+	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR = "a valid username and password is required to authorize"
+	INVALID_ACCESS_TOKEN_ERROR            = "the given session token is invalid or was expired"
 )
 
 type AuthController struct {
@@ -32,8 +33,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	var body data.RegisterNewUserBodyCredentialsBody
 
-	err = json.Unmarshal(rawBody, &body)
-	if err != nil {
+	if err = json.Unmarshal(rawBody, &body); err != nil {
 		utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -96,12 +96,31 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 	password := strings.Trim(body.Password, " ")
 	sessionToken := strings.Trim(body.SessionToken, " ")
 
-	// Authorize with acess session token string.
+	updateSessionTokenWithCredentials := func() error {
+		if username == "" || password == "" {
+			return errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR)
+		}
 
-	if username == "" && password == "" && len(sessionToken) > 0 {
-		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
+		newSessionToken, err := ac.Database.AuthorizeUserWithCredentials(username, password)
 		if err != nil {
 			utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
+			return nil
+		}
+
+		fmt.Fprintf(w, `{ "newSessionToken": "%s" }`, newSessionToken)
+
+		return nil
+	}
+
+	// Authorize with acess session token string.
+
+	if sessionToken != "" {
+		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
+		if err != nil {
+			if err = updateSessionTokenWithCredentials(); err != nil {
+				utils.WriteGenericJsonError(w, http.StatusUnauthorized,
+					errors.New(INVALID_ACCESS_TOKEN_ERROR))
+			}
 			return
 		}
 
@@ -109,11 +128,9 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	if (username == "" && password != "") || (username != "" && password == "") {
-		utils.WriteGenericJsonError(w, http.StatusUnauthorized,
-			errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR))
-		return
-	}
+	// Authorize with username and password credentials.
 
-	// TODO: Authorize with user credentials.
+	if err = updateSessionTokenWithCredentials(); err != nil {
+		utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
+	}
 }
