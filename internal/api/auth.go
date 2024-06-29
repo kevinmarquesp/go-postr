@@ -96,6 +96,8 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 	password := strings.Trim(body.Password, " ")
 	sessionToken := strings.Trim(body.SessionToken, " ")
 
+	var response data.UpdateUserSessionTokenResponse
+
 	updateSessionTokenWithCredentials := func() error {
 		if username == "" || password == "" {
 			return errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR)
@@ -107,7 +109,14 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 			return nil
 		}
 
-		fmt.Fprintf(w, `{ "newSessionToken": "%s" }`, newSessionToken)
+		response.NewSessionToken = newSessionToken
+
+		responseJsonBytes, err := json.Marshal(response)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprint(w, string(responseJsonBytes))
 
 		return nil
 	}
@@ -124,7 +133,14 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 			return
 		}
 
-		fmt.Fprintf(w, `{ "newSessionToken": "%s" }`, newSessionToken)
+		response.NewSessionToken = newSessionToken
+
+		responseJsonBytes, err := json.Marshal(response)
+		if err != nil {
+			utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
+		}
+
+		fmt.Fprint(w, string(responseJsonBytes))
 		return
 	}
 

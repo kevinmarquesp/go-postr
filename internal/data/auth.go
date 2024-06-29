@@ -16,3 +16,7 @@ type UpdateUserSessionTokenCredentialsBody struct {
 	Password     string `json:"password"`
 	SessionToken string `json:"sessionToken"`
 }
+
+type UpdateUserSessionTokenResponse struct {
+	NewSessionToken string `json:"newSessionToken"`
+}
