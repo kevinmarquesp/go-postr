@@ -96,44 +96,21 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 	password := strings.Trim(body.Password, " ")
 	sessionToken := strings.Trim(body.SessionToken, " ")
 
-	var response data.UpdateUserSessionTokenResponse
-
-	updateSessionTokenWithCredentials := func() error {
-		if username == "" || password == "" {
-			return errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR)
-		}
-
-		newSessionToken, err := ac.Database.AuthorizeUserWithCredentials(username, password)
-		if err != nil {
-			utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
-			return nil
-		}
-
-		response.NewSessionToken = newSessionToken
-
-		responseJsonBytes, err := json.Marshal(response)
-		if err != nil {
-			return err
-		}
-
-		fmt.Fprint(w, string(responseJsonBytes))
-
-		return nil
-	}
-
 	// Authorize with acess session token string.
 
 	if sessionToken != "" {
 		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
 		if err != nil {
-			if err = updateSessionTokenWithCredentials(); err != nil {
+			if err = ac.updateSessionTokenWithCredentials(w, username, password); err != nil {
 				utils.WriteGenericJsonError(w, http.StatusUnauthorized,
 					errors.New(INVALID_ACCESS_TOKEN_ERROR))
 			}
 			return
 		}
 
-		response.NewSessionToken = newSessionToken
+		response := data.UpdateUserSessionTokenResponse{
+			NewSessionToken: newSessionToken,
+		}
 
 		responseJsonBytes, err := json.Marshal(response)
 		if err != nil {
@@ -146,7 +123,32 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 
 	// Authorize with username and password credentials.
 
-	if err = updateSessionTokenWithCredentials(); err != nil {
+	if err = ac.updateSessionTokenWithCredentials(w, username, password); err != nil {
 		utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
 	}
+}
+
+func (ac AuthController) updateSessionTokenWithCredentials(w http.ResponseWriter, username, password string) error {
+	if username == "" || password == "" {
+		return errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR)
+	}
+
+	newSessionToken, err := ac.Database.AuthorizeUserWithCredentials(username, password)
+	if err != nil {
+		utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
+		return nil
+	}
+
+	response := data.UpdateUserSessionTokenResponse{
+		NewSessionToken: newSessionToken,
+	}
+
+	responseJsonBytes, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprint(w, string(responseJsonBytes))
+
+	return nil
 }
