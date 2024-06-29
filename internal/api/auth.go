@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,6 +11,10 @@ import (
 	"github.com/kevinmarquesp/go-postr/internal/data"
 	"github.com/kevinmarquesp/go-postr/internal/models"
 	"github.com/kevinmarquesp/go-postr/internal/utils"
+)
+
+const (
+	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR = "username and password or a session token is required to authorize"
 )
 
 type AuthController struct {
@@ -88,22 +93,27 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 	}
 
 	username := strings.Trim(body.Username, " ")
-	// password := strings.Trim(body.Password, " ")
+	password := strings.Trim(body.Password, " ")
 	sessionToken := strings.Trim(body.SessionToken, " ")
 
-	// TODO: Try this update session task with the user credentials instead.
+	// Authorize with acess session token string.
 
-	if len(sessionToken) == 0 {
-		utils.WriteGenericJsonError(w, http.StatusNotImplemented, err)
+	if username == "" && password == "" && len(sessionToken) > 0 {
+		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
+		if err != nil {
+			utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		fmt.Fprintf(w, `{ "newSessionToken": "%s" }`, newSessionToken)
 		return
 	}
 
-	newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
-	if err != nil {
-		utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
+	if (username == "" && password != "") || (username != "" && password == "") {
+		utils.WriteGenericJsonError(w, http.StatusUnauthorized,
+			errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR))
 		return
 	}
 
-	fmt.Fprintf(w, `{ "newSessionToken": "%s" }`, newSessionToken)
+	// TODO: Authorize with user credentials.
 }
-
