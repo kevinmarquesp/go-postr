@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/kevinmarquesp/go-postr/internal/utils"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -52,7 +51,7 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 	}
 
 	publicID := publicUUID.String()
-	sessionTokenString := sessionTokenUUID.String()
+	sessionToken := sessionTokenUUID.String()
 	expirationDate := time.Now().Add(SESSION_EXPIRES)
 
 	statement, err := s.conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
@@ -61,27 +60,30 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 		return "", "", err
 	}
 
-	_, err = statement.Exec(publicID, fullname, username, hashedPassword, sessionTokenString, expirationDate)
+	_, err = statement.Exec(publicID, fullname, username, hashedPassword, sessionToken, expirationDate)
 	if err != nil {
 		return "", "", err
 	}
 
-	return publicID, sessionTokenString, nil
+	return publicID, sessionToken, nil
 }
 
-// TODO: Remove the `username` attribute, the session token don't need to depend on that.
-
-func (s *Sqlite) AuthorizeUserWithSessionToken(username, sessionToken string) (string, error) {
-	newSessionToken := utils.GenerateSessionToken(username)
-	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
-
-	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
-        WHERE username IS ? AND session_token IS ? AND session_expires > ?`)
+func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
+	newSessionTokenUUID, err := uuid.NewV7()
 	if err != nil {
 		return "", err
 	}
 
-	rows, err := statement.Exec(newSessionToken, newExpirationDate, username, sessionToken, time.Now())
+	newSessionToken := newSessionTokenUUID.String()
+	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
+
+	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
+        WHERE AND session_token IS ? AND session_expires > ?`)
+	if err != nil {
+		return "", err
+	}
+
+	rows, err := statement.Exec(newSessionToken, newExpirationDate, sessionToken, time.Now())
 	if err != nil {
 		return "", err
 	}
@@ -99,11 +101,12 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(username, sessionToken string) (s
 }
 
 func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string, error) {
-	if err := s.comparePassword(username, password); err != nil {
+	newSessionTokenUUID, err := uuid.NewV7()
+	if err != nil {
 		return "", err
 	}
 
-	newSessionToken := utils.GenerateSessionToken(username)
+	newSessionToken := newSessionTokenUUID.String()
 	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
