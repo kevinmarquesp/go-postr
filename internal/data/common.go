@@ -1,6 +1,6 @@
 package data
 
-type ErrorResponse struct {
+type GenericErrorResponse struct {
 	StatusText string `json:"statusText"`
 	Error      string `json:"error"`
 }

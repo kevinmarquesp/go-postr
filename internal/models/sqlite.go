@@ -16,6 +16,7 @@ type Sqlite struct {
 	conn *sql.DB
 }
 
+// Establishes a connection to the database using the provided URL.
 func (s *Sqlite) Connect(url string) error {
 	conn, err := sql.Open("sqlite3", url)
 	if err != nil {
@@ -27,6 +28,12 @@ func (s *Sqlite) Connect(url string) error {
 	return nil
 }
 
+// Registers a new user in the database with the provided details.
+//
+// Returns:
+//   - A string representing the public ID of the new user.
+//   - A string representing the session token for the new user.
+//   - An error if the registration fails, or nil if successful.
 func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), BCRYPT_COST)
 	if err != nil {
@@ -57,6 +64,7 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 	return publicID, sessionToken, nil
 }
 
+// Authorizes a user based on the provided session token, extending the session duration.
 func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
 	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
@@ -86,6 +94,7 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 	return newSessionToken, nil
 }
 
+// Authorizes a user based on the provided username and password, issuing a new session token.
 func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string, error) {
 	if err := s.comparePassword(username, password); err != nil {
 		return "", err

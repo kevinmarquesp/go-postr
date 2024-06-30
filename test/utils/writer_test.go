@@ -23,11 +23,11 @@ func TestWriteGenericJsonError(t *testing.T) {
 		t.Errorf("Expected status code %d, but got %d", status, w.Code)
 	}
 
-	var received data.ErrorResponse
+	var received data.GenericErrorResponse
 
 	json.Unmarshal([]byte(w.Body.String()), &received)
 
-	expected := data.ErrorResponse{
+	expected := data.GenericErrorResponse{
 		StatusText: http.StatusText(http.StatusInternalServerError),
 		Error:      err.Error(),
 	}
