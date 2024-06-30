@@ -18,20 +18,6 @@ const (
 	PASSWORD_DONT_HAVE_ANY_SPECIALS_ERROR = "password should include at least one special character"
 )
 
-// This function checks if the username is not empty, does not contain spaces,
-// and consists only of valid characters (letters, numbers, underscores, and hyphens).
-//
-// Example usage:
-//
-//	if err := utils.ValidateUsernameString("valid_username"); err != nil {
-//	    fmt.Println("Username validation error:", err)
-//
-//	} else {
-//	    fmt.Println("Username is valid")
-//	}
-//
-// The function returns specific error messages defined in constants ended with
-// the specific "_ERROR" sufix for different validation failures.
 func ValidateUsernameString(username string) error {
 	if len(username) < 1 {
 		return errors.New(USERNAME_IS_EMPTY_ERROR)
@@ -48,19 +34,6 @@ func ValidateUsernameString(username string) error {
 	return nil
 }
 
-// This function checks if the password is not empty, has a minimum length of 12 characters,
-// and includes at least one uppercase letter, one lowercase letter, one number, and one special character.
-//
-// Example usage:
-//
-//	if err := utils.ValidatePasswordString("Valid@12345Password"); err != nil {
-//	    fmt.Println("Password validation error:", err)
-//
-//	} else {
-//	    fmt.Println("Password is valid")
-//	}
-//
-// The function returns specific error messages defined in constants for different validation failures.
 func ValidatePasswordString(password string) error {
 	length := len(password)
 

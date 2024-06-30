@@ -19,53 +19,10 @@ const (
 	INVALID_ACCESS_TOKEN_ERROR                 = "the given session token is invalid or was expired"
 )
 
-// AuthController handles authentication-related HTTP requests.
-//
-// This controller uses a GenericDatabaseProvider to perform operations
-// such as registering new users and managing user sessions.
-//
-// Fields:
-// - Database: An instance of a type that implements the models.GenericDatabaseProvider interface.
-//
-// Example usage:
-//
-//	func main() {
-//	    db := &models.Sqlite{}
-//	    authController := AuthController{Database: db}
-//
-//	    db.Connect("database_url")
-//
-//	    http.HandleFunc("/register", authController.RegisterNewUser)
-//	    http.ListenAndServe(":8080", nil)
-//	}
 type AuthController struct {
 	Database models.GenericDatabaseProvider
 }
 
-// This method reads the request body to obtain the user's registration details,
-// validates the input, registers the new user in the database, and responds with
-// the registration details including a session token.
-//
-// Example request body (JSON):
-//
-//	{
-//	    "fullname": "John Doe",
-//	    "username": "johndoe",
-//	    "password": "Password123!"
-//	}
-//
-// Example response body (JSON):
-//
-//	{
-//	    "username": "johndoe",
-//	    "public_id": "some-unique-public-id",
-//	    "session_token": "some-session-token"
-//	}
-//
-// Possible error responses:
-//   - 400 Bad Request: If any of the input validation checks fail.
-//   - 409 Conflict: If there is an error while generating the response JSON.
-//   - 500 Internal Server Error: If there is an error reading the request body or unmarshaling JSON.
 func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -127,30 +84,6 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 	fmt.Fprint(w, string(responseJsonBytes))
 }
 
-// This method reads the request body to obtain the user's credentials and session token,
-// validates the input, authorizes the user, and responds with a new refreshed session token.
-//
-// Example request body (JSON):
-//
-//	{
-//	    "username": "johndoe",
-//	    "password": "Password123!",
-//	    "session_token": "existing-session-token"
-//	}
-//
-// Note: The credentials are optional if assion token were provided and vice-versa.
-// If the session token validation fails, it will use the credentials information
-// if it was provided along side with the token.
-//
-// Example response body (JSON):
-//
-//	{
-//	    "new_session_token": "new-session-token"
-//	}
-//
-// Possible error responses:
-//   - 401 Unauthorized: If the provided session token or credentials are invalid.
-//   - 500 Internal Server Error: If there is an error reading the request body or unmarshaling JSON.
 func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
