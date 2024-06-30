@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/kevinmarquesp/go-postr/internal/utils"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -40,18 +40,16 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 		return "", "", err
 	}
 
-	sessionTokenUUID, err := uuid.NewV7()
+	publicID, err := utils.GenerateTokenID()
 	if err != nil {
 		return "", "", err
 	}
 
-	publicUUID, err := uuid.NewV7()
+	sessionToken, err := utils.GenerateTokenID()
 	if err != nil {
 		return "", "", err
 	}
 
-	publicID := publicUUID.String()
-	sessionToken := sessionTokenUUID.String()
 	expirationDate := time.Now().Add(SESSION_EXPIRES)
 
 	statement, err := s.conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
@@ -69,12 +67,11 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 }
 
 func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
-	newSessionTokenUUID, err := uuid.NewV7()
+	newSessionToken, err := utils.GenerateTokenID()
 	if err != nil {
 		return "", err
 	}
 
-	newSessionToken := newSessionTokenUUID.String()
 	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
@@ -101,12 +98,15 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 }
 
 func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string, error) {
-	newSessionTokenUUID, err := uuid.NewV7()
+	if err := s.comparePassword(username, password); err != nil {
+		return "", err
+	}
+
+	newSessionToken, err := utils.GenerateTokenID()
 	if err != nil {
 		return "", err
 	}
 
-	newSessionToken := newSessionTokenUUID.String()
 	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
