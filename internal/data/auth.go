@@ -1,5 +1,7 @@
 package data
 
+// TODO: A `fullname` should be required to register.
+
 type RegisterNewUserBodyCredentialsBody struct {
 	Fullname string `json:"fullname"`
 	Username string `json:"username"`

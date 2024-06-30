@@ -40,6 +40,8 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	// Field validation.
 
+	// TODO: It should include the `fullname` to register a new user too.
+
 	username := strings.Trim(body.Username, " ")
 	password := strings.Trim(body.Password, " ")
 

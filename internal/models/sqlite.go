@@ -34,6 +34,8 @@ func (s *Sqlite) Connect(url string) error {
 	return nil
 }
 
+// TODO: Include the `fullname` column when registering a new user.
+
 func (s *Sqlite) RegisterNewUser(username, password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), BCRYPT_COST)
 	if err != nil {
