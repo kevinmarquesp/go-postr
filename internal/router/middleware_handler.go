@@ -2,10 +2,13 @@ package router
 
 import (
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/charmbracelet/log"
 )
+
+const EXCLUDE_MIDDLEWARE_MATCH = `/favicon\.ico`
 
 // Wrapper to hold the writer status when updating the status code.
 type StatusWriter struct {
@@ -27,6 +30,11 @@ func MiddlewareHandler(handler http.Handler) http.Handler {
 		sw := &StatusWriter{
 			ResponseWriter: w,
 			status:         http.StatusOK,
+		}
+
+		if regexp.MustCompile(EXCLUDE_MIDDLEWARE_MATCH).MatchString(r.URL.Path) {
+			handler.ServeHTTP(sw, r)
+			return
 		}
 
 		if Middleware(sw, r) {
