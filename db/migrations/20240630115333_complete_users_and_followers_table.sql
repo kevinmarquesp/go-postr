@@ -5,11 +5,11 @@ DROP TABLE users;
 CREATE TABLE IF NOT EXISTS users (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,
   public_id       UUID UNIQUE NOT NULL,
+  fullname        TEXT NOT NULL,
   username        TEXT UNIQUE NOT NULL,
   password        TEXT NOT NULL,
-  session_token   TEXT NOT NULL,
+  session_token   TEXT UNIQUE NOT NULL,
   session_expires TIMESTAMP NOT NULL,
-  fullname        TEXT UNIQUE NOT NULL,
   description     TEXT,
   followers       INTEGER DEFAULT 0 CHECK (followers >= 0),
   following       INTEGER DEFAULT 0 CHECK (following >= 0),
