@@ -13,7 +13,7 @@ import (
 type Sqlite struct {
 	GenericDatabaseProvider
 
-	conn *sql.DB
+	Conn *sql.DB
 }
 
 func (s *Sqlite) Connect(url string) error {
@@ -22,7 +22,7 @@ func (s *Sqlite) Connect(url string) error {
 		return err
 	}
 
-	s.conn = conn
+	s.Conn = conn
 
 	return nil
 }
@@ -43,7 +43,7 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 		return "", "", err
 	}
 
-	statement, err := s.conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
+	statement, err := s.Conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
         session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return "", "", err
@@ -64,7 +64,7 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 		return "", err
 	}
 
-	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
+	statement, err := s.Conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
         WHERE AND session_token IS ? AND session_expires > ?`)
 	if err != nil {
 		return "", err
@@ -97,7 +97,7 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string
 		return "", err
 	}
 
-	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
+	statement, err := s.Conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
         WHERE username IS ?`)
 	if err != nil {
 		return "", err
@@ -125,7 +125,7 @@ func (s *Sqlite) comparePassword(username, password string) error {
 
 	var hashedPassword string
 
-	if err := s.conn.QueryRow(SELECT_QUERY, username).Scan(&hashedPassword); err != nil {
+	if err := s.Conn.QueryRow(SELECT_QUERY, username).Scan(&hashedPassword); err != nil {
 		return err
 	}
 
