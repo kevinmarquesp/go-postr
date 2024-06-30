@@ -59,6 +59,8 @@ func (s *Sqlite) RegisterNewUser(username, password string) (string, error) {
 	return token, nil
 }
 
+// TODO: Remove the `username` attribute, the session token don't need to depend on that.
+
 func (s *Sqlite) AuthorizeUserWithSessionToken(username, sessionToken string) (string, error) {
 	newSessionToken := utils.GenerateSessionToken(username)
 	newExpirationDate := time.Now().Add(SESSION_EXPIRES)

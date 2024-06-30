@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// TODO: It should not depend on the `username` field to generate a new session token id.
+
 func GenerateSessionToken(username string) string {
 	shaAlgorithm := sha256.New()
 
