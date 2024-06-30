@@ -38,12 +38,10 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 		return "", "", err
 	}
 
-	sessionToken, err := utils.GenerateTokenID()
+	sessionToken, expirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
 		return "", "", err
 	}
-
-	expirationDate := time.Now().Add(SESSION_MAX_DURATION)
 
 	statement, err := s.conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
         session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)`)
@@ -60,12 +58,10 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 }
 
 func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
-	newSessionToken, err := utils.GenerateTokenID()
+	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
 		return "", err
 	}
-
-	newExpirationDate := time.Now().Add(SESSION_MAX_DURATION)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
         WHERE AND session_token IS ? AND session_expires > ?`)
@@ -95,12 +91,10 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string
 		return "", err
 	}
 
-	newSessionToken, err := utils.GenerateTokenID()
+	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
 		return "", err
 	}
-
-	newExpirationDate := time.Now().Add(SESSION_MAX_DURATION)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
         WHERE username IS ?`)
