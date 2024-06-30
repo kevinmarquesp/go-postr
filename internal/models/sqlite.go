@@ -10,13 +10,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const (
-	BCRYPT_COST                          = bcrypt.MinCost
-	SESSION_EXPIRES                      = 10 * time.Second
-	CANNOT_MATCH_TOKEN_TO_USERNAME_ERROR = "invalid token for username or session expired"
-	INVALID_AUTH_CREDENTIALS_ERROR       = "invalid username and password credentials"
-)
-
 type Sqlite struct {
 	GenericDatabaseProvider
 
@@ -50,7 +43,7 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 		return "", "", err
 	}
 
-	expirationDate := time.Now().Add(SESSION_EXPIRES)
+	expirationDate := time.Now().Add(SESSION_MAX_DURATION)
 
 	statement, err := s.conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
         session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)`)
@@ -72,7 +65,7 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 		return "", err
 	}
 
-	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
+	newExpirationDate := time.Now().Add(SESSION_MAX_DURATION)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
         WHERE AND session_token IS ? AND session_expires > ?`)
@@ -107,7 +100,7 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string
 		return "", err
 	}
 
-	newExpirationDate := time.Now().Add(SESSION_EXPIRES)
+	newExpirationDate := time.Now().Add(SESSION_MAX_DURATION)
 
 	statement, err := s.conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
         WHERE username IS ?`)
