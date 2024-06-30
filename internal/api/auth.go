@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR = "a valid username and password is required to authorize"
-	INVALID_ACCESS_TOKEN_ERROR            = "the given session token is invalid or was expired"
+	FULLNAME_REGITER_FIELD_NOT_SPECIFIED_ERROR = "a fullname should be provided to register the user"
+	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR      = "a valid username and password is required to authorize"
+	INVALID_ACCESS_TOKEN_ERROR                 = "the given session token is invalid or was expired"
 )
 
 type AuthController struct {
@@ -40,10 +41,15 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	// Field validation.
 
-	// TODO: It should include the `fullname` to register a new user too.
-
+	fullname := strings.Trim(body.Fullname, " ")
 	username := strings.Trim(body.Username, " ")
 	password := strings.Trim(body.Password, " ")
+
+	if len(fullname) == 0 {
+		utils.WriteGenericJsonError(w, http.StatusBadRequest,
+			errors.New(FULLNAME_REGITER_FIELD_NOT_SPECIFIED_ERROR))
+		return
+	}
 
 	if err = utils.ValidateUsernameString(username); err != nil {
 		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
@@ -57,7 +63,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	// Register and respond.
 
-	sessionToken, err := ac.Database.RegisterNewUser(username, password)
+	publicID, sessionToken, err := ac.Database.RegisterNewUser(fullname, username, password)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
@@ -65,6 +71,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	response := data.RegisterNewUserSuccessfulResponse{
 		Username:     username,
+		PublicID:     publicID,
 		SessionToken: sessionToken,
 	}
 

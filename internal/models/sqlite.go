@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/kevinmarquesp/go-postr/internal/utils"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
@@ -34,29 +35,38 @@ func (s *Sqlite) Connect(url string) error {
 	return nil
 }
 
-// TODO: Include the `fullname` column when registering a new user.
-
-func (s *Sqlite) RegisterNewUser(username, password string) (string, error) {
+func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), BCRYPT_COST)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	token := utils.GenerateSessionToken(username)
+	sessionTokenUUID, err := uuid.NewV7()
+	if err != nil {
+		return "", "", err
+	}
+
+	publicUUID, err := uuid.NewV7()
+	if err != nil {
+		return "", "", err
+	}
+
+	publicID := publicUUID.String()
+	sessionTokenString := sessionTokenUUID.String()
 	expirationDate := time.Now().Add(SESSION_EXPIRES)
 
-	statement, err := s.conn.Prepare(`INSERT INTO users (username, password, session_token, session_expires)
-        VALUES (?, ?, ?, ?)`)
+	statement, err := s.conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
+        session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)`)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	_, err = statement.Exec(username, hashedPassword, token, expirationDate)
+	_, err = statement.Exec(publicID, fullname, username, hashedPassword, sessionTokenString, expirationDate)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return token, nil
+	return publicID, sessionTokenString, nil
 }
 
 // TODO: Remove the `username` attribute, the session token don't need to depend on that.
