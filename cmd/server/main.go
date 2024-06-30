@@ -25,7 +25,14 @@ func main() {
 		log.Fatal("Could not connect to the database.", "err", err)
 	}
 
-	if err := router.InitRouter(os.Getenv("PORT"), db); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal(("Port variable was not found in the environment."))
+	}
+
+	log.Info("Starting the application at the port " + port + ".")
+
+	if err := router.InitRouter(port, db); err != nil {
 		log.Fatal("Router error.", "err", err)
 	}
 }
