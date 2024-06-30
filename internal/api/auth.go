@@ -108,7 +108,7 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 	// Authorize with acess session token string.
 
 	if sessionToken != "" {
-		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(username, sessionToken)
+		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(sessionToken)
 		if err != nil {
 			if err = ac.updateSessionTokenWithCredentials(w, username, password); err != nil {
 				utils.WriteGenericJsonError(w, http.StatusUnauthorized,
