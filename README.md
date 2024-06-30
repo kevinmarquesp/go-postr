@@ -16,6 +16,11 @@ struct to the `initServerRouter()` that stores data in memmory, not in a real
 database, allowing me to test the behavior of the handlers.
 
 
+### Database
+
+![Database Schema](./docs/assets/database_schema.png)
+
+
 ## Credentials Flow
 
 +   *Signin*:
