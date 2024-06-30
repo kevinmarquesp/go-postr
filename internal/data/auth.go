@@ -1,5 +1,7 @@
 package data
 
+// Used on the user register API related routes.
+
 type RegisterNewUserBodyCredentialsBody struct {
 	Fullname string `json:"fullname"`
 	Username string `json:"username"`
@@ -12,12 +14,14 @@ type RegisterNewUserSuccessfulResponse struct {
 	SessionToken string `json:"sessionToken"`
 }
 
-type UpdateUserSessionTokenCredentialsBody struct {
+// Used in the refresh session token related routes.
+
+type RefreshUserSessionTokenCredentialsBody struct {
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	SessionToken string `json:"sessionToken"`
 }
 
-type UpdateUserSessionTokenResponse struct {
+type RefreshUserSessionTokenResponse struct {
 	NewSessionToken string `json:"newSessionToken"`
 }

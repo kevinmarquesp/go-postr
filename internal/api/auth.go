@@ -151,7 +151,7 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 // Possible error responses:
 //   - 401 Unauthorized: If the provided session token or credentials are invalid.
 //   - 500 Internal Server Error: If there is an error reading the request body or unmarshaling JSON.
-func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.Request) {
+func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	rawBody, err := io.ReadAll(r.Body)
@@ -160,7 +160,7 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	var body data.UpdateUserSessionTokenCredentialsBody
+	var body data.RefreshUserSessionTokenCredentialsBody
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {
@@ -184,7 +184,7 @@ func (ac AuthController) UpdateUserSessionToken(w http.ResponseWriter, r *http.R
 			return
 		}
 
-		response := data.UpdateUserSessionTokenResponse{
+		response := data.RefreshUserSessionTokenResponse{
 			NewSessionToken: newSessionToken,
 		}
 
@@ -215,7 +215,7 @@ func (ac AuthController) updateSessionTokenWithCredentials(w http.ResponseWriter
 		return nil
 	}
 
-	response := data.UpdateUserSessionTokenResponse{
+	response := data.RefreshUserSessionTokenResponse{
 		NewSessionToken: newSessionToken,
 	}
 
