@@ -9,6 +9,18 @@ MIGRATIONS = db/sqlite3/migrations
 run:
 	@go run $(APP)/$(SERVER)
 
+.PHONY: test
+test:
+	@gotestsum --format-hide-empty-pkg --format-icons codicons $(UNIT)
+
+.PHONY: test-watch
+test-watch:
+	@inotifywait --include '.\.(go|sql)$$' -rm ./ -e modify | \
+		while read -r dir action file; do \
+			clear; printf "\e[?25l\n"; \
+			gotestsum --format-hide-empty-pkg --format-icons codicons; \
+		done
+
 .PHONY: migration-create
 migration-create:
 	@read -rp "Migration name: " file; \
