@@ -1,6 +1,7 @@
 package models_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -11,26 +12,17 @@ import (
 )
 
 func TestSqliteRegisterUser(t *testing.T) {
-	db := &models.Sqlite{}
+	const (
+		TARGET_DIR = "../../tmp/"
+		MOCK_FILE  = "../../db/sqlite3/mock_setup.sql"
+	)
 
-	// Connect to in-memory database
-	if err := db.Connect(":memory:"); err != nil {
-		assert.NoError(t, err)
-	}
+	// Create a temporary database for mocking tests
 
-	// Create the users table
-	createTableStmt := `
-	CREATE TABLE users (
-		public_id TEXT PRIMARY KEY,
-		fullname TEXT,
-		username TEXT UNIQUE,
-		password TEXT,
-		session_token TEXT,
-		session_expires DATETIME
-	);`
-
-	_, err := db.Conn.Exec(createTableStmt)
+	db, dbFile, err := models.MockSqlite(TARGET_DIR, MOCK_FILE)
 	assert.NoError(t, err)
+
+	defer os.Remove(dbFile)
 
 	// Define user details
 	fullname := "John Doe"
@@ -72,36 +64,36 @@ func TestSqliteRegisterUser(t *testing.T) {
 }
 
 func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
-	db := &models.Sqlite{}
+	const (
+		TARGET_DIR = "../../tmp/"
+		MOCK_FILE  = "../../db/sqlite3/mock_setup.sql"
+	)
 
-	// Connect to in-memory database
-	if err := db.Connect(":memory:"); err != nil {
-		assert.NoError(t, err)
-	}
+	// Create a temporary database for mocking tests
 
-	// Create the users table
-	createTableStmt := `
-	CREATE TABLE users (
-		public_id TEXT PRIMARY KEY,
-		fullname TEXT,
-		username TEXT UNIQUE,
-		password TEXT,
-		session_token TEXT,
-		session_expires DATETIME
-	);`
-	_, err := db.Conn.Exec(createTableStmt)
+	db, dbFile, err := models.MockSqlite(TARGET_DIR, MOCK_FILE)
 	assert.NoError(t, err)
+
+	defer os.Remove(dbFile)
 
 	// Insert a user into the database
 	fullname := "John Doe"
 	username := "johndoe"
 	password := "password123"
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), bcrypt.DefaultCost)
 	assert.NoError(t, err)
+
 	publicID, err := utils.GenerateTokenID()
 	assert.NoError(t, err)
-	insertStmt := `INSERT INTO users (public_id, fullname, username, password) VALUES (?, ?, ?, ?)`
-	_, err = db.Conn.Exec(insertStmt, publicID, fullname, username, hashedPassword)
+
+	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Hour)
+
+	insertStmt := `INSERT INTO users (public_id, fullname, username, password, session_token,
+        session_expires) VALUES (?, ?, ?, ?, ?, ?)`
+
+	_, err = db.Conn.Exec(insertStmt, publicID, fullname, username, hashedPassword,
+		initSessionToken, initSessionExpires)
 	assert.NoError(t, err)
 
 	// Authorize user with credentials
