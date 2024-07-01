@@ -3,7 +3,7 @@ SERVER = cmd/server
 
 DB = tmp/database.sqlite3
 PROVIDER = sqlite3
-MIGRATIONS = db/migrations
+MIGRATIONS = db/sqlite3/migrations
 
 .PHONY: run
 run:
