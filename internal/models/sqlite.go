@@ -77,7 +77,7 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 	}
 
 	statement, err := s.Conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
-        WHERE AND session_token IS ? AND session_expires > ?`)
+        WHERE session_token IS ? AND session_expires > ?`)
 	if err != nil {
 		return "", err
 	}
