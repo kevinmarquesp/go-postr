@@ -1,0 +1,42 @@
+name: Test Library
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actions Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+
+      - name: Install Dependencies
+        run: |
+          go get .
+          go install github.com/gotesttools/gotestfmt/v2/cmd/gotestfmt@latest
+
+      - name: Build
+        run: |
+          go build github.com/kevinmarquesp/go-postr/cmd/server
+
+      - name: Test
+        run: |
+          go test -v ./... -json 2>&1 | gotestfmt
