@@ -39,4 +39,5 @@ jobs:
 
       - name: Test
         run: |
+          mkdir -vp ./tmp # For the mock SQLite3 database!
           go test -v ./... -json 2>&1 | gotestfmt
