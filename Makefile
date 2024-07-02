@@ -1,5 +1,6 @@
 APP = github.com/kevinmarquesp/go-postr
 SERVER = cmd/server
+SEED = cmd/seed
 
 DB = tmp/database.sqlite3
 PROVIDER = sqlite3
@@ -8,6 +9,10 @@ MIGRATIONS = db/sqlite3/migrations
 .PHONY: run
 run:
 	@go run $(APP)/$(SERVER)
+
+.PHONY: seed
+seed:
+	@go run $(APP)/$(SEED)
 
 .PHONY: test
 test:
