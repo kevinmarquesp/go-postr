@@ -129,7 +129,7 @@ func TestSqliteRegisterUser(t *testing.T) {
 	}
 }
 
-func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
+func mockSqliteWithJohnDoe(t *testing.T) (models.Sqlite, string, string, string, string) {
 	const (
 		TARGET_DIR = "../../tmp/"
 		MOCK_FILE  = "../../db/sqlite3/mock_setup.sql"
@@ -139,8 +139,6 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 
 	db, dbFile, err := models.MockSqlite(TARGET_DIR, MOCK_FILE)
 	assert.NoError(t, err)
-
-	defer os.Remove(dbFile)
 
 	// Insert a user into the database
 
@@ -162,6 +160,14 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 	_, err = db.Conn.Exec(INSERT_QUERY, publicID, fullname, username, hashedPassword,
 		initSessionToken, initSessionExpires)
 	assert.NoError(t, err)
+
+	return db, dbFile, fullname, username, password
+}
+
+func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
+	db, dbFile, _, username, password := mockSqliteWithJohnDoe(t)
+
+	defer os.Remove(dbFile)
 
 	// Authorize user with credentials
 
@@ -193,38 +199,9 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 }
 
 func TestSqliteAuthorizeUserWithCredentialsFail(t *testing.T) {
-	const (
-		TARGET_DIR = "../../tmp/"
-		MOCK_FILE  = "../../db/sqlite3/mock_setup.sql"
-	)
-
-	// Create a temporary database for mocking tests
-
-	db, dbFile, err := models.MockSqlite(TARGET_DIR, MOCK_FILE)
-	assert.NoError(t, err)
+	db, dbFile, _, username, password := mockSqliteWithJohnDoe(t)
 
 	defer os.Remove(dbFile)
-
-	// Insert a user into the database
-
-	fullname := "John Doe"
-	username := "johndoe"
-	password := "password123"
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), bcrypt.DefaultCost)
-	assert.NoError(t, err)
-
-	publicID, err := utils.GenerateTokenID()
-	assert.NoError(t, err)
-
-	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Hour)
-
-	const INSERT_QUERY = "INSERT INTO users (public_id, fullname, username, password," +
-		"session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)"
-
-	_, err = db.Conn.Exec(INSERT_QUERY, publicID, fullname, username, hashedPassword,
-		initSessionToken, initSessionExpires)
-	assert.NoError(t, err)
 
 	// Fail with incorrect username
 
