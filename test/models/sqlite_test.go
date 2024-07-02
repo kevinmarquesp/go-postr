@@ -36,20 +36,38 @@ func TestSqliteRegisterUser(t *testing.T) {
 		{
 			fullname:   "John Doe",
 			username:   "johndoe",
-			password:   "password123",
+			password:   "Password1234$",
 			expectFail: false,
-		},
-		{
-			fullname:   "John Doe",
-			username:   "johndoe",
-			password:   "password123",
-			expectFail: true, // user already exists
 		},
 		{
 			fullname:   "Fulano de Tal",
 			username:   "fulano",
-			password:   "password123",
+			password:   "Password1234$",
 			expectFail: false,
+		},
+		{
+			fullname:   "Invalid Username",
+			username:   "^^ Invalid >w<",
+			password:   "Password1234$",
+			expectFail: true,
+		},
+		{
+			fullname:   "",
+			username:   "invalid_fullname",
+			password:   "Password1234$",
+			expectFail: true,
+		},
+		{
+			fullname:   "Invalid Password",
+			username:   "invalid_password",
+			password:   "d6873fde9e01402d8c403b876350d911",
+			expectFail: true,
+		},
+		{
+			fullname:   "John Doe",
+			username:   "johndoe",
+			password:   "Password1234$",
+			expectFail: true, // user already exists
 		},
 	}
 
