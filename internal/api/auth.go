@@ -14,9 +14,8 @@ import (
 )
 
 const (
-	FULLNAME_REGITER_FIELD_NOT_SPECIFIED_ERROR = "a fullname should be provided to register the user"
-	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR      = "a valid username and password is required to authorize"
-	INVALID_ACCESS_TOKEN_ERROR                 = "the given session token is invalid or was expired"
+	INVALID_ACCESS_TOKEN_ERROR            = "the given session token is invalid or was expired"
+	UNSPECIFIED_AUTHORIZATION_FIELD_ERROR = "a valid username and password is required to authorize"
 )
 
 type AuthController struct {
@@ -39,27 +38,9 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Field validation.
-
 	fullname := strings.Trim(body.Fullname, " ")
 	username := strings.Trim(body.Username, " ")
 	password := strings.Trim(body.Password, " ")
-
-	if len(fullname) == 0 {
-		utils.WriteGenericJsonError(w, http.StatusBadRequest,
-			errors.New(FULLNAME_REGITER_FIELD_NOT_SPECIFIED_ERROR))
-		return
-	}
-
-	if err = utils.ValidateUsernameString(username); err != nil {
-		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if err = utils.ValidatePasswordString(password); err != nil {
-		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
-		return
-	}
 
 	// Register and respond.
 

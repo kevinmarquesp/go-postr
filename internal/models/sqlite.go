@@ -28,6 +28,18 @@ func (s *Sqlite) Connect(url string) error {
 }
 
 func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, string, error) {
+	if len(fullname) == 0 {
+		return "", "", errors.New(FULLNAME_REGITER_FIELD_NOT_SPECIFIED_ERROR)
+	}
+
+	if err := utils.ValidateUsernameString(username); err != nil {
+		return "", "", err
+	}
+
+	if err := utils.ValidatePasswordString(password); err != nil {
+		return "", "", err
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), BCRYPT_COST)
 	if err != nil {
 		return "", "", err
