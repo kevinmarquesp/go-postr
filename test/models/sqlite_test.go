@@ -129,7 +129,7 @@ func TestSqliteRegisterUser(t *testing.T) {
 	}
 }
 
-func mockSqliteWithJohnDoe(t *testing.T) (models.Sqlite, string, string, string, string) {
+func mockSqliteWithJohnDoe(t *testing.T) (models.Sqlite, string, string, string, string, string) {
 	const (
 		TARGET_DIR = "../../tmp/"
 		MOCK_FILE  = "../../db/sqlite3/mock_setup.sql"
@@ -152,7 +152,7 @@ func mockSqliteWithJohnDoe(t *testing.T) (models.Sqlite, string, string, string,
 	publicID, err := utils.GenerateTokenID()
 	assert.NoError(t, err)
 
-	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Hour)
+	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Second)
 
 	const INSERT_QUERY = "INSERT INTO users (public_id, fullname, username, password," +
 		"session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)"
@@ -161,11 +161,67 @@ func mockSqliteWithJohnDoe(t *testing.T) (models.Sqlite, string, string, string,
 		initSessionToken, initSessionExpires)
 	assert.NoError(t, err)
 
-	return db, dbFile, fullname, username, password
+	return db, dbFile, fullname, username, password, initSessionToken
+}
+
+func TestSqliteAuthorizeUserWithSessionToken(t *testing.T) {
+	db, dbFile, _, username, _, sessionToken := mockSqliteWithJohnDoe(t)
+
+	defer os.Remove(dbFile)
+
+	// Authorize user with the session token
+
+	newSessionToken, err := db.AuthorizeUserWithSessionToken(sessionToken)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, newSessionToken)
+
+	// Query the database to verify the session_token and session_expires were updated
+
+	var (
+		dbSessionToken   string
+		dbSessionExpires time.Time
+	)
+
+	const SELECT_QUERY = "SELECT session_token, session_expires FROM users WHERE username = ?"
+
+	err = db.Conn.QueryRow(SELECT_QUERY, username).Scan(&dbSessionToken, &dbSessionExpires)
+	assert.NoError(t, err)
+
+	// Verify the session token
+
+	assert.Equal(t, newSessionToken, dbSessionToken)
+
+	// Verify the session expiration time is within the expected range
+
+	expectedExpiration := time.Now().Add(models.SESSION_MAX_DURATION)
+
+	assert.WithinDuration(t, expectedExpiration, dbSessionExpires, time.Minute)
+}
+
+func TestSqliteAuthorizeUserWithSessionTokenFail(t *testing.T) {
+	db, dbFile, _, _, _, sessionToken := mockSqliteWithJohnDoe(t)
+
+	defer os.Remove(dbFile)
+
+	// Fail with invalid session token
+
+	newSessiontoken, err := db.AuthorizeUserWithSessionToken("blah-blah-blah-blah-blah")
+	assert.NotNil(t, err)
+	assert.Empty(t, newSessiontoken)
+
+	// Fail with an expired, but valid, session token
+
+	_, err = db.Conn.Exec("UPDATE users SET session_expires = ?"+
+		"WHERE session_token IS ?", time.Now().Add(-1*time.Hour), sessionToken)
+	assert.NoError(t, err)
+
+	sessionToken, err = db.AuthorizeUserWithSessionToken(sessionToken)
+	assert.NotNil(t, err)
+	assert.Empty(t, sessionToken)
 }
 
 func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
-	db, dbFile, _, username, password := mockSqliteWithJohnDoe(t)
+	db, dbFile, _, username, password, _ := mockSqliteWithJohnDoe(t)
 
 	defer os.Remove(dbFile)
 
@@ -199,7 +255,7 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 }
 
 func TestSqliteAuthorizeUserWithCredentialsFail(t *testing.T) {
-	db, dbFile, _, username, password := mockSqliteWithJohnDoe(t)
+	db, dbFile, _, username, password, _ := mockSqliteWithJohnDoe(t)
 
 	defer os.Remove(dbFile)
 
