@@ -17,6 +17,12 @@ build:
 	@mkdir -vp bin &>/dev/null
 	@go build -o $(BIN) $(APP)/$(SERVER)
 
+.PHONY: deps
+deps:
+	go install gotest.tools/gotestsum@latest
+	go install github.com/air-verse/air@latest
+	go install github.com/pressly/goose/v3/cmd/goose@latest
+
 .PHONY: seed
 seed:
 	@go run $(APP)/$(SEED)
