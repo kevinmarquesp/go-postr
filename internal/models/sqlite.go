@@ -69,7 +69,6 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 	return publicID, sessionToken, nil
 }
 
-// Authorizes a user based on the provided session token, extending the session duration.
 func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
 	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
