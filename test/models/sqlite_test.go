@@ -100,11 +100,12 @@ func TestSqliteRegisterUser(t *testing.T) {
 				sessionExpires time.Time
 			}{}
 
-			const QUERY = "SELECT public_id, fullname, username, password, session_token," +
+			const SELECT_QUERY = "SELECT public_id, fullname, username, password, session_token," +
 				"session_expires FROM users WHERE username = ?"
 
-			err = db.Conn.QueryRow(QUERY, user.username).Scan(&dbField.publicID, &dbField.fullname,
-				&dbField.username, &dbField.password, &dbField.sessionToken, &dbField.sessionExpires)
+			err = db.Conn.QueryRow(SELECT_QUERY, user.username).Scan(&dbField.publicID,
+				&dbField.fullname, &dbField.username, &dbField.password, &dbField.sessionToken,
+				&dbField.sessionExpires)
 			assert.NoError(t, err)
 
 			// Verify the user details
@@ -142,6 +143,7 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 	defer os.Remove(dbFile)
 
 	// Insert a user into the database
+
 	fullname := "John Doe"
 	username := "johndoe"
 	password := "password123"
@@ -154,29 +156,85 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 
 	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Hour)
 
-	insertStmt := `INSERT INTO users (public_id, fullname, username, password, session_token,
-        session_expires) VALUES (?, ?, ?, ?, ?, ?)`
+	const INSERT_QUERY = "INSERT INTO users (public_id, fullname, username, password," +
+		"session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)"
 
-	_, err = db.Conn.Exec(insertStmt, publicID, fullname, username, hashedPassword,
+	_, err = db.Conn.Exec(INSERT_QUERY, publicID, fullname, username, hashedPassword,
 		initSessionToken, initSessionExpires)
 	assert.NoError(t, err)
 
 	// Authorize user with credentials
+
 	sessionToken, err := db.AuthorizeUserWithCredentials(username, password)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, sessionToken)
 
 	// Query the database to verify the session_token and session_expires were updated
-	var dbSessionToken string
-	var dbSessionExpires time.Time
-	query := `SELECT session_token, session_expires FROM users WHERE username = ?`
-	err = db.Conn.QueryRow(query, username).Scan(&dbSessionToken, &dbSessionExpires)
+
+	var (
+		dbSessionToken   string
+		dbSessionExpires time.Time
+	)
+
+	const SELECT_QUERY = "SELECT session_token, session_expires FROM users WHERE username = ?"
+
+	err = db.Conn.QueryRow(SELECT_QUERY, username).Scan(&dbSessionToken, &dbSessionExpires)
 	assert.NoError(t, err)
 
 	// Verify the session token
+
 	assert.Equal(t, sessionToken, dbSessionToken)
 
 	// Verify the session expiration time is within the expected range
+
 	expectedExpiration := time.Now().Add(models.SESSION_MAX_DURATION)
+
 	assert.WithinDuration(t, expectedExpiration, dbSessionExpires, time.Minute)
+}
+
+func TestSqliteAuthorizeUserWithCredentialsFail(t *testing.T) {
+	const (
+		TARGET_DIR = "../../tmp/"
+		MOCK_FILE  = "../../db/sqlite3/mock_setup.sql"
+	)
+
+	// Create a temporary database for mocking tests
+
+	db, dbFile, err := models.MockSqlite(TARGET_DIR, MOCK_FILE)
+	assert.NoError(t, err)
+
+	defer os.Remove(dbFile)
+
+	// Insert a user into the database
+
+	fullname := "John Doe"
+	username := "johndoe"
+	password := "password123"
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(username+password), bcrypt.DefaultCost)
+	assert.NoError(t, err)
+
+	publicID, err := utils.GenerateTokenID()
+	assert.NoError(t, err)
+
+	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Hour)
+
+	const INSERT_QUERY = "INSERT INTO users (public_id, fullname, username, password," +
+		"session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)"
+
+	_, err = db.Conn.Exec(INSERT_QUERY, publicID, fullname, username, hashedPassword,
+		initSessionToken, initSessionExpires)
+	assert.NoError(t, err)
+
+	// Fail with incorrect username
+
+	sessionToken, err := db.AuthorizeUserWithCredentials("NonExisting", password)
+	assert.NotNil(t, err)
+	assert.Empty(t, sessionToken)
+
+	// Fail with incorrect password
+
+	sessionToken, err = db.AuthorizeUserWithCredentials(username, "6607cc3df0ec4abfb2e57f8334ca30e3")
+	assert.NotNil(t, err)
+	assert.Empty(t, sessionToken)
 }
