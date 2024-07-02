@@ -1,6 +1,7 @@
 package models_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -24,43 +25,89 @@ func TestSqliteRegisterUser(t *testing.T) {
 
 	defer os.Remove(dbFile)
 
-	// Define user details
-	fullname := "John Doe"
-	username := "johndoe"
-	password := "password123"
+	// Define users details
 
-	// Register new user
-	publicID, sessionToken, err := db.RegisterNewUser(fullname, username, password)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, publicID)
-	assert.NotEmpty(t, sessionToken)
+	users := []struct {
+		fullname   string
+		username   string
+		password   string
+		expectFail bool
+	}{
+		{
+			fullname:   "John Doe",
+			username:   "johndoe",
+			password:   "password123",
+			expectFail: false,
+		},
+		{
+			fullname:   "John Doe",
+			username:   "johndoe",
+			password:   "password123",
+			expectFail: true, // user already exists
+		},
+		{
+			fullname:   "Fulano de Tal",
+			username:   "fulano",
+			password:   "password123",
+			expectFail: false,
+		},
+	}
 
-	// Query the database to verify the user was inserted
-	var (
-		dbPublicID       string
-		dbFullname       string
-		dbUsername       string
-		dbPassword       string
-		dbSessionToken   string
-		dbSessionExpires time.Time
-	)
-	query := `SELECT public_id, fullname, username, password, session_token, session_expires FROM users WHERE username = ?`
-	err = db.Conn.QueryRow(query, username).Scan(&dbPublicID, &dbFullname, &dbUsername, &dbPassword, &dbSessionToken, &dbSessionExpires)
-	assert.NoError(t, err)
+	for _, user := range users {
+		testDescription := fmt.Sprintf("fullname:%s; username:%s; password:%s; expectFail:%t",
+			user.fullname, user.username, user.password, user.expectFail)
 
-	// Verify the user details
-	assert.Equal(t, publicID, dbPublicID)
-	assert.Equal(t, fullname, dbFullname)
-	assert.Equal(t, username, dbUsername)
-	assert.Equal(t, sessionToken, dbSessionToken)
+		t.Run(testDescription, func(t *testing.T) {
+			// Try to register the user
 
-	// Verify the password
-	err = bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(username+password))
-	assert.NoError(t, err)
+			publicID, userSessionToken, err := db.RegisterNewUser(user.fullname, user.username, user.password)
 
-	// Verify the session expiration time is within the expected range
-	expectedExpiration := time.Now().Add(models.SESSION_MAX_DURATION)
-	assert.WithinDuration(t, expectedExpiration, dbSessionExpires, time.Minute)
+			if user.expectFail {
+				assert.NotNil(t, err)
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.NotEmpty(t, publicID)
+			assert.NotEmpty(t, userSessionToken)
+
+			// Query the database to verify if the user was inserted
+
+			dbField := struct {
+				publicID       string
+				fullname       string
+				username       string
+				password       string
+				sessionToken   string
+				sessionExpires time.Time
+			}{}
+
+			const QUERY = "SELECT public_id, fullname, username, password, session_token," +
+				"session_expires FROM users WHERE username = ?"
+
+			err = db.Conn.QueryRow(QUERY, user.username).Scan(&dbField.publicID, &dbField.fullname,
+				&dbField.username, &dbField.password, &dbField.sessionToken, &dbField.sessionExpires)
+			assert.NoError(t, err)
+
+			// Verify the user details
+
+			assert.Equal(t, publicID, dbField.publicID)
+			assert.Equal(t, user.fullname, dbField.fullname)
+			assert.Equal(t, user.username, dbField.username)
+			assert.Equal(t, userSessionToken, dbField.sessionToken)
+
+			// Verify the passwords
+
+			err = bcrypt.CompareHashAndPassword([]byte(dbField.password),
+				[]byte(user.username+user.password))
+			assert.NoError(t, err)
+
+			// Verify the session expiration time is within the expected range
+
+			expectedExpiration := time.Now().Add(models.SESSION_MAX_DURATION)
+			assert.WithinDuration(t, expectedExpiration, dbField.sessionExpires, time.Minute)
+		})
+	}
 }
 
 func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
