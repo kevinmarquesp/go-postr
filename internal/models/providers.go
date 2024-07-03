@@ -10,8 +10,7 @@ const (
 	BCRYPT_COST          = bcrypt.MinCost
 	SESSION_MAX_DURATION = 10 * time.Second
 
-	FULLNAME_REGITER_FIELD_NOT_SPECIFIED_ERROR = "a fullname should be provided to register the user"
-
+	EMPTY_ARGUMENTS_ERROR                = "one, or more, required arguments was empty"
 	CANNOT_MATCH_TOKEN_TO_USERNAME_ERROR = "invalid token for username or session expired"
 	INVALID_AUTH_CREDENTIALS_ERROR       = "invalid username and password credentials"
 )
