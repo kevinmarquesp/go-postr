@@ -28,10 +28,6 @@ func (s *Sqlite) Connect(url string) error {
 }
 
 func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, string, error) {
-	if fullname == "" || username == "" || password == "" {
-		return "", "", errors.New(EMPTY_ARGUMENTS_ERROR)
-	}
-
 	if err := utils.ValidateUsernameString(username); err != nil {
 		return "", "", err
 	}
@@ -70,10 +66,6 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 }
 
 func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
-	if sessionToken == "" {
-		return "", errors.New(EMPTY_ARGUMENTS_ERROR)
-	}
-
 	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
 		return "", err
@@ -103,10 +95,6 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 }
 
 func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string, error) {
-	if username == "" || password == "" {
-		return "", errors.New(EMPTY_ARGUMENTS_ERROR)
-	}
-
 	if err := s.comparePassword(username, password); err != nil {
 		return "", err
 	}
