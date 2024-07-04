@@ -51,8 +51,11 @@ func (s *Sqlite) RegisterNewUser(fullname, username, password string) (string, s
 		return "", "", err
 	}
 
-	statement, err := s.Conn.Prepare(`INSERT INTO users (public_id, fullname, username, password,
-        session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)`)
+	statement, err := s.Conn.Prepare(`INSERT
+        INTO users
+            (public_id, fullname, username, password, session_token, session_expires)
+        VALUES
+            (?1, ?2, ?3, ?4, ?5, ?6)`)
 	if err != nil {
 		return "", "", err
 	}
@@ -71,8 +74,14 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
 		return "", err
 	}
 
-	statement, err := s.Conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
-        WHERE session_token IS ? AND session_expires > ?`)
+	statement, err := s.Conn.Prepare(`UPDATE users
+        SET
+            session_token   = ?1,
+            session_expires = ?2,
+            updated_at      = CURRENT_TIMESTAMP
+        WHERE
+            session_token IS ?3
+            AND session_expires > ?4`)
 	if err != nil {
 		return "", err
 	}
@@ -104,8 +113,13 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string
 		return "", err
 	}
 
-	statement, err := s.Conn.Prepare(`UPDATE users SET session_token = ?, session_expires = ?
-        WHERE username IS ?`)
+	statement, err := s.Conn.Prepare(`UPDATE users
+        SET
+            session_token   = ?1,
+            session_expires = ?2,
+            updated_at      = CURRENT_TIMESTAMP
+        WHERE
+            username IS ?3`)
 	if err != nil {
 		return "", err
 	}
@@ -128,7 +142,11 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string
 }
 
 func (s *Sqlite) comparePassword(username, password string) error {
-	const SELECT_QUERY = "SELECT password FROM users WHERE username IS ?"
+	const SELECT_QUERY = `SELECT password
+        FROM
+            users
+        WHERE
+            username IS ?`
 
 	var hashedPassword string
 
