@@ -110,12 +110,17 @@ func TestSqliteRegisterUser(t *testing.T) {
 				sessionExpires time.Time
 			}{}
 
-			const SELECT_QUERY = "SELECT public_id, fullname, username, password, session_token," +
-				"session_expires FROM users WHERE username = ?"
+			const SELECT_QUERY = `SELECT public_id, fullname, username, password,
+                                         session_token, session_expires
+                FROM
+                    users
+                WHERE
+                    username = ?1`
 
-			err = db.Conn.QueryRow(SELECT_QUERY, user.username).Scan(&dbField.publicID,
-				&dbField.fullname, &dbField.username, &dbField.password, &dbField.sessionToken,
-				&dbField.sessionExpires)
+			err = db.Conn.
+				QueryRow(SELECT_QUERY, user.username).
+				Scan(&dbField.publicID, &dbField.fullname, &dbField.username,
+					&dbField.password, &dbField.sessionToken, &dbField.sessionExpires)
 			assert.NoError(t, err)
 
 			t.Log("Comparing the selected user details with the provided data.")
@@ -164,11 +169,14 @@ func mockSqliteWithJohnDoe(t *testing.T) (models.Sqlite, string, string, string,
 
 	initSessionToken, initSessionExpires, err := utils.GenerateNewSessionToken(time.Second)
 
-	const INSERT_QUERY = "INSERT INTO users (public_id, fullname, username, password," +
-		"session_token, session_expires) VALUES (?, ?, ?, ?, ?, ?)"
+	const INSERT_QUERY = `INSERT INTO users
+            (public_id, fullname, username, password, session_token, session_expires)
+        VALUES
+            (?1, ?2, ?3, ?4, ?5, ?6)`
 
-	_, err = db.Conn.Exec(INSERT_QUERY, publicID, fullname, username, hashedPassword,
-		initSessionToken, initSessionExpires)
+	_, err = db.Conn.
+		Exec(INSERT_QUERY, publicID, fullname, username, hashedPassword,
+			initSessionToken, initSessionExpires)
 	assert.NoError(t, err)
 
 	// Many tests may require all this information to run.
@@ -194,7 +202,11 @@ func TestSqliteAuthorizeUserWithSessionToken(t *testing.T) {
 		dbSessionExpires time.Time
 	)
 
-	const SELECT_QUERY = "SELECT session_token, session_expires FROM users WHERE username = ?"
+	const SELECT_QUERY = `SELECT session_token, session_expires
+        FROM
+            users
+        WHERE
+            username = ?1`
 
 	err = db.Conn.QueryRow(SELECT_QUERY, username).Scan(&dbSessionToken, &dbSessionExpires)
 	assert.NoError(t, err)
@@ -223,8 +235,14 @@ func TestSqliteAuthorizeUserWithSessionTokenFail(t *testing.T) {
 
 	t.Log("Should fail with an expired, but still valid, session token string.")
 
-	_, err = db.Conn.Exec("UPDATE users SET session_expires = ?"+
-		"WHERE session_token IS ?", time.Now().Add(-1*time.Hour), sessionToken)
+	const UPDATE_QUERY = `UPDATE users
+        SET
+            session_expires = ?1
+        WHERE
+            session_token IS ?2`
+
+	_, err = db.Conn.
+		Exec(UPDATE_QUERY, time.Now().Add(-1*time.Hour), sessionToken)
 	assert.NoError(t, err)
 
 	resp, err = db.AuthorizeUserWithSessionToken(sessionToken)
@@ -250,7 +268,11 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 		dbSessionExpires time.Time
 	)
 
-	const SELECT_QUERY = "SELECT session_token, session_expires FROM users WHERE username = ?"
+	const SELECT_QUERY = `SELECT session_token, session_expires
+        FROM
+            users
+        WHERE
+            username = ?1`
 
 	err = db.Conn.QueryRow(SELECT_QUERY, username).Scan(&dbSessionToken, &dbSessionExpires)
 	assert.NoError(t, err)
