@@ -38,3 +38,20 @@ type RegisterResponse struct {
 	PublicId     string `json:"publicId"`
 	SessionToken string `json:"sessionToken"`
 }
+
+type SessionToken struct {
+	SessionToken string `json:"sessionToken"`
+}
+
+// Data types that may be useful for the Auth related routes.
+
+type Auth struct {
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	SessionToken string `json:"sessionToken"`
+}
+
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}

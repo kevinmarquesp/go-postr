@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/kevinmarquesp/go-postr/internal/data"
 	"github.com/kevinmarquesp/go-postr/internal/models"
 	"github.com/kevinmarquesp/go-postr/internal/utils"
 )
@@ -68,7 +67,7 @@ func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.
 		return
 	}
 
-	var body data.RefreshUserSessionTokenCredentialsBody
+	var body models.Auth
 
 	err = json.Unmarshal(rawBody, &body)
 	if err != nil {
@@ -92,8 +91,8 @@ func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.
 			return
 		}
 
-		response := data.RefreshUserSessionTokenResponse{
-			NewSessionToken: newSessionToken,
+		response := models.SessionToken{
+			SessionToken: newSessionToken,
 		}
 
 		responseJsonBytes, err := json.Marshal(response)
@@ -123,8 +122,8 @@ func (ac AuthController) updateSessionTokenWithCredentials(w http.ResponseWriter
 		return nil
 	}
 
-	response := data.RefreshUserSessionTokenResponse{
-		NewSessionToken: newSessionToken,
+	response := models.SessionToken{
+		SessionToken: newSessionToken,
 	}
 
 	responseJsonBytes, err := json.Marshal(response)
