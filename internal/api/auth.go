@@ -44,25 +44,19 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	// Register and respond.
 
-	publicID, sessionToken, err := ac.Database.RegisterNewUser(form)
+	response, err := ac.Database.RegisterNewUser(form)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	response := data.RegisterNewUserSuccessfulResponse{
-		Username:     form.Username,
-		PublicID:     publicID,
-		SessionToken: sessionToken,
-	}
-
-	responseJsonBytes, err := json.Marshal(response)
+	responseJson, err := utils.JsonMarshalString(response)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusConflict, err)
 		return
 	}
 
-	fmt.Fprint(w, string(responseJsonBytes))
+	fmt.Fprint(w, string(responseJson))
 }
 
 func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.Request) {

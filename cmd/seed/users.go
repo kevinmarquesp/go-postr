@@ -65,7 +65,7 @@ func InsertDummyUsers(db models.GenericDatabaseProvider) {
 		username := string(regexp.MustCompile(`[^a-zA-Z0-9_-]`).
 			ReplaceAll([]byte(user.Username), []byte("_"))) // Make it valid.
 
-		_, _, err := db.RegisterNewUser(models.RegisterForm{
+		_, err := db.RegisterNewUser(models.RegisterForm{
 			Fullname: fullname,
 			Username: username,
 			Password: password,

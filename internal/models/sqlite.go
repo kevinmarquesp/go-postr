@@ -27,28 +27,28 @@ func (s *Sqlite) Connect(url string) error {
 	return nil
 }
 
-func (s *Sqlite) RegisterNewUser(form RegisterForm) (string, string, error) {
+func (s *Sqlite) RegisterNewUser(form RegisterForm) (RegisterResponse, error) {
 	if err := utils.ValidateUsernameString(form.Username); err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
 	if err := utils.ValidatePasswordString(form.Password); err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Username+form.Password), BCRYPT_COST)
 	if err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
 	publicId, err := utils.GenerateTokenID()
 	if err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
 	sessionToken, expirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
 	statement, err := s.Conn.Prepare(`INSERT
@@ -57,16 +57,21 @@ func (s *Sqlite) RegisterNewUser(form RegisterForm) (string, string, error) {
         VALUES
             (?1, ?2, ?3, ?4, ?5, ?6)`)
 	if err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
 	_, err = statement.Exec(publicId, form.Fullname, form.Username,
 		hashedPassword, sessionToken, expirationDate)
 	if err != nil {
-		return "", "", err
+		return RegisterResponse{}, err
 	}
 
-	return publicId, sessionToken, nil
+	return RegisterResponse{
+		Fullname:     form.Fullname,
+		Username:     form.Username,
+		PublicId:     publicId,
+		SessionToken: sessionToken,
+	}, nil
 }
 
 func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {

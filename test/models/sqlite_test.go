@@ -84,7 +84,7 @@ func TestSqliteRegisterUser(t *testing.T) {
 		t.Run(testDescription, func(t *testing.T) {
 			t.Log("Try to register a the new user to the database.")
 
-			publicID, userSessionToken, err := db.RegisterNewUser(models.RegisterForm{
+			response, err := db.RegisterNewUser(models.RegisterForm{
 				Fullname: user.fullname,
 				Username: user.username,
 				Password: user.password,
@@ -96,8 +96,8 @@ func TestSqliteRegisterUser(t *testing.T) {
 			}
 
 			assert.NoError(t, err)
-			assert.NotEmpty(t, publicID)
-			assert.NotEmpty(t, userSessionToken)
+			assert.NotEmpty(t, response.PublicId)
+			assert.NotEmpty(t, response.SessionToken)
 
 			t.Log("Query the database to verify if the user was inserted with success.")
 
@@ -120,10 +120,10 @@ func TestSqliteRegisterUser(t *testing.T) {
 
 			t.Log("Comparing the selected user details with the provided data.")
 
-			assert.Equal(t, publicID, dbField.publicID)
-			assert.Equal(t, user.fullname, dbField.fullname)
-			assert.Equal(t, user.username, dbField.username)
-			assert.Equal(t, userSessionToken, dbField.sessionToken)
+			assert.Equal(t, response.PublicId, dbField.publicID)
+			assert.Equal(t, response.Fullname, dbField.fullname)
+			assert.Equal(t, response.Username, dbField.username)
+			assert.Equal(t, response.SessionToken, dbField.sessionToken)
 
 			t.Log("Verifying the password hash.")
 
