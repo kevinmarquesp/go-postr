@@ -84,7 +84,11 @@ func TestSqliteRegisterUser(t *testing.T) {
 		t.Run(testDescription, func(t *testing.T) {
 			t.Log("Try to register a the new user to the database.")
 
-			publicID, userSessionToken, err := db.RegisterNewUser(user.fullname, user.username, user.password)
+			publicID, userSessionToken, err := db.RegisterNewUser(models.RegisterForm{
+				Fullname: user.fullname,
+				Username: user.username,
+				Password: user.password,
+			})
 
 			if user.expectFail {
 				assert.NotNil(t, err)

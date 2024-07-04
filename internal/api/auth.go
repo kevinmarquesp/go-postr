@@ -31,27 +31,27 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var body data.RegisterNewUserBodyCredentialsBody
+	var form models.RegisterForm
 
-	if err = json.Unmarshal(rawBody, &body); err != nil {
+	if err = json.Unmarshal(rawBody, &form); err != nil {
 		utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	fullname := strings.Trim(body.Fullname, " ")
-	username := strings.Trim(body.Username, " ")
-	password := strings.Trim(body.Password, " ")
+	form.Fullname = strings.Trim(form.Fullname, " ")
+	form.Username = strings.Trim(form.Username, " ")
+	form.Password = strings.Trim(form.Password, " ")
 
 	// Register and respond.
 
-	publicID, sessionToken, err := ac.Database.RegisterNewUser(fullname, username, password)
+	publicID, sessionToken, err := ac.Database.RegisterNewUser(form)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	response := data.RegisterNewUserSuccessfulResponse{
-		Username:     username,
+		Username:     form.Username,
 		PublicID:     publicID,
 		SessionToken: sessionToken,
 	}
