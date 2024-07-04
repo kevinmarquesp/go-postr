@@ -43,19 +43,19 @@ func (ac AuthController) RegisterNewUser(w http.ResponseWriter, r *http.Request)
 
 	// Register and respond.
 
-	response, err := ac.Database.RegisterNewUser(form)
+	resp, err := ac.Database.RegisterNewUser(form)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	responseJson, err := utils.JsonMarshalString(response)
+	respJson, err := utils.JsonMarshalString(resp)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusConflict, err)
 		return
 	}
 
-	fmt.Fprint(w, string(responseJson))
+	fmt.Fprint(w, string(respJson))
 }
 
 func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +82,7 @@ func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.
 	// Authorize with acess session token string.
 
 	if sessionToken != "" {
-		newSessionToken, err := ac.Database.AuthorizeUserWithSessionToken(sessionToken)
+		resp, err := ac.Database.AuthorizeUserWithSessionToken(sessionToken)
 		if err != nil {
 			if err = ac.updateSessionTokenWithCredentials(w, username, password); err != nil {
 				utils.WriteGenericJsonError(w, http.StatusUnauthorized,
@@ -91,16 +91,12 @@ func (ac AuthController) RefreshUserSessionToken(w http.ResponseWriter, r *http.
 			return
 		}
 
-		response := models.SessionToken{
-			SessionToken: newSessionToken,
-		}
-
-		responseJsonBytes, err := json.Marshal(response)
+		respJson, err := utils.JsonMarshalString(resp)
 		if err != nil {
 			utils.WriteGenericJsonError(w, http.StatusInternalServerError, err)
 		}
 
-		fmt.Fprint(w, string(responseJsonBytes))
+		fmt.Fprint(w, respJson)
 		return
 	}
 
@@ -116,22 +112,18 @@ func (ac AuthController) updateSessionTokenWithCredentials(w http.ResponseWriter
 		return errors.New(UNSPECIFIED_AUTHORIZATION_FIELD_ERROR)
 	}
 
-	newSessionToken, err := ac.Database.AuthorizeUserWithCredentials(username, password)
+	resp, err := ac.Database.AuthorizeUserWithCredentials(username, password)
 	if err != nil {
 		utils.WriteGenericJsonError(w, http.StatusUnauthorized, err)
 		return nil
 	}
 
-	response := models.SessionToken{
-		SessionToken: newSessionToken,
-	}
-
-	responseJsonBytes, err := json.Marshal(response)
+	respJson, err := utils.JsonMarshalString(resp)
 	if err != nil {
 		return err
 	}
 
-	fmt.Fprint(w, string(responseJsonBytes))
+	fmt.Fprint(w, respJson)
 
 	return nil
 }

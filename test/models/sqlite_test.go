@@ -84,7 +84,7 @@ func TestSqliteRegisterUser(t *testing.T) {
 		t.Run(testDescription, func(t *testing.T) {
 			t.Log("Try to register a the new user to the database.")
 
-			response, err := db.RegisterNewUser(models.RegisterForm{
+			resp, err := db.RegisterNewUser(models.RegisterForm{
 				Fullname: user.fullname,
 				Username: user.username,
 				Password: user.password,
@@ -96,8 +96,8 @@ func TestSqliteRegisterUser(t *testing.T) {
 			}
 
 			assert.NoError(t, err)
-			assert.NotEmpty(t, response.PublicId)
-			assert.NotEmpty(t, response.SessionToken)
+			assert.NotEmpty(t, resp.PublicId)
+			assert.NotEmpty(t, resp.SessionToken)
 
 			t.Log("Query the database to verify if the user was inserted with success.")
 
@@ -120,10 +120,10 @@ func TestSqliteRegisterUser(t *testing.T) {
 
 			t.Log("Comparing the selected user details with the provided data.")
 
-			assert.Equal(t, response.PublicId, dbField.publicID)
-			assert.Equal(t, response.Fullname, dbField.fullname)
-			assert.Equal(t, response.Username, dbField.username)
-			assert.Equal(t, response.SessionToken, dbField.sessionToken)
+			assert.Equal(t, resp.PublicId, dbField.publicID)
+			assert.Equal(t, resp.Fullname, dbField.fullname)
+			assert.Equal(t, resp.Username, dbField.username)
+			assert.Equal(t, resp.SessionToken, dbField.sessionToken)
 
 			t.Log("Verifying the password hash.")
 
@@ -183,9 +183,9 @@ func TestSqliteAuthorizeUserWithSessionToken(t *testing.T) {
 
 	t.Log("Try to authorize with the session token string.")
 
-	newSessionToken, err := db.AuthorizeUserWithSessionToken(sessionToken)
+	resp, err := db.AuthorizeUserWithSessionToken(sessionToken)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, newSessionToken)
+	assert.NotEmpty(t, resp.SessionToken)
 
 	t.Log("Query the database to verify if the session_token & session_expires fields were updated.")
 
@@ -201,7 +201,7 @@ func TestSqliteAuthorizeUserWithSessionToken(t *testing.T) {
 
 	t.Log("Verify if the session token was updated with success.")
 
-	assert.Equal(t, newSessionToken, dbSessionToken)
+	assert.Equal(t, resp.SessionToken, dbSessionToken)
 	assert.NotEqual(t, sessionToken, dbSessionToken)
 
 	t.Log("Verify if the session expiration date is within the expected range.")
@@ -217,9 +217,9 @@ func TestSqliteAuthorizeUserWithSessionTokenFail(t *testing.T) {
 
 	t.Log("Should fail with a invalid session token string.")
 
-	newSessiontoken, err := db.AuthorizeUserWithSessionToken("blah-blah-blah-blah-blah")
+	resp, err := db.AuthorizeUserWithSessionToken("blah-blah-blah-blah-blah")
 	assert.NotNil(t, err)
-	assert.Empty(t, newSessiontoken)
+	assert.Empty(t, resp)
 
 	t.Log("Should fail with an expired, but still valid, session token string.")
 
@@ -227,9 +227,9 @@ func TestSqliteAuthorizeUserWithSessionTokenFail(t *testing.T) {
 		"WHERE session_token IS ?", time.Now().Add(-1*time.Hour), sessionToken)
 	assert.NoError(t, err)
 
-	sessionToken, err = db.AuthorizeUserWithSessionToken(sessionToken)
+	resp, err = db.AuthorizeUserWithSessionToken(sessionToken)
 	assert.NotNil(t, err)
-	assert.Empty(t, sessionToken)
+	assert.Empty(t, resp)
 }
 
 func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
@@ -239,9 +239,9 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 
 	t.Log("Try to authorize the user with the credentials.")
 
-	newSessionToken, err := db.AuthorizeUserWithCredentials(username, password)
+	resp, err := db.AuthorizeUserWithCredentials(username, password)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, newSessionToken)
+	assert.NotEmpty(t, resp.SessionToken)
 
 	t.Log("Query the database to verify if the session_token & session_expires fields were updated.")
 
@@ -257,7 +257,7 @@ func TestSqliteAuthorizeUserWithCredentials(t *testing.T) {
 
 	t.Log("Verify if the session token was updated with success.")
 
-	assert.Equal(t, newSessionToken, dbSessionToken)
+	assert.Equal(t, resp.SessionToken, dbSessionToken)
 	assert.NotEqual(t, sessionToken, dbSessionToken)
 
 	t.Log("Verify if the session expiration date is within the expected range.")
@@ -273,13 +273,13 @@ func TestSqliteAuthorizeUserWithCredentialsFail(t *testing.T) {
 
 	t.Log("Should fail with an incorrect username.")
 
-	sessionToken, err := db.AuthorizeUserWithCredentials("NonExisting", password)
+	resp, err := db.AuthorizeUserWithCredentials("NonExisting", password)
 	assert.NotNil(t, err)
-	assert.Empty(t, sessionToken)
+	assert.Empty(t, resp)
 
 	t.Log("Should fail with an incorrect password.")
 
-	sessionToken, err = db.AuthorizeUserWithCredentials(username, "6607cc3df0ec4abfb2e57f8334ca30e3")
+	resp, err = db.AuthorizeUserWithCredentials(username, "6607cc3df0ec4abfb2e57f8334ca30e3")
 	assert.NotNil(t, err)
-	assert.Empty(t, sessionToken)
+	assert.Empty(t, resp)
 }

@@ -16,14 +16,9 @@ const (
 
 type GenericDatabaseProvider interface {
 	Connect(url string) error
-
-	// This function will return the public ID of the inserted user and its
-	// session token ID (which has an expiration date defined by the
-	// models.SESSION_MAX_DURATION constant)
 	RegisterNewUser(form RegisterForm) (RegisterResponse, error)
-
-	AuthorizeUserWithSessionToken(sessionToken string) (string, error)
-	AuthorizeUserWithCredentials(username, password string) (string, error)
+	AuthorizeUserWithSessionToken(sessionToken string) (SessionToken, error)
+	AuthorizeUserWithCredentials(username, password string) (SessionToken, error)
 }
 
 type RegisterForm struct {

@@ -74,10 +74,10 @@ func (s *Sqlite) RegisterNewUser(form RegisterForm) (RegisterResponse, error) {
 	}, nil
 }
 
-func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, error) {
+func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (SessionToken, error) {
 	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	statement, err := s.Conn.Prepare(`UPDATE users
@@ -89,34 +89,36 @@ func (s *Sqlite) AuthorizeUserWithSessionToken(sessionToken string) (string, err
             session_token IS ?3
             AND session_expires > ?4`)
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	rows, err := statement.Exec(newSessionToken, newExpirationDate, sessionToken, time.Now())
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	rowsAffected, err := rows.RowsAffected()
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	if rowsAffected < 1 {
-		return "", errors.New(CANNOT_MATCH_TOKEN_TO_USERNAME_ERROR)
+		return SessionToken{}, errors.New(CANNOT_MATCH_TOKEN_TO_USERNAME_ERROR)
 	}
 
-	return newSessionToken, nil
+	return SessionToken{
+		SessionToken: newSessionToken,
+	}, nil
 }
 
-func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string, error) {
+func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (SessionToken, error) {
 	if err := s.comparePassword(username, password); err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	newSessionToken, newExpirationDate, err := utils.GenerateNewSessionToken(SESSION_MAX_DURATION)
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	statement, err := s.Conn.Prepare(`UPDATE users
@@ -127,24 +129,26 @@ func (s *Sqlite) AuthorizeUserWithCredentials(username, password string) (string
         WHERE
             username IS ?3`)
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	rows, err := statement.Exec(newSessionToken, newExpirationDate, username)
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	rowsAffected, err := rows.RowsAffected()
 	if err != nil {
-		return "", err
+		return SessionToken{}, err
 	}
 
 	if rowsAffected < 1 {
-		return "", errors.New(INVALID_AUTH_CREDENTIALS_ERROR)
+		return SessionToken{}, errors.New(INVALID_AUTH_CREDENTIALS_ERROR)
 	}
 
-	return newSessionToken, nil
+	return SessionToken{
+		SessionToken: newSessionToken,
+	}, nil
 }
 
 func (s *Sqlite) comparePassword(username, password string) error {
