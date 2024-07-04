@@ -69,6 +69,12 @@ func TestSqliteRegisterUser(t *testing.T) {
 			password:   "Password1234$",
 			expectFail: true, // user already exists
 		},
+		{
+			fullname:   "",
+			username:   "",
+			password:   "Password1234$",
+			expectFail: true,
+		},
 	}
 
 	for _, user := range users {
