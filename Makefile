@@ -1,5 +1,5 @@
 APP = github.com/kevinmarquesp/go-postr
-SERVER = cmd/server
+SERVER = cmd/gopostr
 SEED = cmd/seed
 
 BIN = bin/server
