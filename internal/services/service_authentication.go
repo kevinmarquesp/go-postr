@@ -7,6 +7,7 @@ import (
 
 	"github.com/kevinmarquesp/go-postr/internal/models"
 	"github.com/kevinmarquesp/go-postr/internal/repositories"
+	"github.com/oklog/ulid/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -51,6 +52,10 @@ func (ga GopostrAuthenticationService) AuthenticateWithCredentials(name, usernam
 		return empty, errors.New("Passwords did not match.")
 	}
 
+	// Generate a custom ID for the new user.
+
+	id := ulid.Make().String()
+
 	// Hash the password before inserting.
 
 	hashedPassword, err := hashPassword(password)
@@ -60,7 +65,7 @@ func (ga GopostrAuthenticationService) AuthenticateWithCredentials(name, usernam
 
 	// Insert a new user to the repository & return the new user schema.
 
-	user, err := ga.UserRepo.CreateNewUser(name, username, email, hashedPassword)
+	user, err := ga.UserRepo.CreateNewUser(id, name, username, email, hashedPassword)
 	if err != nil {
 		return empty, err
 	}
