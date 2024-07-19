@@ -5,13 +5,13 @@ import "time"
 type UserSchema struct {
 	Name      string
 	Username  string
-	email     string
-	password  string
-	createdAt time.Time
-	updatedAt time.Time
+	Email     string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type UserRepository interface {
 	CreateNewUser(name, username, email, password string) (UserSchema, error) // register
-	FindUniqueByEmail(UserSchema, error) (UserSchema, error)                  // enter
+	FindUniqueByEmail(email string) (UserSchema, error)                       // enter
 }
