@@ -14,7 +14,7 @@ type MockedUserRepository struct {
 
 func TestNewGopostrAuthentication(t *testing.T) {
 	mockUserRepo := MockedUserRepository{}
-	authenticationService := services.NewGopostrAuthentication(mockUserRepo)
+	authenticationService := services.NewGopostrAuthenticationService(mockUserRepo)
 
-	assert.IsType(t, services.GopostrAuthentication{}, authenticationService)
+	assert.IsType(t, services.GopostrAuthenticationService{}, authenticationService)
 }

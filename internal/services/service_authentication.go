@@ -10,19 +10,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type GopostrAuthentication struct {
+type GopostrAuthenticationService struct {
 	AuthenticationService
 
 	UserRepo repositories.UserRepository
 }
 
-func NewGopostrAuthentication(userRepo repositories.UserRepository) GopostrAuthentication {
-	return GopostrAuthentication{
+func NewGopostrAuthenticationService(userRepo repositories.UserRepository) GopostrAuthenticationService {
+	return GopostrAuthenticationService{
 		UserRepo: userRepo,
 	}
 }
 
-func (ga GopostrAuthentication) AuthenticateWithCredentials(name, username, email, password, confirmation string) (repositories.UserSchema, error) {
+func (ga GopostrAuthenticationService) AuthenticateWithCredentials(name, username, email, password, confirmation string) (repositories.UserSchema, error) {
 	empty := repositories.UserSchema{}
 
 	// Validate parameters request.
