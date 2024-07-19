@@ -7,6 +7,8 @@ PROJECT_BIN = go_postr
 
 run: build
 	./$(PROJECT_BIN)
+.PHONY: run
 
 build:
 	$(GO_BIN) build -o $(TARGET)/$(PROJECT_BIN) $(PROJECT_PACKAGE)/$(PROJECT_MAIN)
+.PHONY: build
