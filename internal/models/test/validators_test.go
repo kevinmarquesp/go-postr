@@ -13,6 +13,7 @@ func TestValidateUsername(t *testing.T) {
 		username string
 		wantErr  bool
 	}{
+		{"Reserved name", "account", true},
 		{"Empty username", "", true},
 		{"Username with spaces", "user name", true},
 		{"Username with special characters", "user@name", true},

@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -11,6 +12,15 @@ func ValidateName(name string) (string, error) {
 }
 
 func ValidateUsername(username string) (string, error) {
+	reservedNames := []string{
+		"account",
+		"user",
+		"users",
+		"help",
+		"admin",
+		"all",
+	}
+
 	if len(username) < 1 {
 		return "", errors.New("Empty username not allowed.")
 
@@ -20,6 +30,8 @@ func ValidateUsername(username string) (string, error) {
 	} else if !regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString(username) {
 		return "", errors.New("Username could not have special characters other than - and _.")
 
+	} else if slices.Contains(reservedNames, username) {
+		return "", errors.New("Reserved name not allowed.")
 	}
 
 	return strings.Trim(username, " "), nil
