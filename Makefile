@@ -4,6 +4,7 @@ TARGET = bin
 PROJECT_PACKAGE = github.com/kevinmarquesp/go-postr
 PROJECT_MAIN = cmd/go_postr
 PROJECT_BIN = go_postr
+PROJECT_PORT = 8000
 
 GOTEST_BIN = gotestsum
 TEST_TARGET = ./...
@@ -32,7 +33,15 @@ test-watch:
 		done
 .PHONY: test-watch
 
-depsget-all: depsget depsget-gose depsget-gotestsum
+templ:
+	templ generate
+.PHONY: templ
+
+templ-watch:
+	templ generate -watch -proxy=http://localhost:$(PROJECT_PORT) -open-browser=false
+.PHONY: templ-watch
+
+depsget-all: depsget depsget-gose depsget-gotestsum depsget-templ
 .PHONY: depsget-all
 
 depsget:
@@ -46,6 +55,10 @@ depsget-gose:
 depsget-gotestsum:
 	$(GO_BIN) install gotest.tools/gotestsum@latest
 .PHONY: depsget-gotestsum
+
+depsget-templ:
+	$(GO_BIN) install github.com/a-h/templ/cmd/templ@latest
+.PHONY: depsget-templ
 
 migration-add:
 	@mkdir -vp $(MIGRATIONS_TARGET)
