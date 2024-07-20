@@ -29,4 +29,9 @@ go.work
 cookies.txt
 
 # Templ generated files
-**/*_templ.go
+/**/*_templ.go
+/**/*_templ.txt
+
+# Javascript (Node) related files
+/node_modules
+/dist
