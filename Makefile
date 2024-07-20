@@ -33,6 +33,10 @@ test-watch:
 		done
 .PHONY: test-watch
 
+air:
+	air -build.bin=$(TARGET)/$(PROJECT_BIN)
+.PHONY: air
+
 templ:
 	templ generate
 .PHONY: templ
@@ -41,7 +45,7 @@ templ-watch:
 	templ generate -watch -proxy=http://localhost:$(PROJECT_PORT) -open-browser=false
 .PHONY: templ-watch
 
-depsget-all: depsget depsget-gose depsget-gotestsum depsget-templ
+depsget-all: depsget depsget-gose depsget-gotestsum depsget-templ depsget-air
 .PHONY: depsget-all
 
 depsget:
@@ -59,6 +63,10 @@ depsget-gotestsum:
 depsget-templ:
 	$(GO_BIN) install github.com/a-h/templ/cmd/templ@latest
 .PHONY: depsget-templ
+
+depsget-air:
+	$(GO_BIN) install github.com/air-verse/air@latest
+.PHONY: depsget-air
 
 migration-add:
 	@mkdir -vp $(MIGRATIONS_TARGET)
