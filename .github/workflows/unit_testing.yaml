@@ -1,0 +1,42 @@
+name: Unit Testing With Gotestsum
+
+on:
+  push:
+    branches:
+      - "main"
+      - "dev"
+      - "release/*"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actions Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Go Compiler
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+
+      - name: Install Dependencies
+        run: |
+          make depsget depsget-gotestsum
+
+      - name: Build
+        run: |
+          make build
+
+      - name: Test
+        run: |
+          make test
