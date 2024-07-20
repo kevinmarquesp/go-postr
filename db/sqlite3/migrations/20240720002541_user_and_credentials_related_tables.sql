@@ -8,13 +8,7 @@ CREATE TABLE Users (
   description TEXT,
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-  auth_type TEXT CHECK (
-    auth_type IS 'CREDENTIALS' OR
-    auth_type IS 'ANONYMOUS' OR
-    auth_type IS 'GOOGLE' OR
-    auth_type IS 'GITHUB'
-  ),
+  password    TEXT CHECK (LENGTH(password) >= 60),
 
   role TEXT DEFAULT 'STANDARD' CHECK (
     role IS 'STANDARD' OR
@@ -22,15 +16,9 @@ CREATE TABLE Users (
     role IS 'BANNED'
   )
 );
-
-CREATE TABLE Credentials (
-  userId   TEXT UNIQUE NOT NULL CHECK (LENGTH(userId) = 26),
-  password TEXT NOT NULL CHECK (LENGTH(password) >= 60)
-);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE Users;
-DROP TABLE Credentials;
 -- +goose StatementEnd
