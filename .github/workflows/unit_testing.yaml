@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          make depsget depsget-gotestsum
+          make depsget-templ depsget depsget-gotestsum
 
       - name: Build
         run: |
