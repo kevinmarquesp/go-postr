@@ -1,0 +1,16 @@
+:root {
+  --clr-bg: black;
+  --clr-dots: hsla(240, 10%, 2%);
+  --dots-sz: 8px;
+  --dots-gap: 52px;
+}
+
+body {
+  background:
+    radial-gradient(transparent, var(--clr-bg)),
+    linear-gradient(90deg, var(--clr-bg) calc(var(--dots-gap) - var(--dots-sz)),
+      transparent 0%) center / var(--dots-gap) var(--dots-gap),
+    linear-gradient(var(--clr-bg) calc(var(--dots-gap) - var(--dots-sz)),
+      transparent 0%) center / var(--dots-gap) var(--dots-gap),
+    var(--clr-dots);
+}
