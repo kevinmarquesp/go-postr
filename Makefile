@@ -13,6 +13,8 @@ MIGRATIONS_TARGET = ./db/sqlite3/migrations
 DATABASE_URL = ./tmp/database.sqlite3
 DATABASE_PROVIDER = sqlite3
 
+NPM = pnpm
+
 run: build
 	./$(TARGET)/$(PROJECT_BIN)
 .PHONY: run
@@ -68,6 +70,10 @@ depsget-air:
 	$(GO_BIN) install github.com/air-verse/air@latest
 .PHONY: depsget-air
 
+depsget-node:
+	$(NPM) install
+.PHONY: depsget-node
+
 migration-add:
 	@mkdir -vp $(MIGRATIONS_TARGET)
 	@read -rp "(read) File name: " file; \
@@ -81,3 +87,11 @@ migration-up:
 migration-reset:
 	GOOSE_DBSTRING=$(DATABASE_URL) goose -dir=$(MIGRATIONS_TARGET) $(DATABASE_PROVIDER) reset
 .PHONY: migration-add
+
+node-tailwind:
+	$(NPM) run tailwind
+.PHONY: node-tailwind
+
+node-tailwind-watch:
+	$(NPM) run tailwind:watch
+.PHONY: node-tailwind-watch
