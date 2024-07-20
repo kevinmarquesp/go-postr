@@ -28,19 +28,11 @@ func (su SqliteUserRepository) CreateNewUser(id, name, username, email, password
 	empty := UserSchema{}
 
 	statement, err := su.database.Prepare(`
-      -- Insert the user data and the credentials information in different tables.
-
       INSERT
         INTO Users
-          (id, name, username, email, auth_type)
+          (id, name, username, email, password)
       VALUES
-        (?1 ?2, ?3, ?4, "CREDENTIALS");
-
-      INSERT
-        INTO Credentials
-          (userId, password)
-        VALUES
-          (?1, ?5);
+        (?1, ?2, ?3, ?4, ?5);
     `)
 	if err != nil {
 		return empty, err
