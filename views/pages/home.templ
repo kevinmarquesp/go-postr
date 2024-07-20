@@ -4,8 +4,31 @@ import "github.com/kevinmarquesp/go-postr/views/layouts"
 
 templ Home() {
 	@layouts.Base("Home Page") {
-		<div>
-			<h1>Hello world!</h1>
+		<div class="w-fit mx-auto">
+			<div class="flex flex-grow flex-wrap w-screen max-w-[calc(2*24rem+72rem)]">
+				<nav class="w-full max-w-sm p-4 mx-auto">
+					<h1 class="text-4xl font-black my-4">Go Postr</h1>
+					<p class="text-xl">
+						Faça postagens e interaja com os outros de forma simples e direta!
+					</p>
+					<hr class="block border-zinc-800 my-4"/>
+					<h2 class="text-lg font-bold mb-2">Criar conta / Entrar</h2>
+					<ul class="space-y-1">
+						<li><a class="transition-all duration-75 bg-zinc-800 hover:bg-zinc-700 block w-full py-3 px-5 rounded-md" href="#">Registrar-se</a></li>
+						<li><a class="transition-all duration-75 bg-zinc-800 hover:bg-zinc-700 block w-full py-3 px-5 rounded-md" href="#">Entrar</a></li>
+					</ul>
+					<hr class="block border-zinc-800 my-4"/>
+					<h2 class="text-lg font-bold mb-2">Mains informações</h2>
+					<ul class="space-y-1">
+						<li><a class="transition-all duration-75 bg-zinc-800 hover:bg-zinc-700 block w-full py-3 px-5 rounded-md" href="#">Sobre</a></li>
+						<li><a class="transition-all duration-75 bg-zinc-800 hover:bg-zinc-700 block w-full py-3 px-5 rounded-md" href="https://github.com/kevinmarquesp/go-postr">Código fonte</a></li>
+						<li><a class="transition-all duration-75 bg-zinc-800 hover:bg-zinc-700 block w-full py-3 px-5 rounded-md" href="https://kevinmarquesp.github.io">Autor's Blog</a></li>
+					</ul>
+				</nav>
+				<main class="grow max-w-6xl p-4 mx-auto"></main>
+				<aside class="w-full max-w-sm p-4 mx-auto"></aside>
+			</div>
+			<footer class="p-6"></footer>
 		</div>
 	}
 }
