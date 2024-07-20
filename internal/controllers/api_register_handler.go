@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/charmbracelet/log"
+	"github.com/kevinmarquesp/go-postr/internal/models"
 	"github.com/kevinmarquesp/go-postr/internal/services"
 )
 
@@ -30,7 +30,12 @@ func (au ApiUserHandler) RegisterNewUserWithCredentials(w http.ResponseWriter, r
 		Confirmation string `json:"confirmation"`
 	}
 
-	json.NewDecoder(r.Body).Decode(&props)
+	err := json.NewDecoder(r.Body).Decode(&props)
+	if err != nil {
+		models.WriteHttpJsonError(w, http.StatusBadRequest, err,
+			"controllers.api-user", "The request body is invalid.")
+		return
+	}
 
 	createdUser, err := au.AuthenticationService.AuthenticateWithCredentials(
 		strings.Trim(props.Name, " "),
@@ -40,11 +45,12 @@ func (au ApiUserHandler) RegisterNewUserWithCredentials(w http.ResponseWriter, r
 		strings.Trim(props.Confirmation, " "),
 	)
 	if err != nil {
-		// TODO: Create a function to format the error in a JSON HTTP response.
-		log.Error("Could not register the new user for some reason.", "error", err)
+		models.WriteHttpJsonError(w, http.StatusInternalServerError, err,
+			"services.authentication", "Could not register the request user to the database.")
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(createdUser)
 }
 
