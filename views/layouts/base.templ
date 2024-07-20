@@ -7,9 +7,10 @@ templ Base(title string) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href="/tailwind.min.css"/>
+			<link rel="stylesheet" href="/css/background.css"/>
 			<title>Go Postr | { title }</title>
 		</head>
-		<body>
+		<body class="overflow-x-hidden w-screen h-screen text-white">
 			{ children... }
 		</body>
 	</html>
