@@ -38,7 +38,7 @@ func (su SqliteUserRepository) CreateNewUser(id, name, username, email, password
 
       INSERT
         INTO Credentials
-          (id, password)
+          (userId, password)
         VALUES
           (?1, ?5);
     `)
