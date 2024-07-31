@@ -40,7 +40,7 @@ func TestNewGopostrAuthentication(t *testing.T) {
 	mockUserRepo := MockedUserRepository{}
 	authenticationService := services.NewGopostrAuthenticationService(mockUserRepo)
 
-	assert.IsType(t, services.GopostrAuthenticationService{}, authenticationService)
+	assert.IsType(t, &services.GopostrAuthenticationService{}, authenticationService)
 }
 
 func TestAuthenticateWithCredentials(t *testing.T) {
