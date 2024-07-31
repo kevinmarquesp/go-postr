@@ -17,8 +17,8 @@ type GopostrAuthenticationService struct {
 	UserRepo repositories.UserRepository
 }
 
-func NewGopostrAuthenticationService(userRepo repositories.UserRepository) GopostrAuthenticationService {
-	return GopostrAuthenticationService{
+func NewGopostrAuthenticationService(userRepo repositories.UserRepository) *GopostrAuthenticationService {
+	return &GopostrAuthenticationService{
 		UserRepo: userRepo,
 	}
 }

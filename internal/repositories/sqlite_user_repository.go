@@ -13,13 +13,13 @@ type SqliteUserRepository struct {
 	database *sql.DB
 }
 
-func NewSqliteUserRepository(path string) (SqliteUserRepository, error) {
+func NewSqliteUserRepository(path string) (*SqliteUserRepository, error) {
 	connection, err := sql.Open("sqlite3", path)
 	if err != nil {
-		return SqliteUserRepository{}, err
+		return &SqliteUserRepository{}, err
 	}
 
-	return SqliteUserRepository{
+	return &SqliteUserRepository{
 		database: connection,
 	}, nil
 }
