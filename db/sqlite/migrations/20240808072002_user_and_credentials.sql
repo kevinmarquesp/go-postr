@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS Users (
-  id           TEXT UNIQUE NOT NULL CHECK (LENGTH(id) IS 25),
+  id           TEXT UNIQUE NOT NULL CHECK (LENGTH(id) IS 26),
   username     TEXT NOT NULL UNIQUE CHECK (username IS NOT ''),
   bio          TEXT CHECK (display_name IS NOT ''),
   display_name TEXT CHECK (display_name IS NOT ''),
@@ -21,12 +21,17 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS Credentials (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id    TEXT NOT NULL CHECK (LENGTH(user_id) IS 25),
-  email      TEXT NOT NULL,
-  password   TEXT NOT NULL CHECK (LENGTH(password) >= 60),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id     TEXT NOT NULL CHECK (LENGTH(user_id) IS 26),
+  email       TEXT NOT NULL,
+  password    TEXT NOT NULL CHECK (LENGTH(password) >= 60),
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT foreign_key_user_id
+    FOREIGN KEY (user_id)
+    REFERENCES Users (id)
+    ON DELETE CASCADE
 );
 -- +goose StatementEnd
 
